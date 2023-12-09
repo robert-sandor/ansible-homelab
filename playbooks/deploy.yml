@@ -4,6 +4,10 @@
   hosts: all
   strategy: free
 
+  roles:
+    - role: base
+      tags: base
+
   tasks:
     - name: Debug
       ansible.builtin.debug:
