@@ -1,0 +1,10 @@
+---
+- name: Deploy
+
+  hosts: all
+  strategy: free
+
+  tasks:
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "Init"
