@@ -1,6 +1,15 @@
 ---
+- name: Enable nvidia container toolkit
+  ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
+  changed_when: true
+  become: true
+
 - name: Restart Docker
   become: true
   ansible.builtin.service:
-    name: dockerd
+    name: docker
     state: restarted
+
+- name: Reboot
+  ansible.builtin.reboot:
+  become: true

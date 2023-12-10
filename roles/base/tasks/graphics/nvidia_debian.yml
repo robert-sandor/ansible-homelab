@@ -1,0 +1,66 @@
+---
+- name: NVIDIA Driver Debian
+  when: ansible_facts.distribution == 'Debian'
+  block:
+    - name: Ensure /etc/apt/keyrings exists
+      become: true
+      ansible.builtin.file:
+        path: /usr/share/keyrings
+        mode: "0755"
+        owner: root
+        group: root
+
+    - name: Check if nvidia GPG key exists
+      ansible.builtin.stat:
+        path: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+      register: nvidia_gpg_key_stat
+
+    - name: Download nvidia GPG key if doesn't exists
+      when: not nvidia_gpg_key_stat.stat.exists
+      block:
+        - name: Get GPG keys from Docker
+          ansible.builtin.get_url:
+            url: https://nvidia.github.io/libnvidia-container/gpgkey
+            dest: /tmp/nvidia_gpg_key
+            mode: "0755"
+
+        - name: Dearmor nvidia key using gpg
+          become: true
+          ansible.builtin.command: "gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg /tmp/nvidia_gpg_key"
+          changed_when: true
+
+        - name: Remove downloaded temp file
+          ansible.builtin.file:
+            path: /tmp/nvidia_gpg_key
+            state: absent
+
+    - name: Add non-free and non-free-firmware apt repositories
+      become: true
+      ansible.builtin.apt_repository:
+        state: present
+        filename: non-free
+        repo: "{{ item }}"
+      loop:
+        - deb http://deb.debian.org/debian bookworm contrib non-free non-free-firmware
+        - deb-src http://deb.debian.org/debian bookworm contrib non-free non-free-firmware
+        - deb http://deb.debian.org/debian-security/ bookworm-security contrib non-free non-free-firmware
+        - deb-src http://deb.debian.org/debian-security/ bookworm-security contrib non-free non-free-firmware
+        - deb http://deb.debian.org/debian bookworm-updates contrib non-free non-free-firmware
+        - deb-src http://deb.debian.org/debian bookworm-updates contrib non-free non-free-firmware
+
+    - name: Add nvidia-container-toolkit repository
+      become: true
+      ansible.builtin.apt_repository:
+        state: present
+        filename: nvidia-container-toolkit
+        repo: "deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH) /"
+
+    - name: Install nvidia-driver and container-toolkit
+      become: true
+      ansible.builtin.apt:
+        pkg:
+          - nvidia-driver
+          - nvidia-container-toolkit
+      notify:
+        - Enable nvidia container toolkit
+        - Reboot

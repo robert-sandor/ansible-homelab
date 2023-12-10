@@ -8,5 +8,14 @@ base:
   update_system: true
 
   docker:
+    # Configure insecure registries if needed
     insecure_registries: []
+    # Add docker registry mirrors
     registry_mirrors: []
+
+  # Section for setting up graphics drivers - for now only nvidia is supported
+  graphics:
+    # Attempt to autodetect gpu type using lshw
+    autodetect: true
+    # Force the installation of nvidia drivers
+    nvidia: false

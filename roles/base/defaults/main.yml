@@ -5,3 +5,7 @@ base_defaults:
   docker:
     insecure_registries: []
     registry_mirrors: []
+
+  graphics:
+    autodetect: true
+    nvidia: false

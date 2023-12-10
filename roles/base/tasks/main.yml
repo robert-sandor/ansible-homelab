@@ -8,3 +8,6 @@
 
     - name: Install docker
       ansible.builtin.import_tasks: ./docker.yml
+
+    - name: Install graphics drivers
+      ansible.builtin.import_tasks: ./graphics.yml
