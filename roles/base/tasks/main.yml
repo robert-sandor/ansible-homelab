@@ -5,3 +5,6 @@
   block:
     - name: Initial setup
       ansible.builtin.import_tasks: ./setup.yml
+
+    - name: Install docker
+      ansible.builtin.import_tasks: ./docker.yml

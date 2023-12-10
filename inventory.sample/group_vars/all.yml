@@ -6,3 +6,7 @@ base:
   # Whether to run a full system upgrade (apt full-upgrade)
   # It's recommended to have this to true on initial deployment, and set it to false after for more stability, or keep it to true for latest packages
   update_system: true
+
+  docker:
+    insecure_registries: []
+    registry_mirrors: []

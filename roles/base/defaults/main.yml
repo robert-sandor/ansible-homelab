@@ -1,3 +1,7 @@
 ---
 base_defaults:
   update_system: true
+
+  docker:
+    insecure_registries: []
+    registry_mirrors: []

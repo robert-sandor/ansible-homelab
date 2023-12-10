@@ -1,0 +1,119 @@
+---
+- name: Install prerequisites
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Ensure /etc/apt/keyrings exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Check if docker GPG key exists
+  ansible.builtin.stat:
+    path: /etc/apt/keyrings/docker.gpg
+  register: docker_gpg_key_stat
+
+- name: Download Docker GPG key if doesn't exists
+  when: not docker_gpg_key_stat.stat.exists
+  block:
+    - name: Get GPG keys from Docker
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /tmp/docker_gpg_key
+        mode: "0755"
+
+    - name: Dearmor Docker key
+      become: true
+      ansible.builtin.command:
+        cmd: gpg --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker_gpg_key
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Remove downloaded temp file
+      ansible.builtin.file:
+        path: /tmp/docker_gpg_key
+        state: absent
+
+- name: Add docker repository
+  become: true
+  ansible.builtin.apt_repository:
+    update_cache: true
+    repo: >-
+      deb [arch={{ 'amd64' if 'x86_64' in ansible_facts.architecture else 'arm64' }}
+      signed-by=/etc/apt/keyrings/docker.gpg]
+      https://download.docker.com/linux/{{ 'debian' if ansible_facts.distribution | lower == 'debian' else 'ubuntu' }}
+      {{ ansible_facts.distribution_release }} stable
+    state: present
+    filename: docker
+
+- name: Install docker
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+
+- name: Ensure docker group is present
+  become: true
+  ansible.builtin.group:
+    name: docker
+
+- name: Add user to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_facts.user_id }}"
+    groups: docker
+    append: true
+
+- name: Reset connection
+  ansible.builtin.meta: reset_connection
+
+- name: Enable docker daemon to run at boot
+  become: true
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Ensure /etc/docker/daemon.json exists
+  become: true
+  ansible.builtin.file:
+    state: touch
+    access_time: preserve
+    modification_time: preserve
+    path: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Read docker daemon config if it exists
+  become: true
+  ansible.builtin.command: cat /etc/docker/daemon.json
+  changed_when: false
+  register: docker_daemon_config
+
+- name: Set docker daemon config
+  vars:
+    docker_config: "{{ docker_daemon_config.stdout | from_json if docker_daemon_config.stdout | length > 0 else {} }}"
+    docker_config_updates:
+      insecure-registries: "{{ (docker_config['insecure-registries'] | default([]) + base_config.docker.insecure_registries) | unique }}"
+      registry-mirrors: "{{ (docker_config['registry-mirrors'] | default([]) + base_config.docker.registry_mirrors) | unique }}"
+  become: true
+  ansible.builtin.copy:
+    content: "{{ docker_config | combine(docker_config_updates, recursive=True) | to_nice_json(indent=2) }}"
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Docker
