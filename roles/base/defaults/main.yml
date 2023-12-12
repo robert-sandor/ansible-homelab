@@ -9,3 +9,15 @@ base_defaults:
   graphics:
     autodetect: true
     nvidia: false
+
+  traefik:
+    version: latest
+
+  diun:
+    version: latest
+
+  docker_socket_proxy:
+    version: latest
+
+  portainer_agent:
+    version: latest

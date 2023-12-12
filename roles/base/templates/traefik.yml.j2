@@ -1,0 +1,52 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+api:
+  insecure: {{ base_config.traefik.insecure_api | string | lower }}
+
+{% if base_config.traefik.access_log %}accessLog: {}
+{% endif %}
+
+log:
+  level: info
+
+providers:
+  docker:
+    network: traefik
+    exposedByDefault: false
+
+entryPoints:
+  http:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: https
+  https:
+    address: ":443"
+    http:
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "{{ ansible_hostname }}.{{ domain }}"
+            sans:
+              - "*.{{ ansible_hostname }}.{{ domain }}"
+  smtp:
+    address: ":465"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: {{ base_config.traefik.certificate.email }}
+      storage: /letsencrypt/letsencrypt.json
+      caServer: https://acme-{% if base_config.traefik.certificate.staging %}staging-{% endif %}v02.api.letsencrypt.org/directory
+      dnsChallenge:
+        provider: {{ base_config.traefik.certificate.dns_provider }}
+        resolvers:
+          - 1.1.1.1
+          - 8.8.8.8
+
+metrics:
+  prometheus:
+    manualRouting: true

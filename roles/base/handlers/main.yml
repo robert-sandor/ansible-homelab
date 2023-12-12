@@ -13,3 +13,8 @@
 - name: Reboot
   ansible.builtin.reboot:
   become: true
+
+- name: Restart traefik
+  community.docker.docker_container:
+    name: traefik
+    restart: true

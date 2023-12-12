@@ -1,6 +1,14 @@
-globals:
-  # This will be the domain for the deployment - hostnames for the host will be set to <ansible_hostname>.<domain>
-  domain: example.domain.xyz
+# This will be the domain for the deployment - hostnames for the host will be set to <ansible_hostname>.<domain>
+domain: example.domain.xyz
+
+# Timezone to set for the hosts and containers
+timezone: Etc/UTC
+
+# Hostname of the node that will host the core apps
+core_host: core
+
+# Path to project on the hosts
+deployment_path: "/home/{{ ansible_facts.user_id }}/{{ (domain | split('.'))[0] }}"
 
 base:
   # Whether to run a full system upgrade (apt full-upgrade)
@@ -19,3 +27,50 @@ base:
     autodetect: true
     # Force the installation of nvidia drivers
     nvidia: false
+
+  # Traefik - reverse proxy
+  traefik:
+    version: latest
+
+    # Enable access logs
+    # Note: This will print a log of logs
+    access_log: false
+
+    # Expose the api and dashboard on :8080
+    insecure_api: false
+
+    # Certificate configurations
+    certificate:
+      # Whether to use letsencrypt's staging environment
+      # Note: This will not generate a real certificate - it is useful for testing, to avoid hitting letsencrypt prod env rate limits
+      staging: true
+
+      # Email address of the domain admin - used to register to letsencrypt
+      email: "admin@{{ domain }}"
+
+      # DNS provider settings - used for the ACME DNS challenge
+      # See https://doc.traefik.io/traefik/https/acme/#providers for available providers
+      # and their settings
+      dns_provider: cloudflare
+      env:
+        CF_API_EMAIL: "admin@{{ domain }}"
+        CF_DNS_API_TOKEN: changeme
+
+  # Diun - docker image update notifier
+  diun:
+    version: latest
+    # When to check for new images, in cron format
+    schedule: 0 0 * * sat
+    # Environment variables for enabling notifications - see https://crazymax.dev/diun/notif/discord/ for more info
+    # Example provided for ntfy, which is part of the core apps
+    notifications:
+      DIUN_NOTIF_NTFY_ENDPOINT: https://ntfy.{{ core_host }}.{{ domain }}
+      DIUN_NOTIF_NTFY_TOPIC: docker-image-updates
+
+  # Docker socket proxy - expose docker API securely
+  docker_socket_proxy:
+    version: latest
+
+  # Portainer agent - agent to connect to portainer
+  portainer_agent:
+    version: latest

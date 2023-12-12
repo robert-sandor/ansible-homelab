@@ -2,7 +2,7 @@
 - name: Set hostname
   become: true
   ansible.builtin.hostname:
-    name: "{{ ansible_hostname }}.{{ globals.domain }}"
+    name: "{{ ansible_hostname }}.{{ domain }}"
 
 - name: Update system
   become: true

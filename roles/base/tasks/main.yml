@@ -11,3 +11,9 @@
 
     - name: Install graphics drivers
       ansible.builtin.import_tasks: ./graphics.yml
+
+    - name: Setup base containers
+      ansible.builtin.import_tasks: ./containers.yml
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
