@@ -1,5 +1,5 @@
 watch:
-  schedule: "{{ diun_schedule }}"
+  schedule: "{{ base_diun_schedule }}"
 
 providers:
   docker: {}

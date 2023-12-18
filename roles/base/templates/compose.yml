@@ -4,7 +4,7 @@ services:
   traefik:
     container_name: traefik
     hostname: traefik
-    image: traefik:{{ traefik_version }}
+    image: traefik:{{ base_traefik_version }}
     restart: unless-stopped
     env_file:
       - traefik.env
@@ -49,7 +49,7 @@ services:
   diun:
     container_name: diun
     hostname: diun.{{ hostname }}
-    image: crazymax/diun:{{ diun_version }}
+    image: crazymax/diun:{{ base_diun_version }}
     restart: unless-stopped
     command: serve
     environment:
@@ -65,7 +65,7 @@ services:
   docker_socket_proxy:
     container_name: docker_socket_proxy
     hostname: docker_socket_proxy
-    image: tecnativa/docker-socket-proxy:{{ dsp_version }}
+    image: tecnativa/docker-socket-proxy:{{ base_dsp_version }}
     restart: unless-stopped
     environment:
       CONTAINERS: 1
@@ -79,7 +79,7 @@ services:
   portainer_agent:
     container_name: portainer_agent
     hostname: portainer_agent
-    image: portainer/agent:{{ portainer_agent_version }}
+    image: portainer/agent:{{ base_portainer_agent_version }}
     restart: unless-stopped
     networks:
       - portainer

@@ -6,7 +6,7 @@
 
 - name: Update system
   become: true
-  when: update_system
+  when: base_update_system
   ansible.builtin.apt:
     update_cache: true
     upgrade: full

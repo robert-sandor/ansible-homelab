@@ -41,11 +41,11 @@ entryPoints:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: "{{ traefik_acme_email }}"
+      email: "{{ base_traefik_acme_email }}"
       storage: /letsencrypt/acme.json
-      caServer: https://acme-{% if traefik_acme_staging %}staging-{% endif %}v02.api.letsencrypt.org/directory
+      caServer: https://acme-{% if base_traefik_acme_staging %}staging-{% endif %}v02.api.letsencrypt.org/directory
       dnsChallenge:
-        provider: "{{ traefik_dns_provider }}"
+        provider: "{{ base_traefik_dns_provider }}"
         resolvers:
           - 1.1.1.1
           - 1.0.0.1

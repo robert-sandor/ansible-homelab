@@ -5,12 +5,12 @@
     has_nvidia_gpu: "{{ lshw_output.stdout | from_json | json_query(nvidia_gpu_query) | length > 0 }}"
   block:
     - name: Run lshw
-      when: gpu_autodetect
+      when: base_gpu_autodetect
       ansible.builtin.command: lshw -class display -json
       changed_when: false
       become: true
       register: lshw_output
 
     - name: Install NVIDIA GPU driver
-      when: gpu_nvidia or has_nvidia_gpu
+      when: base_gpu_nvidia or has_nvidia_gpu
       ansible.builtin.include_tasks: ./graphics/nvidia_{{ ansible_facts.os_family | lower }}.yml

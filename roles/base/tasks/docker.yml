@@ -107,8 +107,8 @@
   vars:
     docker_config: "{{ docker_daemon_config.stdout | from_json if docker_daemon_config.stdout | length > 0 else {} }}"
     docker_config_updates:
-      insecure-registries: "{{ (docker_config['insecure-registries'] | default([]) + docker_insecure_registries) | unique }}"
-      registry-mirrors: "{{ (docker_config['registry-mirrors'] | default([]) + docker_registry_mirrors) | unique }}"
+      insecure-registries: "{{ (docker_config['insecure-registries'] | default([]) + base_docker_insecure_registries) | unique }}"
+      registry-mirrors: "{{ (docker_config['registry-mirrors'] | default([]) + base_docker_registry_mirrors) | unique }}"
   become: true
   ansible.builtin.copy:
     content: "{{ docker_config | combine(docker_config_updates, recursive=True) | to_nice_json(indent=2) }}"

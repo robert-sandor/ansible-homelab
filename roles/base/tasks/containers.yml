@@ -13,7 +13,7 @@
     content: "{{ item.value }}"
     dest: "{{ deploy_path }}/base/traefik_secrets/{{ item.key | lower }}"
     mode: '0600'
-  loop: "{{ traefik_env | dict2items }}"
+  loop: "{{ base_traefik_env | dict2items }}"
 
 - name: Template files
   ansible.builtin.template:
