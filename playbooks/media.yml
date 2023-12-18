@@ -1,0 +1,7 @@
+---
+- name: Deploy media
+  hosts: media
+  tasks:
+    - name: Hello
+      ansible.builtin.debug:
+        msg: hello from media

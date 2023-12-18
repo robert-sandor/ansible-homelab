@@ -4,10 +4,10 @@ services:
   traefik:
     container_name: traefik
     hostname: traefik
-    image: traefik:$TRAEFIK_VERSION
+    image: traefik:{{ traefik_version }}
     restart: unless-stopped
     env_file:
-      - .traefik.env
+      - traefik.env
     networks:
       - traefik
     ports:
@@ -23,50 +23,49 @@ services:
     labels:
       traefik.enable: "true"
       # Access to dashboard
-      traefik.http.routers.traefik.rule: "Host(`traefik.$HOSTNAME`)"
+      traefik.http.routers.traefik.rule: "Host(`traefik.{{ hostname }}`)"
       traefik.http.routers.traefik.entrypoints: https
       traefik.http.routers.traefik.service: api@internal
       traefik.http.routers.traefik.middlewares: authelia@docker
       # Access to metrics
-      traefik.http.routers.traefik-metrics.rule: "Host(`traefik.$HOSTNAME`) && PathPrefix(`/metrics`)"
+      traefik.http.routers.traefik-metrics.rule: "Host(`traefik.{{ hostname }}`) && PathPrefix(`/metrics`)"
       traefik.http.routers.traefik-metrics.entrypoints: https
       traefik.http.routers.traefik-metrics.service: prometheus@internal
       # Authelia middlewares
-      traefik.http.middlewares.authelia.forwardauth.address: "https://auth.$CORE_HOSTNAME/api/verify?rd=https://auth.$CORE_HOSTNAME"
+      traefik.http.middlewares.authelia.forwardauth.address: "https://auth.{{ core_hostname }}/api/verify?rd=https://auth.{{ core_hostname }}"
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
-      traefik.http.middlewares.authelia-basic.forwardauth.address: "https://auth.$CORE_HOSTNAME/api/verify?auth=basic"
+      traefik.http.middlewares.authelia-basic.forwardauth.address: "https://auth.{{ core_hostname }}/api/verify?auth=basic"
       traefik.http.middlewares.authelia-basic.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia-basic.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
       # Simplydash
       simplydash.enable: true
       simplydash.name: Traefik
       simplydash.group: admin
-      simplydash.link: https://traefik.$HOSTNAME
-      simplydash.description: $HOSTNAME
+      simplydash.link: https://traefik.{{ hostname }}
+      simplydash.description: "{{ hostname }}"
       simplydash.healthcheck.enable: true
 
   diun:
     container_name: diun
-    hostname: diun.$HOSTNAME
-    image: crazymax/diun:$DIUN_VERSION
+    hostname: diun.{{ hostname }}
+    image: crazymax/diun:{{ diun_version }}
     restart: unless-stopped
     command: serve
-    env_file:
-      - .diun.env
     environment:
       LOG_LEVEL: info
       LOG_JSON: "true"
     networks:
       - diun
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ./diun.yml:/etc/diun/diun.yml
       - diun-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   docker_socket_proxy:
     container_name: docker_socket_proxy
     hostname: docker_socket_proxy
-    image: tecnativa/docker-socket-proxy:$DOCKER_SOCKET_PROXY_VERSION
+    image: tecnativa/docker-socket-proxy:{{ dsp_version }}
     restart: unless-stopped
     environment:
       CONTAINERS: 1
@@ -80,7 +79,7 @@ services:
   portainer_agent:
     container_name: portainer_agent
     hostname: portainer_agent
-    image: portainer/agent:$PORTAINER_AGENT_VERSION
+    image: portainer/agent:{{ portainer_agent_version }}
     restart: unless-stopped
     networks:
       - portainer

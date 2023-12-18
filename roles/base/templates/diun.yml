@@ -1,0 +1,10 @@
+watch:
+  schedule: "{{ diun_schedule }}"
+
+providers:
+  docker: {}
+
+notif:
+  ntfy:
+    endpoint: https://ntfy.{{ core_hostname }}.{{ domain }}
+    topic: docker-image-updates

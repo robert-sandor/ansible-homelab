@@ -1,76 +1,37 @@
-# This will be the domain for the deployment - hostnames for the host will be set to <ansible_hostname>.<domain>
-domain: example.domain.xyz
+---
+# Toggle on to update all system packages
+update_system: false
 
-# Timezone to set for the hosts and containers
-timezone: Etc/UTC
+# Setup insecure registries for docker
+docker_insecure_registries: []
+# Setup docker registry mirrors
+docker_registry_mirrors: []
 
-# Hostname of the node that will host the core apps
-core_host: core
+# Attempt to auto detect GPU vendor and install drivers - currently, only nvidia is supported
+gpu_autodetect: true
+# Force installation of nvidia driver
+gpu_nvidia: false
 
-# Path to project on the hosts
-deployment_path: "/home/{{ ansible_facts.user_id }}/{{ (domain | split('.'))[0] }}"
+### Traefik - reverse proxy
+traefik_version: v3.0
+# Email to use for the letsencrypt certificate
+traefik_acme_email: admin@{{ domain }}
+# Toggle to use the staging letsencrypt server
+traefik_acme_staging: true
+# DNS provider for acme DNS-01 challenge
+traefik_dns_provider: cloudflare
+# Environment variables to add to traefik for the above DNS provider
+traefik_env:
+  CF_API_EMAIL: "admin@{{ domain }}"
+  CF_DNS_API_TOKEN: changeme
 
-base:
-  # Whether to run a full system upgrade (apt full-upgrade)
-  # It's recommended to have this to true on initial deployment, and set it to false after for more stability, or keep it to true for latest packages
-  update_system: true
+### DIUN - docker image update notifier
+diun_version: 4
+# Cron schedule on when diun runs and checks for updates
+diun_schedule: 0 0 * * *
 
-  docker:
-    # Configure insecure registries if needed
-    insecure_registries: []
-    # Add docker registry mirrors
-    registry_mirrors: []
+### Docker Socket Proxy - a proxy to control exposed docker api resources
+dsp_version: 0.1
 
-  # Section for setting up graphics drivers - for now only nvidia is supported
-  graphics:
-    # Attempt to autodetect gpu type using lshw
-    autodetect: true
-    # Force the installation of nvidia drivers
-    nvidia: false
-
-  # Traefik - reverse proxy
-  traefik:
-    version: latest
-
-    # Enable access logs
-    # Note: This will print a log of logs
-    access_log: false
-
-    # Expose the api and dashboard on :8080
-    insecure_api: false
-
-    # Certificate configurations
-    certificate:
-      # Whether to use letsencrypt's staging environment
-      # Note: This will not generate a real certificate - it is useful for testing, to avoid hitting letsencrypt prod env rate limits
-      staging: true
-
-      # Email address of the domain admin - used to register to letsencrypt
-      email: "admin@{{ domain }}"
-
-      # DNS provider settings - used for the ACME DNS challenge
-      # See https://doc.traefik.io/traefik/https/acme/#providers for available providers
-      # and their settings
-      dns_provider: cloudflare
-      env:
-        CF_API_EMAIL: "admin@{{ domain }}"
-        CF_DNS_API_TOKEN: changeme
-
-  # Diun - docker image update notifier
-  diun:
-    version: latest
-    # When to check for new images, in cron format
-    schedule: 0 0 * * sat
-    # Environment variables for enabling notifications - see https://crazymax.dev/diun/notif/discord/ for more info
-    # Example provided for ntfy, which is part of the core apps
-    notifications:
-      DIUN_NOTIF_NTFY_ENDPOINT: https://ntfy.{{ core_host }}.{{ domain }}
-      DIUN_NOTIF_NTFY_TOPIC: docker-image-updates
-
-  # Docker socket proxy - expose docker API securely
-  docker_socket_proxy:
-    version: latest
-
-  # Portainer agent - agent to connect to portainer
-  portainer_agent:
-    version: latest
+### Portainer agent - used by Portainer to connect to this host
+portainer_agent_version: 2.19.4

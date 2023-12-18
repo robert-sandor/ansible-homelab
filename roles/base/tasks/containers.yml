@@ -2,47 +2,38 @@
 - name: Create directory structure
   ansible.builtin.file:
     state: directory
-    path: "{{ deployment_path }}/{{ item }}"
+    path: "{{ deploy_path }}/{{ item }}"
     mode: "0755"
   loop:
     - base
     - base/traefik_secrets
 
-- name: Copy files
-  ansible.builtin.copy:
-    src: "{{ item.src }}"
-    dest: "{{ deployment_path }}/{{ item.dest }}"
-    mode: "{{ item.mode | default('0644') }}"
-  loop:
-    - src: compose.yml
-      dest: base/compose.yml
-
 - name: Create traefik secrets
   ansible.builtin.copy:
     content: "{{ item.value }}"
-    dest: "{{ deployment_path }}/base/traefik_secrets/{{ item.key | lower }}"
+    dest: "{{ deploy_path }}/base/traefik_secrets/{{ item.key | lower }}"
     mode: '0600'
-  loop: "{{ base_config.traefik.certificate.env | dict2items }}"
+  loop: "{{ traefik_env | dict2items }}"
 
 - name: Template files
   ansible.builtin.template:
     src: "{{ item.src }}"
-    dest: "{{ deployment_path }}/{{ item.dest }}"
+    dest: "{{ deploy_path }}/{{ item.dest }}"
     mode: "{{ item.mode | default('0644') }}"
   loop:
-    - src: .env.j2
-      dest: base/.env
-    - src: .diun.env.j2
-      dest: base/.diun.env
+    - src: compose.yml
+      dest: base/compose.yml
+    - src: diun.yml
+      dest: base/diun.yml
       mode: '0600'
-    - src: .traefik.env.j2
-      dest: base/.traefik.env
+    - src: traefik.env.j2
+      dest: base/traefik.env
       mode: '0600'
 
 - name: Template traefik config
   ansible.builtin.template:
-    src: "traefik.yml.j2"
-    dest: "{{ deployment_path }}/base/traefik.yml"
+    src: traefik.yml
+    dest: "{{ deploy_path }}/base/traefik.yml"
     mode: '0644'
   notify: Restart traefik
 
@@ -55,4 +46,4 @@
     name: common
     tasks_from: compose
   vars:
-    common_project_src: "{{ deployment_path }}/base"
+    common_project_src: "{{ deploy_path }}/base"

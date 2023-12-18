@@ -6,7 +6,7 @@
 
 - name: Update system
   become: true
-  when: base_config.update_system
+  when: update_system
   ansible.builtin.apt:
     update_cache: true
     upgrade: full
@@ -40,13 +40,13 @@
 
 - name: Copy zshrc
   ansible.builtin.copy:
-    src: .zshrc
+    src: zshrc
     dest: ~/.zshrc
     mode: '0644'
 
 - name: Copy p10k.zsh
   ansible.builtin.copy:
-    src: .p10k.zsh
+    src: p10k.zsh
     dest: ~/.p10k.zsh
     mode: '0644'
 

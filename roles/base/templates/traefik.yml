@@ -3,10 +3,13 @@ global:
   sendAnonymousUsage: false
 
 api:
-  insecure: {{ base_config.traefik.insecure_api | string | lower }}
+  insecure: false
 
-{% if base_config.traefik.access_log %}accessLog: {}
-{% endif %}
+accessLog:
+  bufferingSize: 100
+  filters:
+    statusCodes:
+      - "400-599"
 
 log:
   level: info
@@ -38,14 +41,14 @@ entryPoints:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: {{ base_config.traefik.certificate.email }}
-      storage: /letsencrypt/letsencrypt.json
-      caServer: https://acme-{% if base_config.traefik.certificate.staging %}staging-{% endif %}v02.api.letsencrypt.org/directory
+      email: "{{ traefik_acme_email }}"
+      storage: /letsencrypt/acme.json
+      caServer: https://acme-{% if traefik_acme_staging %}staging-{% endif %}v02.api.letsencrypt.org/directory
       dnsChallenge:
-        provider: {{ base_config.traefik.certificate.dns_provider }}
+        provider: "{{ traefik_dns_provider }}"
         resolvers:
           - 1.1.1.1
-          - 8.8.8.8
+          - 1.0.0.1
 
 metrics:
   prometheus:

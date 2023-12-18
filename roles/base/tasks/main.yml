@@ -1,7 +1,5 @@
 ---
 - name: Base configuration
-  vars:
-    base_config: "{{ base_defaults | combine(base, recursive=True) }}"
   block:
     - name: Initial setup
       ansible.builtin.import_tasks: ./setup.yml
