@@ -1,0 +1,9 @@
+configs:
+  "*@*":
+    urls:
+      - discord://{{ core_mailrise_discord_webhook_id }}/{{ core_mailrise_discord_webhook_token }}
+
+smtp:
+  auth:
+    basic:
+      "{{ core_mailrise_user }}": "{{ core_mailrise_password }}"

@@ -1,0 +1,21 @@
+verbose=false
+
+http_url = "https://lldap.{{ hostname }}"
+
+ldap_base_dn = "{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
+ldap_user_dn = "admin"
+ldap_user_email = "admin@{{ domain }}"
+
+database_url = "postgres://lldap:{{ core_lldap_db_password }}@lldap-postgres/lldap"
+
+key_seed = "{{ hostname | b64encode }}"
+
+[smtp_options]
+enable_password_reset=true
+server="{{ hostname }}"
+port=465
+smtp_encryption = "TLS"
+user="{{ core_mailrise_user }}"
+password="{{ core_mailrise_password }}"
+from="Admin <admin@{{ domain }}>"
+reply_to="Do not reply <noreply@{{ domain }}>"

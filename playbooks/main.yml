@@ -1,12 +1,4 @@
 ---
-- name: Set facts
-  hosts: all
-  tasks:
-    - name: Set facts
-      ansible.builtin.set_fact:
-        hostname: "{{ ansible_hostname }}.{{ domain }}"
-        core_hostname: "{{ core_host }}.{{ domain }}"
-
 - name: Deploy base
   ansible.builtin.import_playbook: ./base.yml
 

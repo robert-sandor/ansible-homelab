@@ -1,0 +1,223 @@
+version: "3"
+
+services:
+  mailrise:
+    container_name: mailrise
+    hostname: mailrise
+    image: ghcr.io/yoryan/mailrise:{{ core_mailrise_version }}
+    restart: unless-stopped
+    networks:
+      - traefik
+    volumes:
+      - ./mailrise.yml:/etc/mailrise.conf:ro
+    labels:
+      traefik.enable: true
+      traefik.tcp.routers.mailrise.rule: HostSNI(`*`)
+      traefik.tcp.routers.mailrise.tls: true
+      traefik.tcp.routers.mailrise.entrypoints: smtp
+      traefik.tcp.routers.mailrise.tls.certresolver: letsencrypt
+      traefik.tcp.routers.mailrise.tls.domains[0].main: "mailrise.{{ hostname }}"
+
+  lldap:
+    container_name: lldap
+    hostname: lldap
+    image: lldap/lldap:{{ core_lldap_version }}
+    restart: unless-stopped
+    secrets:
+      - lldap_jwt_secret
+      - lldap_user_pass
+    environment:
+      TZ: "{{ timezone }}"
+      UID: "{{ ansible_facts.user_uid }}"
+      GID: "{{ ansible_facts.user_gid }}"
+      LLDAP_JWT_SECRET_FILE: /run/secrets/lldap_jwt_secret
+      LLDAP_LDAP_USER_PASS_FILE: /run/secrets/lldap_user_pass
+    ports:
+      - "3890:3890"
+    networks:
+      - traefik
+      - lldap
+    volumes:
+      - ./lldap:/data
+    depends_on:
+      - lldap-postgres
+      - mailrise
+    labels:
+      traefik.enable: true
+      traefik.http.services.lldap.loadbalancer.server.port: 17170
+      traefik.http.routers.lldap.rule: Host(`lldap.{{ hostname }}`)
+      traefik.http.routers.lldap.entrypoints: https
+      traefik.http.routers.lldap.service: lldap
+      simplydash.enable: true
+      simplydash.name: LLDAP
+      simplydash.group: admin
+      simplydash.link: https://lldap.{{ hostname }}
+      simplydash.description: User Management
+      simplydash.healthcheck.enable: true
+
+  lldap-postgres:
+    container_name: lldap-postgres
+    hostname: lldap-postgres
+    image: postgres:{{ core_lldap_postgres_version }}
+    restart: unless-stopped
+    secrets:
+      - lldap_postgres_password
+    environment:
+      TZ: "{{ timezone }}"
+      POSTGRES_USER: lldap
+      POSTGRES_DB: lldap
+      POSTGRES_PASSWORD_FILE: /run/secrets/lldap_postgres_password
+    networks:
+      - lldap
+    volumes:
+      - lldap-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -d lldap
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+  authelia:
+    container_name: authelia
+    hostname: authelia
+    image: authelia/authelia:{{ core_authelia_version }}
+    restart: unless-stopped
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    secrets:
+      - authelia_jwt_secret
+      - lldap_user_pass
+      - authelia_session_secret
+      - authelia_storage_secret
+      - authelia_postgres_password
+      - authelia_oidc_hmac_secret
+      - authelia_oidc_issuer_private_key
+    environment:
+      TZ: "{{ timezone }}"
+      AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE: /run/secrets/lldap_user_pass
+      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
+      AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE: /run/secrets/authelia_postgres_password
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_secret
+      AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET_FILE: /run/secrets/authelia_oidc_hmac_secret
+      AUTHELIA_IDENTITY_PROVIDERS_OIDC_ISSUER_PRIVATE_KEY_FILE: /run/secrets/authelia_oidc_issuer_private_key
+    networks:
+      - authelia
+      - traefik
+    ports:
+      - "9091:9091"
+    volumes:
+      - ./authelia:/config
+    depends_on:
+      - authelia-postgres
+      - authelia-redis
+      - lldap
+      - mailrise
+    labels:
+      traefik.enable: true
+      traefik.http.services.authelia.loadbalancer.server.port: 9091
+      traefik.http.routers.authelia.rule: Host(`auth.{{ hostname }}`)
+      traefik.http.routers.authelia.entrypoints: https
+      traefik.http.routers.authelia.service: authelia
+      simplydash.enable: true
+      simplydash.name: Authelia
+      simplydash.group: admin
+      simplydash.link: https://auth.{{ hostname }}
+      simplydash.description: Authentication
+      simplydash.healthcheck.enable: true
+
+  authelia-redis:
+    container_name: authelia-redis
+    hostname: authelia-redis
+    image: redis:{{ core_authelia_redis_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+    networks:
+      - authelia
+    volumes:
+      - authelia-redis:/data
+    healthcheck:
+      test: redis-cli --raw incr ping
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+  authelia-postgres:
+    container_name: authelia-postgres
+    hostname: authelia-postgres
+    image: postgres:{{ core_authelia_postgres_version }}
+    restart: unless-stopped
+    secrets:
+      - authelia_postgres_password
+    environment:
+      TZ: "{{ timezone }}"
+      POSTGRES_USER: authelia
+      POSTGRES_DB: authelia
+      POSTGRES_PASSWORD_FILE: /run/secrets/authelia_postgres_password
+    networks:
+      - authelia
+    volumes:
+      - authelia-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -d authelia
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+  portainer:
+    container_name: portainer
+    hostname: portainer
+    image: portainer/portainer-ce:{{ core_portainer_version }}
+    restart: unless-stopped
+    networks:
+      - traefik
+    volumes:
+      - portainer-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
+      traefik.http.routers.portainer.rule: Host(`portainer.{{ hostname }}`)
+      traefik.http.routers.portainer.entrypoints: https
+      traefik.http.routers.portainer.service: portainer
+      simplydash.enable: true
+      simplydash.name: Portainer
+      simplydash.group: admin
+      simplydash.link: https://portainer.{{ hostname }}
+      simplydash.description: Docker Management
+      simplydash.healthcheck.enable: true
+
+volumes:
+  lldap-postgres:
+  authelia-postgres:
+  authelia-redis:
+  portainer-data:
+
+networks:
+  authelia:
+  lldap:
+  traefik:
+    external: true
+
+secrets:
+  lldap_jwt_secret:
+    file: ./secrets/lldap_jwt_secret
+  lldap_user_pass:
+    file: ./secrets/lldap_user_pass
+  lldap_postgres_password:
+    file: ./secrets/lldap_postgres_password
+  authelia_jwt_secret:
+    file: ./secrets/authelia_jwt_secret
+  authelia_session_secret:
+    file: ./secrets/authelia_session_secret
+  authelia_storage_secret:
+    file: ./secrets/authelia_storage_secret
+  authelia_postgres_password:
+    file: ./secrets/authelia_postgres_password
+  authelia_oidc_hmac_secret:
+    file: ./secrets/authelia_oidc_hmac_secret
+  authelia_oidc_issuer_private_key:
+    file: ./secrets/authelia_oidc_issuer_private_key

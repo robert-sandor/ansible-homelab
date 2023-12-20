@@ -1,5 +1,8 @@
 ---
 - name: Base configuration
+  vars:
+    hostname: "{{ ansible_hostname }}.{{ domain }}"
+    core_hostname: "{{ core_host }}.{{ domain }}"
   block:
     - name: Initial setup
       ansible.builtin.import_tasks: ./setup.yml

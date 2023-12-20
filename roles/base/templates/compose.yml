@@ -32,10 +32,10 @@ services:
       traefik.http.routers.traefik-metrics.entrypoints: https
       traefik.http.routers.traefik-metrics.service: prometheus@internal
       # Authelia middlewares
-      traefik.http.middlewares.authelia.forwardauth.address: "https://auth.{{ core_hostname }}/api/verify?rd=https://auth.{{ core_hostname }}"
+      traefik.http.middlewares.authelia.forwardauth.address: "http://{{ core_hostname }}:9091/api/verify?rd=https://auth.{{ core_hostname }}"
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
-      traefik.http.middlewares.authelia-basic.forwardauth.address: "https://auth.{{ core_hostname }}/api/verify?auth=basic"
+      traefik.http.middlewares.authelia-basic.forwardauth.address: "http://{{ core_hostname }}:9091/api/verify?auth=basic"
       traefik.http.middlewares.authelia-basic.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia-basic.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
       # Simplydash

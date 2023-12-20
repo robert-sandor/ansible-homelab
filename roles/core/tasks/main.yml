@@ -1,0 +1,13 @@
+---
+- name: Deploy core services
+  vars:
+    hostname: "{{ ansible_hostname }}.{{ domain }}"
+    skip_tls: "{{ base_traefik_acme_staging }}"
+  block:
+    - name: Deploy containers
+      ansible.builtin.import_tasks: ./deploy.yml
+
+        # TODO: Bootstrap LLDAP users
+
+    - name: Configure Portainer
+      ansible.builtin.import_tasks: ./configure_portainer.yml

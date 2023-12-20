@@ -1,0 +1,49 @@
+---
+### LLDAP - simple LDAP server
+core_lldap_version: v0.5.0
+core_lldap_postgres_version: 16
+
+# Admin password
+core_lldap_admin_password: changeme
+# DB password - recommendation is to use a randomly generated password
+core_lldap_db_password: changeme
+
+### Mailrise - SMTP to notifications
+core_mailrise_version: latest
+
+# User and password for SMTP access
+core_mailrise_user: mailrise
+core_mailrise_password: changeme
+
+# Webhook ID and Token for Discord notifications
+# Enable webhook on the discord channel, and it should give you a link like the one bellow
+# https://discord.com/api/webhooks/<webhook_id>/<webhook_token> - copy only the id and token bellow
+core_mailrise_discord_webhook_id: 123456
+core_mailrise_discord_webhook_token: changeme
+
+### Authelia
+core_authelia_version: 4.37
+core_authelia_postgres_version: 16
+core_authelia_redis_version: 7
+
+# Allowed subdomains of the domain where users are allowed access - note, admins have access to all subdomains
+# example - to allow access to 'mealie.domain.com', add 'mealie' to the list
+core_authelia_users_allowed_hosts:
+  - traefik.{{ ansible_hostname }}
+
+# To generate the oidc secret values, use the command bellow, and copy the random generated password in the plain field, and the digest in the digest field
+# docker run --rm authelia/authelia authelia crypto hash generate pbkdf2 -v sha512 --random --random.charset alphanumeric --random.length 72
+core_authelia_oidc_portainer_secret:
+  plain: changeme
+  digest: changeme
+
+### Portainer
+core_portainer_version: 2.19.4
+
+# User and password for the admin user in Portainer
+core_portainer_admin_user: admin
+core_portainer_admin_password: changeme
+
+# Hostnames of the portainer agents to add to this instance of portainer
+core_portainer_agents:
+  - example.{{ domain }}

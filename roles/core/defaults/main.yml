@@ -1,0 +1,22 @@
+### LLDAP - simple LDAP server
+core_lldap_version: stable
+
+# Admin password
+core_lldap_admin_password: changeme
+
+# Postgres version for lldap
+core_lldap_postgres_version: 16
+
+# Postgres password for lldap
+core_lldap_postgres_password: changeme
+
+### Mailrise - SMTP to notifications
+core_mailrise_version: latest
+
+# User and password for SMTP access
+core_mailrise_user: mailrise
+core_mailrise_password: changeme
+
+# Webhook ID and Token for Discord notifications
+core_mailrise_discord_webhook_id: changeme
+core_mailrise_discord_webhook_token: changeme

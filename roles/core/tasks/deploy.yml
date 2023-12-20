@@ -1,0 +1,76 @@
+---
+- name: Create directory structure
+  ansible.builtin.file:
+    state: directory
+    path: "{{ deploy_path }}/{{ item.path }}"
+    mode: "{{ item.mode | default('0755') }}"
+  loop:
+    - path: core
+    - path: core/secrets
+      mode: "0700"
+    - path: core/lldap
+    - path: core/authelia
+
+- name: Template files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ deploy_path }}/core/{{ item.dest }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop:
+    - src: compose.yml
+      dest: compose.yml
+    - src: mailrise.yml
+      dest: mailrise.yml
+    - src: lldap_config.toml
+      dest: lldap/lldap_config.toml
+      mode: "0600"
+    - src: authelia_configuration.yml.j2
+      dest: authelia/configuration.yml
+      mode: "0600"
+  register: core_template_updates
+
+- name: Set secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ deploy_path }}/core/secrets/{{ item.dest }}"
+    mode: "0600"
+    force: false
+  loop:
+    - dest: lldap_user_pass
+      content: "{{ core_lldap_admin_password }}"
+    - dest: lldap_postgres_password
+      content: "{{ core_lldap_db_password }}"
+    - dest: lldap_jwt_secret
+      content: "{{ lookup('community.general.random_string', length=32) }}"
+    - dest: authelia_jwt_secret
+      content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
+    - dest: authelia_session_secret
+      content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
+    - dest: authelia_storage_secret
+      content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
+    - dest: authelia_postgres_password
+      content: "{{ lookup('community.general.random_string', length=32) }}"
+    - dest: authelia_oidc_hmac_secret
+      content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
+  register: core_secrets_updates
+
+- name: Generate authelia OIDC HMAC secret
+  ansible.builtin.command:
+    cmd: >
+      docker run -u "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+      -v {{ deploy_path }}/core/secrets:/secrets
+      authelia/authelia:{{ core_authelia_version }}
+      authelia crypto pair rsa generate --bits 4096 --directory /secrets
+      --file.private-key authelia_oidc_issuer_private_key
+      --file.public-key authelia_oidc_issuer_public_key
+    creates: "{{ deploy_path }}/core/secrets/authelia_oidc_issuer_private_key"
+  register: core_authelia_oidc_update
+
+- name: Deploy containers
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: compose
+  vars:
+    common_project_src: "{{ deploy_path }}/core"
+    common_force_recreate: "{{ core_template_updates.changed or core_secrets_updates.changed or core_authelia_oidc_update.changed }}"

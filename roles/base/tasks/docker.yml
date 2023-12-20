@@ -64,6 +64,12 @@
       - containerd.io
       - docker-compose-plugin
 
+- name: Install docker python dependencies
+  ansible.builtin.pip:
+    name:
+      - docker
+      - jsondiff
+
 - name: Ensure docker group is present
   become: true
   ansible.builtin.group:

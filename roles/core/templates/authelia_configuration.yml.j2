@@ -1,0 +1,76 @@
+---
+theme: auto
+
+log:
+  level: info
+  format: json
+
+authentication_backend:
+  refresh_interval: 1m
+  ldap:
+    implementation: custom
+    url: ldap://lldap:3890
+    timeout: 5s
+    start_tls: false
+    base_dn: "{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
+    username_attribute: uid
+    additional_users_dn: ou=people
+    users_filter: "(&({username_attribute}={input})(objectClass=person))"
+    additional_groups_dn: ou=groups
+    groups_filter: "(member={dn})"
+    group_name_attribute: cn
+    mail_attribute: mail
+    display_name_attribute: displayName
+    user: uid=admin,ou=people,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain: "*.{{ domain }}"
+      policy: bypass
+      networks:
+        - 172.16.0.0/12
+    - policy: one_factor
+      subject:
+        - group:admins
+      domain: "*.{{ domain }}"
+    - policy: one_factor
+      subject:
+        - group:users
+      domain:
+{% for item in core_authelia_users_allowed_hosts %}
+        - "{{ item }}.{{ domain }}"
+{% endfor %}
+
+session:
+  name: authelia_{{ ansible_hostname }}_session
+  domain: {{ domain }}
+  redis:
+    host: authelia-redis
+    port: 6379
+
+storage:
+  postgres:
+    host: authelia-postgres
+    port: 5432
+    database: authelia
+    username: authelia
+
+notifier:
+  smtp:
+    host: mailrise.{{ ansible_hostname }}.{{ domain }}
+    port: 465
+    timeout: 10s
+    username: mailrise
+    password: {{ core_mailrise_password }}
+    sender: Authelia <authelia@{{ domain }}>
+    identifier: auth.{{ ansible_hostname }}.{{ domain }}
+
+identity_providers:
+  oidc:
+    clients:
+      - id: portainer
+        secret: "{{ core_authelia_oidc_portainer_secret.digest }}"
+        authorization_policy: one_factor
+        redirect_uris:
+          - https://portainer.{{ ansible_hostname }}.{{ domain }}

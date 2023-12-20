@@ -31,6 +31,7 @@
     pkg:
       - qemu-guest-agent
   when: ansible_facts.virtualization_role == 'guest'
+  notify: Reboot
 
 - name: Change shell to zsh
   become: true
