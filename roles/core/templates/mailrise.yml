@@ -2,6 +2,7 @@ configs:
   "*@*":
     urls:
       - discord://{{ core_mailrise_discord_webhook_id }}/{{ core_mailrise_discord_webhook_token }}
+      - ntfy://ntfy:80/mailrise
 
 smtp:
   auth:

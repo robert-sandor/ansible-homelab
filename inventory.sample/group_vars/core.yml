@@ -47,3 +47,6 @@ core_portainer_admin_password: changeme
 # Hostnames of the portainer agents to add to this instance of portainer
 core_portainer_agents:
   - example.{{ domain }}
+
+### Ntfy - notification service
+core_ntfy_version: v2.8.0
