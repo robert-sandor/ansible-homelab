@@ -1,7 +1,4 @@
 ---
-# Toggle on to update all system packages
-base_update_system: false
-
 # Setup insecure registries for docker
 base_docker_insecure_registries: []
 # Setup docker registry mirrors
@@ -13,25 +10,15 @@ base_gpu_autodetect: true
 base_gpu_nvidia: false
 
 ### Traefik - reverse proxy
-base_traefik_version: latest
-# Email to use for the letsencrypt certificate
-base_traefik_acme_email: admin@{{ domain }}
-# Toggle to use the staging letsencrypt server
-base_traefik_acme_staging: true
-# DNS provider for acme DNS-01 challenge
-base_traefik_dns_provider: cloudflare
-# Environment variables to add to traefik for the above DNS provider
-base_traefik_env:
-  CF_API_EMAIL: "admin@{{ domain }}"
-  CF_DNS_API_TOKEN: changeme
+base_traefik_version: v3.0
 
 ### DIUN - docker image update notifier
-base_diun_version: latest
+base_diun_version: 4
 # Cron schedule on when diun runs and checks for updates
-base_diun_schedule: 0 0 * * *
+base_diun_schedule: 0 0 * * sat
 
 ### Docker Socket Proxy - a proxy to control exposed docker api resources
-base_dsp_version: latest
+base_dsp_version: 0.1
 
 ### Portainer agent - used by Portainer to connect to this host
-base_portainer_agent_version: latest
+base_portainer_agent_version: 2.19.4

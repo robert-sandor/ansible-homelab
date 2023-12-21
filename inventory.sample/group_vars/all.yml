@@ -1,19 +1,8 @@
 ---
 # Toggle on to update all system packages
-base_update_system: false
-
-# Setup insecure registries for docker
-base_docker_insecure_registries: []
-# Setup docker registry mirrors
-base_docker_registry_mirrors: []
-
-# Attempt to auto detect GPU vendor and install drivers - currently, only nvidia is supported
-base_gpu_autodetect: true
-# Force installation of nvidia driver
-base_gpu_nvidia: false
+system_update: false
 
 ### Traefik - reverse proxy
-base_traefik_version: v3.0
 # Email to use for the letsencrypt certificate
 base_traefik_acme_email: admin@{{ domain }}
 # Toggle to use the staging letsencrypt server
@@ -26,12 +15,5 @@ base_traefik_env:
   CF_DNS_API_TOKEN: changeme
 
 ### DIUN - docker image update notifier
-base_diun_version: 4
 # Cron schedule on when diun runs and checks for updates
 base_diun_schedule: 0 0 * * *
-
-### Docker Socket Proxy - a proxy to control exposed docker api resources
-base_dsp_version: 0.1
-
-### Portainer agent - used by Portainer to connect to this host
-base_portainer_agent_version: 2.19.4

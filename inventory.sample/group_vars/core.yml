@@ -1,16 +1,11 @@
 ---
 ### LLDAP - simple LDAP server
-core_lldap_version: v0.5.0
-core_lldap_postgres_version: 16
-
-# Admin password
+# Password for the admin user
 core_lldap_admin_password: changeme
 # DB password - recommendation is to use a randomly generated password
 core_lldap_db_password: changeme
 
 ### Mailrise - SMTP to notifications
-core_mailrise_version: latest
-
 # User and password for SMTP access
 core_mailrise_user: mailrise
 core_mailrise_password: changeme
@@ -22,10 +17,6 @@ core_mailrise_discord_webhook_id: 123456
 core_mailrise_discord_webhook_token: changeme
 
 ### Authelia
-core_authelia_version: 4.37
-core_authelia_postgres_version: 16
-core_authelia_redis_version: 7
-
 # Allowed subdomains of the domain where users are allowed access - note, admins have access to all subdomains
 # example - to allow access to 'mealie.domain.com', add 'mealie' to the list
 core_authelia_users_allowed_hosts:
@@ -38,8 +29,6 @@ core_authelia_oidc_portainer_secret:
   digest: changeme
 
 ### Portainer
-core_portainer_version: 2.19.4
-
 # User and password for the admin user in Portainer
 core_portainer_admin_user: admin
 core_portainer_admin_password: changeme
@@ -47,6 +36,3 @@ core_portainer_admin_password: changeme
 # Hostnames of the portainer agents to add to this instance of portainer
 core_portainer_agents:
   - example.{{ domain }}
-
-### Ntfy - notification service
-core_ntfy_version: v2.8.0

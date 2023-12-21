@@ -1,5 +1,5 @@
 ---
 - name: Deploy base
-  hosts: all
+  hosts: base
   roles:
     - base

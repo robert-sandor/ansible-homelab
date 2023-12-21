@@ -1,6 +1,12 @@
 ---
+- name: Configure system
+  ansible.builtin.import_playbook: ./system.yml
+
 - name: Deploy base
   ansible.builtin.import_playbook: ./base.yml
 
 - name: Deploy core
   ansible.builtin.import_playbook: ./core.yml
+
+- name: Deploy media
+  ansible.builtin.import_playbook: ./media.yml

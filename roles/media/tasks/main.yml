@@ -1,0 +1,5 @@
+---
+# TODO: write this
+- name: Hello
+  ansible.builtin.debug:
+    msg: hello from media

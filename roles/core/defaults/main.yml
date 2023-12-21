@@ -1,22 +1,18 @@
+---
 ### LLDAP - simple LDAP server
-core_lldap_version: stable
-
-# Admin password
-core_lldap_admin_password: changeme
-
-# Postgres version for lldap
+core_lldap_version: v0.5.0
 core_lldap_postgres_version: 16
-
-# Postgres password for lldap
-core_lldap_postgres_password: changeme
 
 ### Mailrise - SMTP to notifications
 core_mailrise_version: latest
 
-# User and password for SMTP access
-core_mailrise_user: mailrise
-core_mailrise_password: changeme
+### Authelia
+core_authelia_version: 4.37
+core_authelia_postgres_version: 16
+core_authelia_redis_version: 7
 
-# Webhook ID and Token for Discord notifications
-core_mailrise_discord_webhook_id: changeme
-core_mailrise_discord_webhook_token: changeme
+### Portainer
+core_portainer_version: 2.19.4
+
+### Ntfy - notification service
+core_ntfy_version: v2.8.0
