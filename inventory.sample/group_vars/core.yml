@@ -36,3 +36,8 @@ core_portainer_admin_password: changeme
 # Hostnames of the portainer agents to add to this instance of portainer
 core_portainer_agents:
   - example.{{ domain }}
+
+### Simplydash - app dashboard
+# List of hosts on the domain with exposed docker APIs to add to simplydash
+core_simplydash_hosts:
+  - example

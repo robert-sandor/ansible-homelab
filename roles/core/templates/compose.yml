@@ -41,6 +41,25 @@ services:
       simplydash.description: Notficiations
       simplydash.healthcheck.enable: true
 
+  simplydash:
+    container_name: simplydash
+    hostname: simplydash
+    image: ghcr.io/robert-sandor/simplydash:{{ core_simplydash_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+    networks:
+      - traefik
+    volumes:
+      - ./simplydash:/app/config:ro
+      - simplydash-cache:/app/images
+    labels:
+      traefik.enable: true
+      traefik.http.services.simplydash.loadbalancer.server.port: 8080
+      traefik.http.routers.simplydash.rule: Host(`{{ hostname }}`)
+      traefik.http.routers.simplydash.entrypoints: https
+      traefik.http.routers.simplydash.service: simplydash
+
   mailrise:
     container_name: mailrise
     hostname: mailrise
@@ -238,6 +257,7 @@ volumes:
   authelia-redis:
   portainer-data:
   ntfy-cache:
+  simplydash-cache:
 
 networks:
   authelia:

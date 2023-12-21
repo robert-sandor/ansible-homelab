@@ -10,6 +10,7 @@
       mode: "0700"
     - path: core/lldap
     - path: core/authelia
+    - path: core/simplydash
 
 - name: Template files
   ansible.builtin.template:
@@ -27,6 +28,8 @@
     - src: authelia_configuration.yml.j2
       dest: authelia/configuration.yml
       mode: "0600"
+    - src: simplydash.yml.j2
+      dest: simplydash/config.yml
   register: core_template_updates
 
 - name: Set secrets

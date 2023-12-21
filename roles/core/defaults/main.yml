@@ -16,3 +16,14 @@ core_portainer_version: 2.19.4
 
 ### Ntfy - notification service
 core_ntfy_version: v2.8.0
+
+### Simplydash - dashboard
+core_simplydash_version: dev
+
+core_simplydash_groups:
+  - apps
+  - media
+  - admin
+
+core_simplydash_hosts:
+  - "{{ ansible_hostname }}"
