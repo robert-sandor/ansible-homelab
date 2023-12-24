@@ -23,9 +23,6 @@
   loop:
     - src: compose.yml
       dest: base/compose.yml
-    - src: diun.yml
-      dest: base/diun.yml
-      mode: '0600'
     - src: traefik.env.j2
       dest: base/traefik.env
       mode: '0600'
@@ -36,6 +33,13 @@
     dest: "{{ deploy_path }}/base/traefik.yml"
     mode: '0644'
   notify: Restart traefik
+
+- name: Template diun config
+  ansible.builtin.template:
+    src: diun.yml
+    dest: "{{ deploy_path }}/base/diun.yml"
+    mode: '0600'
+  notify: Restart diun
 
 - name: Create traefik network
   community.docker.docker_network:

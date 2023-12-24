@@ -1,0 +1,15 @@
+---
+media_transmission_version: 4.0.5
+media_sonarr_version: 3.0.10
+media_radarr_version: 5.1.3
+media_lidarr_version: 2.0.7
+media_prowlarr_version: 1.10.5
+media_bazarr_version: 1.4.0
+media_plex_version: 1.32.8
+media_overseerr_version: 1.33.2
+
+media_mount_host: localhost
+media_mount_path: /media
+media_mount_user: media
+media_mount_password: changeme
+media_mount_opts: file_mode=0777,dir_mode=0777

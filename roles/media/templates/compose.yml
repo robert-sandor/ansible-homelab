@@ -1,0 +1,267 @@
+version: "3"
+
+services:
+  transmission:
+    container_name: transmission
+    hostname: transmission
+    image: ghcr.io/linuxserver/transmission:{{ media_transmission_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      # TODO: enable this once it's downloaded
+      # TRANSMISSION_WEB_HOME: /config/flood/flood-for-transmission
+    networks:
+      - traefik
+    ports:
+      - "51413:51413/tcp"
+      - "51413:51413/udp"
+    volumes:
+      - ./transmission:/config
+      - media:/media
+    labels:
+      traefik.enable: true
+      traefik.http.services.transmission.loadbalancer.server.port: 9091
+      traefik.http.routers.transmission.rule: Host(`transmission.{{ hostname }}`)
+      traefik.http.routers.transmission.entrypoints: https
+      traefik.http.routers.transmission.service: transmission
+      traefik.http.routers.transmission.middlewares: authelia@docker
+      simplydash.enable: true
+      simplydash.name: Transmission
+      simplydash.group: media
+      simplydash.link: https://transmission.{{ hostname }}
+      simplydash.description: Torrent client
+      simplydash.healthcheck.enable: true
+
+  sonarr:
+    container_name: sonarr
+    hostname: sonarr
+    image: ghcr.io/linuxserver/sonarr:{{ media_sonarr_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:sonarr
+    networks:
+      - traefik
+    volumes:
+      - ./sonarr:/config
+      - media:/media
+    depends_on:
+      - transmission
+    labels:
+      traefik.enable: true
+      traefik.http.services.sonarr.loadbalancer.server.port: 8989
+      traefik.http.routers.sonarr.rule: Host(`sonarr.{{ hostname }}`)
+      traefik.http.routers.sonarr.entrypoints: https
+      traefik.http.routers.sonarr.service: sonarr
+      traefik.http.routers.sonarr.middlewares: authelia@docker
+      simplydash.enable: true
+      simplydash.name: Sonarr
+      simplydash.group: media
+      simplydash.link: https://sonarr.{{ hostname }}
+      simplydash.description: TV Series Manager
+      simplydash.healthcheck.enable: true
+
+  radarr:
+    container_name: radarr
+    hostname: radarr
+    image: ghcr.io/linuxserver/radarr:{{ media_radarr_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:radarr
+    networks:
+      - traefik
+    volumes:
+      - ./radarr:/config
+      - media:/media
+    depends_on:
+      - transmission
+    labels:
+      traefik.enable: true
+      traefik.http.services.radarr.loadbalancer.server.port: 7878
+      traefik.http.routers.radarr.rule: Host(`radarr.{{ hostname }}`)
+      traefik.http.routers.radarr.entrypoints: https
+      traefik.http.routers.radarr.service: radarr
+      traefik.http.routers.radarr.middlewares: authelia@docker
+      simplydash.enable: true
+      simplydash.name: Radarr
+      simplydash.group: media
+      simplydash.link: https://radarr.{{ hostname }}
+      simplydash.description: Movie Collection Manager
+      simplydash.healthcheck.enable: true
+
+  lidarr:
+    container_name: lidarr
+    hostname: lidarr
+    image: ghcr.io/linuxserver/lidarr:{{ media_lidarr_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:lidarr
+    networks:
+      - traefik
+    volumes:
+      - ./lidarr:/config
+      - media:/media
+    depends_on:
+      - transmission
+    labels:
+      traefik.enable: true
+      traefik.http.services.lidarr.loadbalancer.server.port: 8686
+      traefik.http.routers.lidarr.rule: Host(`lidarr.{{ hostname }}`)
+      traefik.http.routers.lidarr.entrypoints: https
+      traefik.http.routers.lidarr.service: lidarr
+      traefik.http.routers.lidarr.middlewares: authelia@docker
+      simplydash.enable: true
+      simplydash.name: Lidarr
+      simplydash.group: media
+      simplydash.link: https://lidarr.{{ hostname }}
+      simplydash.description: Music Collection Manager
+      simplydash.healthcheck.enable: true
+
+  bazarr:
+    container_name: bazarr
+    hostname: bazarr
+    image: ghcr.io/linuxserver/bazarr:{{ media_bazarr_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:bazarr
+    networks:
+      - traefik
+    volumes:
+      - ./bazarr:/config
+      - media:/media
+    labels:
+      traefik.enable: true
+      traefik.http.services.bazarr.loadbalancer.server.port: 6767
+      traefik.http.routers.bazarr.rule: Host(`bazarr.{{ hostname }}`)
+      traefik.http.routers.bazarr.entrypoints: https
+      traefik.http.routers.bazarr.service: bazarr
+      traefik.http.routers.bazarr.middlewares: authelia@docker
+      simplydash.enable: true
+      simplydash.name: Bazarr
+      simplydash.group: media
+      simplydash.link: https://bazarr.{{ hostname }}
+      simplydash.description: Subtitles Manager
+      simplydash.healthcheck.enable: true
+
+  prowlarr:
+    container_name: prowlarr
+    hostname: prowlarr
+    image: ghcr.io/linuxserver/prowlarr:{{ media_prowlarr_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:prowlarr
+    networks:
+      - traefik
+    volumes:
+      - ./prowlarr:/config
+    depends_on:
+      - transmission
+      - sonarr
+      - radarr
+    labels:
+      traefik.enable: true
+      traefik.http.services.prowlarr.loadbalancer.server.port: 9696
+      traefik.http.routers.prowlarr.rule: Host(`prowlarr.{{ hostname }}`)
+      traefik.http.routers.prowlarr.entrypoints: https
+      traefik.http.routers.prowlarr.service: prowlarr
+      traefik.http.routers.prowlarr.middlewares: authelia@docker
+      simplydash.enable: true
+      simplydash.name: Prowlarr
+      simplydash.group: media
+      simplydash.link: https://prowlarr.{{ hostname }}
+      simplydash.description: Indexer proxy
+      simplydash.healthcheck.enable: true
+
+  overseerr:
+    container_name: overseerr
+    hostname: overseerr
+    image: ghcr.io/linuxserver/overseerr:{{ media_overseerr_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+    networks:
+      - traefik
+    volumes:
+      - ./overseerr:/config
+    depends_on:
+      - sonarr
+      - radarr
+      - plex
+    labels:
+      traefik.enable: true
+      traefik.http.services.overseerr.loadbalancer.server.port: 5055
+      traefik.http.routers.overseerr.rule: Host(`overseerr.{{ hostname }}`)
+      traefik.http.routers.overseerr.entrypoints: https
+      traefik.http.routers.overseerr.service: overseerr
+      simplydash.enable: true
+      simplydash.name: Overseerr
+      simplydash.group: media
+      simplydash.link: https://overseerr.{{ hostname }}
+      simplydash.description: Media Request and Discovery
+      simplydash.healthcheck.enable: true
+
+  plex:
+    container_name: plex
+    hostname: plex
+    image: ghcr.io/linuxserver/plex:{{ media_plex_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+    networks:
+      - traefik
+    ports:
+      - "32400:32400"
+      - "1900:1900/udp"
+      - "5353:5353/udp"
+      - "8324:8324"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+      - "32469:32469"
+    volumes:
+      - ./plex:/config
+      - media:/media
+    labels:
+      traefik.enable: true
+      traefik.http.services.plex.loadbalancer.server.port: 32400
+      traefik.http.routers.plex.rule: Host(`plex.{{ hostname }}`)
+      traefik.http.routers.plex.entrypoints: https
+      traefik.http.routers.plex.service: plex
+      simplydash.enable: true
+      simplydash.name: Plex
+      simplydash.group: media
+      simplydash.link: https://plex.{{ hostname }}
+      simplydash.description: Media Server
+      simplydash.healthcheck.enable: true
+
+volumes:
+  media:
+    driver_opts:
+      type: cifs
+      device: "//{{ media_mount_host }}{{ media_mount_path }}"
+      o: addr={{ media_mount_host }},username={{ media_mount_user }},password={{ media_mount_password }},{{ media_mount_opts }}
+
+networks:
+  traefik:
+    external: true

@@ -18,3 +18,8 @@
   community.docker.docker_container:
     name: traefik
     restart: true
+
+- name: Restart diun
+  community.docker.docker_container:
+    name: diun
+    restart: true

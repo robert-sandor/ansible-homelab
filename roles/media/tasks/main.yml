@@ -1,5 +1,8 @@
 ---
-# TODO: write this
-- name: Hello
-  ansible.builtin.debug:
-    msg: hello from media
+- name: Deploy media services
+  vars:
+    hostname: "{{ ansible_hostname }}.{{ domain }}"
+    skip_tls: "{{ base_traefik_acme_staging }}"
+  block:
+    - name: Deploy containers
+      ansible.builtin.import_tasks: ./deploy.yml

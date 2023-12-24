@@ -1,0 +1,44 @@
+---
+- name: Create directory structure
+  ansible.builtin.file:
+    state: directory
+    path: "{{ deploy_path }}/{{ item.path }}"
+    mode: "{{ item.mode | default('0755') }}"
+  loop:
+    - path: media
+    - path: media/transmission
+    - path: media/sonarr
+    - path: media/radarr
+    - path: media/lidarr
+    - path: media/bazarr
+    - path: media/prowlarr
+    - path: media/overseerr
+    - path: media/plex
+
+- name: Template files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ deploy_path }}/media/{{ item.dest }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop:
+    - src: compose.yml
+      dest: compose.yml
+  register: media_template_updates
+
+- name: Set secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ deploy_path }}/media/secrets/{{ item.dest }}"
+    mode: "0600"
+    force: false
+  loop: []
+  register: media_secrets_updates
+
+- name: Deploy containers
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: compose
+  vars:
+    common_project_src: "{{ deploy_path }}/media"
+    common_force_recreate: "{{ media_template_updates.changed or media_secrets_updates.changed }}"

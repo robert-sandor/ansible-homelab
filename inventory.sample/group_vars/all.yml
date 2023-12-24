@@ -1,4 +1,16 @@
 ---
+# Timezone to set on the hosts
+timezone: Etc/UTC
+
+# Domain for the deployment
+domain: example.xyz
+
+# Hostname of the host where core is deployed
+core_host: core
+
+# Path on the host system where to deploy
+deploy_path: /home/{{ ansible_facts.user_id }}/docker
+
 # Toggle on to update all system packages
 system_update: false
 
@@ -17,3 +29,5 @@ base_traefik_env:
 ### DIUN - docker image update notifier
 # Cron schedule on when diun runs and checks for updates
 base_diun_schedule: 0 0 * * *
+# Webhook URL to a discord channel to push notifications to
+base_diun_discord_webhook: https://discord.com/api/webhooks/1234/xxxx
