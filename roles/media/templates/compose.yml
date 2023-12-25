@@ -10,8 +10,7 @@ services:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
-      # TODO: enable this once it's downloaded
-      # TRANSMISSION_WEB_HOME: /config/flood/flood-for-transmission
+      TRANSMISSION_WEB_HOME: /config/flood/flood-for-transmission
     networks:
       - traefik
     ports:

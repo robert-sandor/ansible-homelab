@@ -1,0 +1,44 @@
+- name: Configure transmission
+  vars:
+    transmission_api: https://transmission.{{ hostname }}/transmission/rpc
+    transmission_post_settings: >
+      {{ transmission_pre_settings.stdout | from_json
+      | combine(media_transmission_settings, recursive=True)
+      | combine(media_transmission_required_settings, recursive=True) }}
+  block:
+    - name: Read transmission settings
+      ansible.builtin.command: cat {{ media_deploy_path }}/transmission/settings.json
+      changed_when: false
+      register: transmission_pre_settings
+
+    - name: Update settings
+      when: not transmission_pre_settings.stdout | from_json == transmission_post_settings
+      block:
+        - name: Stop transmission container
+          community.docker.docker_container:
+            name: transmission
+            state: stopped
+
+        - name: Update settings.json
+          ansible.builtin.copy:
+            content: "{{ transmission_post_settings | to_nice_json }}"
+            dest: "{{ media_deploy_path }}/transmission/settings.json"
+            mode: "0600"
+
+      always:
+        - name: Start transmission container
+          community.docker.docker_container:
+            name: transmission
+            state: started
+
+    - name: Download latest flood-for-transmission
+      ansible.builtin.get_url:
+        url: "https://github.com/johman10/flood-for-transmission/releases/download/latest/flood-for-transmission.zip"
+        dest: "{{ media_deploy_path }}/transmission/flood/"
+        mode: "0644"
+
+    - name: Unarchive flood-for-transmission
+      ansible.builtin.unarchive:
+        src: "{{ media_deploy_path }}/transmission/flood/flood-for-transmission.zip"
+        remote_src: true
+        dest: "{{ media_deploy_path }}/transmission/flood/"

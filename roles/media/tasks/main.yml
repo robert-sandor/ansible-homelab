@@ -2,7 +2,11 @@
 - name: Deploy media services
   vars:
     hostname: "{{ ansible_hostname }}.{{ domain }}"
+    media_deploy_path: "{{ deploy_path }}/media"
     skip_tls: "{{ base_traefik_acme_staging }}"
   block:
     - name: Deploy containers
       ansible.builtin.import_tasks: ./deploy.yml
+
+    - name: Configure transmission
+      ansible.builtin.import_tasks: ./transmission.yml
