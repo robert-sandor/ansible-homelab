@@ -42,6 +42,8 @@
       ansible.builtin.uri:
         method: POST
         url: "{{ sonarr_api }}/rootFolder"
+        headers:
+          x-api-key: "{{ sonarr_api_key }}"
         body_format: json
         body:
           path: "{{ sonarr_root_folder }}"
