@@ -57,6 +57,10 @@ services:
       traefik.http.routers.sonarr.entrypoints: https
       traefik.http.routers.sonarr.service: sonarr
       traefik.http.routers.sonarr.middlewares: authelia@docker
+      traefik.http.services.sonarr-api.loadbalancer.server.port: 8989
+      traefik.http.routers.sonarr-api.rule: Host(`sonarr.{{ hostname }}`) && PathPrefix(`/api`)
+      traefik.http.routers.sonarr-api.entrypoints: https
+      traefik.http.routers.sonarr-api.service: sonarr-api
       simplydash.enable: true
       simplydash.name: Sonarr
       simplydash.group: media
@@ -88,6 +92,10 @@ services:
       traefik.http.routers.radarr.entrypoints: https
       traefik.http.routers.radarr.service: radarr
       traefik.http.routers.radarr.middlewares: authelia@docker
+      traefik.http.services.radarr-api.loadbalancer.server.port: 7878
+      traefik.http.routers.radarr-api.rule: Host(`radarr.{{ hostname }}`) && PathPrefix(`/api`)
+      traefik.http.routers.radarr-api.entrypoints: https
+      traefik.http.routers.radarr-api.service: radarr-api
       simplydash.enable: true
       simplydash.name: Radarr
       simplydash.group: media
@@ -119,6 +127,10 @@ services:
       traefik.http.routers.lidarr.entrypoints: https
       traefik.http.routers.lidarr.service: lidarr
       traefik.http.routers.lidarr.middlewares: authelia@docker
+      traefik.http.services.lidarr-api.loadbalancer.server.port: 8686
+      traefik.http.routers.lidarr-api.rule: Host(`lidarr.{{ hostname }}`) && PathPrefix(`/api`)
+      traefik.http.routers.lidarr-api.entrypoints: https
+      traefik.http.routers.lidarr-api.service: lidarr-api
       simplydash.enable: true
       simplydash.name: Lidarr
       simplydash.group: media
@@ -141,6 +153,9 @@ services:
     volumes:
       - ./bazarr:/config
       - media:/media
+    depends_on:
+      - sonarr
+      - radarr
     labels:
       traefik.enable: true
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
@@ -173,6 +188,7 @@ services:
       - transmission
       - sonarr
       - radarr
+      - lidarr
     labels:
       traefik.enable: true
       traefik.http.services.prowlarr.loadbalancer.server.port: 9696

@@ -10,3 +10,12 @@
 
     - name: Configure transmission
       ansible.builtin.import_tasks: ./transmission.yml
+
+    - name: Configure sonarr
+      ansible.builtin.import_tasks: ./sonarr.yml
+
+    - name: Configure radarr
+      ansible.builtin.import_tasks: ./radarr.yml
+
+    - name: Configure lidarr
+      ansible.builtin.import_tasks: ./lidarr.yml

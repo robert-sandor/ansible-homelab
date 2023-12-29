@@ -48,13 +48,13 @@
       ansible.builtin.copy:
         src: zshrc
         dest: ~/.zshrc
-        mode: '0644'
+        mode: "0644"
 
     - name: Copy p10k.zsh
       ansible.builtin.copy:
         src: p10k.zsh
         dest: ~/.p10k.zsh
-        mode: '0644'
+        mode: "0644"
 
     - name: Create virtualenv
       ansible.builtin.command:

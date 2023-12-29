@@ -6,6 +6,12 @@
       | combine(media_transmission_settings, recursive=True)
       | combine(media_transmission_required_settings, recursive=True) }}
   block:
+    - name: Ensure download directory exists
+      community.docker.docker_container_exec:
+        container: transmission
+        command: mkdir -p {{ media_transmission_download_path }}
+      changed_when: false
+
     - name: Read transmission settings
       ansible.builtin.command: cat {{ media_deploy_path }}/transmission/settings.json
       changed_when: false

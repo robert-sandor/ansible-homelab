@@ -9,39 +9,16 @@
       - lsb-release
     state: present
 
-- name: Ensure /etc/apt/keyrings exists
+- name: Setup Docker GPG key
   become: true
-  ansible.builtin.file:
-    path: /etc/apt/keyrings
-    state: directory
-    mode: "0755"
-    owner: root
-    group: root
-
-- name: Check if docker GPG key exists
-  ansible.builtin.stat:
-    path: /etc/apt/keyrings/docker.gpg
-  register: docker_gpg_key_stat
-
-- name: Download Docker GPG key if doesn't exists
-  when: not docker_gpg_key_stat.stat.exists
-  block:
-    - name: Get GPG keys from Docker
-      ansible.builtin.get_url:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        dest: /tmp/docker_gpg_key
-        mode: "0755"
-
-    - name: Dearmor Docker key
-      become: true
-      ansible.builtin.command:
-        cmd: gpg --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker_gpg_key
-        creates: /etc/apt/keyrings/docker.gpg
-
-    - name: Remove downloaded temp file
-      ansible.builtin.file:
-        path: /tmp/docker_gpg_key
-        state: absent
+  ansible.builtin.shell:
+    executable: /usr/bin/bash
+    cmd: |
+      set -eo pipefail
+      install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      chmod a+r /etc/apt/keyrings/docker.gpg
+    creates: /etc/apt/keyrings/docker.gpg
 
 - name: Add docker repository
   become: true

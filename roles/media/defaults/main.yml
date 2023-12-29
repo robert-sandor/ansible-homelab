@@ -1,16 +1,17 @@
 ---
 ### Transmission - Bittorrent client
 media_transmission_version: 4.0.5
+media_transmission_download_path: /media/downloads
 # Required settings - changing this will lead to things not working as intended
 media_transmission_required_settings:
-  download-dir: /media/downloads
-  incomplete-dir: /media/downloads/incomplete
+  download-dir: "{{ media_transmission_download_path }}"
+  incomplete-dir: "{{ media_transmission_download_path }}/incomplete"
 # Additional setttings
 media_transmission_settings: {}
 
 ### Sonarr - TV Series manager
 media_sonarr_version: 3.0.10
-media_radarr_version: 5.1.3
+media_radarr_version: 5.2.6
 media_lidarr_version: 2.0.7
 media_prowlarr_version: 1.10.5
 media_bazarr_version: 1.4.0

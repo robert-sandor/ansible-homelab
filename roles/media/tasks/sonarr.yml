@@ -1,0 +1,96 @@
+---
+- name: Configure Sonarr
+  vars:
+    sonarr_api: "https://sonarr.{{ hostname }}/api/v3"
+    sonarr_root_folder: /media/series
+    sonarr_root_folder_query: "[?path == '{{ sonarr_root_folder }}']"
+    sonarr_root_folder_set: "{{ sonarr_get_root_folder_response.json | json_query(sonarr_root_folder_query) | length > 0 }}"
+    sonarr_current_download_client: "{{ sonarr_current_download_clients.json | json_query('[?implementation == `Transmission`]') }}"
+  block:
+    - name: Ensure series directory exists
+      community.docker.docker_container_exec:
+        container: sonarr
+        command: mkdir -p {{ sonarr_root_folder }}
+      changed_when: false
+
+    - name: Get config
+      ansible.builtin.shell:
+        executable: /usr/bin/bash
+        cmd: |
+          set -eo pipefail
+          cat {{ media_deploy_path }}/sonarr/config.xml | grep -i apikey | tr '<' '>' | cut -d '>' -f3
+      changed_when: false
+      register: sonarr_api_key_result
+      until: sonarr_api_key_result.rc == 0 and sonarr_api_key_result.stdout != ''
+
+    - name: Export sonarr api key
+      ansible.builtin.set_fact:
+        sonarr_api_key: "{{ sonarr_api_key_result.stdout }}"
+
+    - name: Get root folder
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ sonarr_api }}/rootFolder"
+        headers:
+          x-api-key: "{{ sonarr_api_key }}"
+        status_code: 200
+      until: not sonarr_get_root_folder_response.failed
+      register: sonarr_get_root_folder_response
+
+    - name: Set root folder
+      when: not sonarr_root_folder_set
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ sonarr_api }}/rootFolder"
+        body_format: json
+        body:
+          path: "{{ sonarr_root_folder }}"
+        status_code: 201
+      until: not sonarr_get_root_folder_response.failed
+
+    - name: Get download clients
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ sonarr_api }}/downloadclient"
+        headers:
+          x-api-key: "{{ sonarr_api_key }}"
+        status_code: 200
+      register: sonarr_current_download_clients
+
+    - name: Create download client
+      when: sonarr_current_download_client | length == 0
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ sonarr_api }}/downloadclient"
+        headers:
+          x-api-key: "{{ sonarr_api_key }}"
+        body_format: json
+        body:
+          enable: true
+          protocol: torrent
+          priority: 1
+          removeCompletedDownloads: true
+          removeFailedDownloads: true
+          name: transmission
+          fields:
+            - name: host
+              value: transmission
+            - name: port
+              value: 9091
+            - name: useSsl
+              value: false
+            - name: urlBase
+              value: "/transmission/"
+            - name: tvCategory
+              value: series
+            - name: recentTvPriority
+              value: 0
+            - name: olderTvPriority
+              value: 0
+            - name: addPaused
+              value: false
+          implementationName: Transmission
+          implementation: Transmission
+          configContract: TransmissionSettings
+          tags: []
+        status_code: 201
