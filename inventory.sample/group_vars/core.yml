@@ -6,10 +6,6 @@ core_lldap_admin_password: changeme
 core_lldap_db_password: changeme
 
 ### Mailrise - SMTP to notifications
-# User and password for SMTP access
-core_mailrise_user: mailrise
-core_mailrise_password: changeme
-
 # Webhook ID and Token for Discord notifications
 # Enable webhook on the discord channel, and it should give you a link like the one bellow
 # https://discord.com/api/webhooks/<webhook_id>/<webhook_token> - copy only the id and token bellow

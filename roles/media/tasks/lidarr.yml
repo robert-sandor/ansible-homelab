@@ -111,11 +111,11 @@
               value: false
             - name: urlBase
               value: "/transmission/"
-            - name: tvCategory
+            - name: musicCategory
               value: series
-            - name: recentTvPriority
+            - name: recentMusicPriority
               value: 0
-            - name: olderTvPriority
+            - name: olderMusicPriority
               value: 0
             - name: addPaused
               value: false

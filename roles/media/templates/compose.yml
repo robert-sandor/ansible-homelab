@@ -42,7 +42,6 @@ services:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
-      DOCKER_MODS: ghcr.io/gilbn/theme.park:sonarr
     networks:
       - traefik
     volumes:
@@ -77,7 +76,6 @@ services:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
-      DOCKER_MODS: ghcr.io/gilbn/theme.park:radarr
     networks:
       - traefik
     volumes:
@@ -112,7 +110,6 @@ services:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
-      DOCKER_MODS: ghcr.io/gilbn/theme.park:lidarr
     networks:
       - traefik
     volumes:
@@ -147,7 +144,6 @@ services:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
-      DOCKER_MODS: ghcr.io/gilbn/theme.park:bazarr
     networks:
       - traefik
     volumes:
@@ -179,7 +175,6 @@ services:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
-      DOCKER_MODS: ghcr.io/gilbn/theme.park:prowlarr
     networks:
       - traefik
     volumes:
@@ -196,6 +191,10 @@ services:
       traefik.http.routers.prowlarr.entrypoints: https
       traefik.http.routers.prowlarr.service: prowlarr
       traefik.http.routers.prowlarr.middlewares: authelia@docker
+      traefik.http.services.prowlarr-api.loadbalancer.server.port: 9696
+      traefik.http.routers.prowlarr-api.rule: Host(`prowlarr.{{ hostname }}`) && PathPrefix(`/api`)
+      traefik.http.routers.prowlarr-api.entrypoints: https
+      traefik.http.routers.prowlarr-api.service: prowlarr-api
       simplydash.enable: true
       simplydash.name: Prowlarr
       simplydash.group: media
@@ -246,7 +245,7 @@ services:
       - traefik
     ports:
       - "32400:32400"
-      - "1900:1900/udp"
+      # - "1900:1900/udp"
       - "5353:5353/udp"
       - "8324:8324"
       - "32410:32410/udp"
@@ -268,6 +267,66 @@ services:
       simplydash.group: media
       simplydash.link: https://plex.{{ hostname }}
       simplydash.description: Media Server
+      simplydash.healthcheck.enable: true
+
+  jellyfin:
+    container_name: jellyfin
+    hostname: jellyfin
+    image: ghcr.io/linuxserver/jellyfin:{{ media_jellyfin_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      JELLYFIN_PublishedServerUrl: jellyfin.{{ hostname }}
+    networks:
+      - traefik
+    ports:
+      - "8096:8096"
+      - "1900:1900/udp"
+      - "7359:7359/udp"
+    volumes:
+      - ./jellyfin:/config
+      - media:/media
+    labels:
+      traefik.enable: true
+      traefik.http.services.jellyfin.loadbalancer.server.port: 8096
+      traefik.http.routers.jellyfin.rule: Host(`jellyfin.{{ hostname }}`)
+      traefik.http.routers.jellyfin.entrypoints: https
+      traefik.http.routers.jellyfin.service: jellyfin
+      simplydash.enable: true
+      simplydash.name: Jellyfin
+      simplydash.group: media
+      simplydash.link: https://jellyfin.{{ hostname }}
+      simplydash.description: Media Server
+      simplydash.healthcheck.enable: true
+
+  jellyseerr:
+    container_name: jellyseerr
+    hostname: jellyseerr
+    image: fallenbagel/jellyseerr:{{ media_jellyseerr_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+    networks:
+      - traefik
+    volumes:
+      - ./jellyseerr:/app/config
+    depends_on:
+      - sonarr
+      - radarr
+      - jellyfin
+    labels:
+      traefik.enable: true
+      traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
+      traefik.http.routers.jellyseerr.rule: Host(`jellyseerr.{{ hostname }}`)
+      traefik.http.routers.jellyseerr.entrypoints: https
+      traefik.http.routers.jellyseerr.service: jellyseerr
+      simplydash.enable: true
+      simplydash.name: Jellyseerr
+      simplydash.group: media
+      simplydash.link: https://jellyseerr.{{ hostname }}
+      simplydash.description: Media requests
       simplydash.healthcheck.enable: true
 
 volumes:

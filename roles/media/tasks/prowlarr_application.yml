@@ -1,0 +1,23 @@
+---
+- name: Prowlarr - Update Application config
+  vars:
+    app_query: "[?implementationName == '{{ app_name }}']"
+    application_config: "{{ current_applications.json | json_query(app_query) }}"
+    application_configured: "{{ application_config | length > 0 }}"
+    application_schema: "{{ application_schema_list.json | json_query(app_query) }}"
+    default_fields_query: "[?contains(keys(@), 'value')]"
+    app_default_fields: "{{ application_schema[0].fields | json_query(default_fields_query) | items2dict(key_name='name', value_name='value') }}"
+    app_config_override:
+      name: "{{ app_name }}"
+      fields: "{{ app_default_fields | combine(fields) | dict2items(key_name='name', value_name='value') }}"
+    app_config: "{{ application_schema[0] | combine(app_config_override, recursive=True) }}"
+  ansible.builtin.uri:
+    method: "{{ application_configured | ternary('PUT', 'POST') }}"
+    url: "{{ prowlarr_api }}/applications/{{ application_configured | ternary(application_config[0].id, '') }}"
+    headers:
+      x-api-key: "{{ prowlarr_api_key }}"
+    body_format: json
+    body: "{{ app_config }}"
+    status_code:
+      - 201
+      - 202

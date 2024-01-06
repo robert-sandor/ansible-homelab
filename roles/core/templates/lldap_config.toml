@@ -15,7 +15,5 @@ enable_password_reset=true
 server="{{ hostname }}"
 port=465
 smtp_encryption = "TLS"
-user="{{ core_mailrise_user }}"
-password="{{ core_mailrise_password }}"
 from="Admin <admin@{{ domain }}>"
 reply_to="Do not reply <noreply@{{ domain }}>"

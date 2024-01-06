@@ -2,7 +2,8 @@ watch:
   schedule: "{{ base_diun_schedule }}"
 
 providers:
-  docker: {}
+  docker:
+    watchByDefault: true
 
 notif:
   ntfy:

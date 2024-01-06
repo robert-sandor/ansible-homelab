@@ -61,8 +61,6 @@ notifier:
     host: mailrise.{{ ansible_hostname }}.{{ domain }}
     port: 465
     timeout: 10s
-    username: mailrise
-    password: {{ core_mailrise_password }}
     sender: Authelia <authelia@{{ domain }}>
     identifier: auth.{{ ansible_hostname }}.{{ domain }}
 

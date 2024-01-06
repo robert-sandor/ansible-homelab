@@ -14,6 +14,7 @@
     - path: prowlarr
     - path: overseerr
     - path: plex
+    - path: jellyfin
 
 - name: Template files
   ansible.builtin.template:

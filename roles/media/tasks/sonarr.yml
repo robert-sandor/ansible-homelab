@@ -6,6 +6,8 @@
     sonarr_root_folder_query: "[?path == '{{ sonarr_root_folder }}']"
     sonarr_root_folder_set: "{{ sonarr_get_root_folder_response.json | json_query(sonarr_root_folder_query) | length > 0 }}"
     sonarr_current_download_client: "{{ sonarr_current_download_clients.json | json_query('[?implementation == `Transmission`]') }}"
+    sonarr_wanted_config:
+      authenticationMethod: external
   block:
     - name: Ensure series directory exists
       community.docker.docker_container_exec:
@@ -49,6 +51,28 @@
           path: "{{ sonarr_root_folder }}"
         status_code: 201
       until: not sonarr_get_root_folder_response.failed
+
+    - name: Get config
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ sonarr_api }}/config/host"
+        headers:
+          x-api-key: "{{ sonarr_api_key }}"
+        status_code: 200
+      register: sonarr_current_config
+
+    - name: Set config
+      when: sonarr_current_config.json != updated_config
+      vars:
+        updated_config: "{{ sonarr_current_config.json | combine(sonarr_wanted_config) }}"
+      ansible.builtin.uri:
+        method: PUT
+        url: "{{ sonarr_api }}/config/host"
+        headers:
+          x-api-key: "{{ sonarr_api_key }}"
+        body_format: json
+        body: "{{ updated_config }}"
+        status_code: 202
 
     - name: Get download clients
       ansible.builtin.uri:

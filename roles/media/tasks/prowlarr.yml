@@ -1,0 +1,127 @@
+---
+- name: Configure Prowlarr
+  vars:
+    prowlarr_api: "https://prowlarr.{{ hostname }}/api/v1"
+    prowlarr_current_download_client: "{{ prowlarr_current_download_clients.json | json_query('[?implementation == `Transmission`]') }}"
+    prowlarr_wanted_config:
+      authenticationMethod: external
+  block:
+    - name: Get config
+      ansible.builtin.shell:
+        executable: /usr/bin/bash
+        cmd: |
+          set -eo pipefail
+          cat {{ media_deploy_path }}/prowlarr/config.xml | grep -i apikey | tr '<' '>' | cut -d '>' -f3
+      changed_when: false
+      register: prowlarr_api_key_result
+      until: prowlarr_api_key_result.rc == 0 and prowlarr_api_key_result.stdout != ''
+
+    - name: Export prowlarr api key
+      ansible.builtin.set_fact:
+        prowlarr_api_key: "{{ prowlarr_api_key_result.stdout }}"
+
+    - name: Get config
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ prowlarr_api }}/config/host"
+        headers:
+          x-api-key: "{{ prowlarr_api_key }}"
+        status_code: 200
+      register: prowlarr_current_config
+
+    - name: Set config
+      when: prowlarr_current_config.json != updated_config
+      vars:
+        updated_config: "{{ prowlarr_current_config.json | combine(prowlarr_wanted_config) }}"
+      ansible.builtin.uri:
+        method: PUT
+        url: "{{ prowlarr_api }}/config/host"
+        headers:
+          x-api-key: "{{ prowlarr_api_key }}"
+        body_format: json
+        body: "{{ updated_config }}"
+        status_code: 202
+
+    - name: Get download clients
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ prowlarr_api }}/downloadclient"
+        headers:
+          x-api-key: "{{ prowlarr_api_key }}"
+        status_code: 200
+      register: prowlarr_current_download_clients
+
+    - name: Create download client
+      when: prowlarr_current_download_client | length == 0
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ prowlarr_api }}/downloadclient"
+        headers:
+          x-api-key: "{{ prowlarr_api_key }}"
+        body_format: json
+        body:
+          enable: true
+          priority: 1
+          name: transmission
+          categories: []
+          fields:
+            - name: host
+              value: transmission
+            - name: port
+              value: 9091
+            - name: useSsl
+              value: false
+            - name: urlBase
+              value: "/transmission/"
+            - name: category
+              value: prowlarr
+            - name: addPaused
+              value: false
+          implementation: Transmission
+          configContract: TransmissionSettings
+        status_code: 201
+
+    - name: Get current applications
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ prowlarr_api }}/applications"
+        headers:
+          x-api-key: "{{ prowlarr_api_key }}"
+        status_code: 200
+      register: current_applications
+
+    - name: Get application schema
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ prowlarr_api }}/applications/schema"
+        headers:
+          x-api-key: "{{ prowlarr_api_key }}"
+        status_code: 200
+      register: application_schema_list
+
+    - name: Setup Sonarr
+      ansible.builtin.import_tasks: prowlarr_application.yml
+      vars:
+        app_name: Sonarr
+        fields:
+          baseUrl: http://sonarr:8989
+          prowlarrUrl: http://prowlarr:9696
+          apiKey: "{{ sonarr_api_key }}"
+
+    - name: Setup Radarr
+      ansible.builtin.import_tasks: prowlarr_application.yml
+      vars:
+        app_name: Radarr
+        fields:
+          baseUrl: http://radarr:7878
+          prowlarrUrl: http://prowlarr:9696
+          apiKey: "{{ radarr_api_key }}"
+
+    - name: Setup Lidarr
+      ansible.builtin.import_tasks: prowlarr_application.yml
+      vars:
+        app_name: Lidarr
+        fields:
+          baseUrl: http://lidarr:8686
+          prowlarrUrl: http://prowlarr:9696
+          apiKey: "{{ lidarr_api_key }}"

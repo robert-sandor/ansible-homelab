@@ -19,3 +19,6 @@
 
     - name: Configure lidarr
       ansible.builtin.import_tasks: ./lidarr.yml
+
+    - name: Configure prowlarr
+      ansible.builtin.import_tasks: ./prowlarr.yml
