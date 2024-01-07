@@ -159,6 +159,10 @@ services:
       traefik.http.routers.bazarr.entrypoints: https
       traefik.http.routers.bazarr.service: bazarr
       traefik.http.routers.bazarr.middlewares: authelia@docker
+      traefik.http.services.bazarr-api.loadbalancer.server.port: 6767
+      traefik.http.routers.bazarr-api.rule: Host(`bazarr.{{ hostname }}`) && PathPrefix(`/api`)
+      traefik.http.routers.bazarr-api.entrypoints: https
+      traefik.http.routers.bazarr-api.service: bazarr-api
       simplydash.enable: true
       simplydash.name: Bazarr
       simplydash.group: media

@@ -29,6 +29,7 @@
           - ncdu
           - exa
           - dnsutils
+          - yq
 
     - name: Install VM dependencies
       become: true

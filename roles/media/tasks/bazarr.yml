@@ -1,0 +1,30 @@
+---
+- name: Configure Bazarr
+  vars:
+    bazarr_api: https://bazarr.{{ hostname }}/api
+    bazarr_api_key: "{{ bazarr_api_key_result.stdout }}"
+  block:
+    - name: Bazarr - Get API Key
+      ansible.builtin.shell:
+        executable: /usr/bin/bash
+        cmd: |
+          set -eo pipefail
+          cat {{ media_deploy_path }}/bazarr/config/config.yaml | yq .auth.apikey | tr -d '"'
+      changed_when: false
+      register: bazarr_api_key_result
+
+    - name: Bazarr - Update Settings
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ bazarr_api }}/system/settings"
+        headers:
+          x-api-key: "{{ bazarr_api_key }}"
+        body_format: form-urlencoded
+        body:
+          settings-general-use_sonarr: "true"
+          settings-sonarr-ip: sonarr
+          settings-sonarr-apikey: "{{ sonarr_api_key }}"
+          settings-general-use_radarr: "true"
+          settings-radarr-ip: radarr
+          settings-radarr-apikey: "{{ radarr_api_key }}"
+        status_code: 204
