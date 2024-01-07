@@ -265,7 +265,7 @@ services:
       simplydash.enable: true
       simplydash.name: Plex
       simplydash.group: media
-      simplydash.link: https://plex.{{ hostname }}
+      simplydash.link: https://plex.{{ hostname }}/web
       simplydash.description: Media Server
       simplydash.healthcheck.enable: true
 
@@ -301,33 +301,35 @@ services:
       simplydash.description: Media Server
       simplydash.healthcheck.enable: true
 
-  jellyseerr:
-    container_name: jellyseerr
-    hostname: jellyseerr
-    image: fallenbagel/jellyseerr:{{ media_jellyseerr_version }}
-    restart: unless-stopped
-    environment:
-      TZ: "{{ timezone }}"
-    networks:
-      - traefik
-    volumes:
-      - ./jellyseerr:/app/config
-    depends_on:
-      - sonarr
-      - radarr
-      - jellyfin
-    labels:
-      traefik.enable: true
-      traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
-      traefik.http.routers.jellyseerr.rule: Host(`jellyseerr.{{ hostname }}`)
-      traefik.http.routers.jellyseerr.entrypoints: https
-      traefik.http.routers.jellyseerr.service: jellyseerr
-      simplydash.enable: true
-      simplydash.name: Jellyseerr
-      simplydash.group: media
-      simplydash.link: https://jellyseerr.{{ hostname }}
-      simplydash.description: Media requests
-      simplydash.healthcheck.enable: true
+  # TODO: Look into adding jellyseerr when needed, or wait until overseerr has jellyfin support
+  #
+  # jellyseerr:
+  #   container_name: jellyseerr
+  #   hostname: jellyseerr
+  #   image: fallenbagel/jellyseerr:{{ media_jellyseerr_version }}
+  #   restart: unless-stopped
+  #   environment:
+  #     TZ: "{{ timezone }}"
+  #   networks:
+  #     - traefik
+  #   volumes:
+  #     - ./jellyseerr:/app/config
+  #   depends_on:
+  #     - sonarr
+  #     - radarr
+  #     - jellyfin
+  #   labels:
+  #     traefik.enable: true
+  #     traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
+  #     traefik.http.routers.jellyseerr.rule: Host(`jellyseerr.{{ hostname }}`)
+  #     traefik.http.routers.jellyseerr.entrypoints: https
+  #     traefik.http.routers.jellyseerr.service: jellyseerr
+  #     simplydash.enable: true
+  #     simplydash.name: Jellyseerr
+  #     simplydash.group: media
+  #     simplydash.link: https://jellyseerr.{{ hostname }}
+  #     simplydash.description: Media requests
+  #     simplydash.healthcheck.enable: true
 
 volumes:
   media:

@@ -30,6 +30,7 @@ access_control:
       policy: bypass
       networks:
         - 172.16.0.0/12
+        - {{ ansible_default_ipv4.address }}/32
     - policy: one_factor
       subject:
         - group:admins
