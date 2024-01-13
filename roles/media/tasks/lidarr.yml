@@ -1,5 +1,5 @@
 ---
-- name: Configure lidarr
+- name: Lidarr - Configure
   vars:
     lidarr_api: "https://lidarr.{{ hostname }}/api/v1"
     lidarr_root_folder: /media/music
@@ -9,13 +9,13 @@
     lidarr_wanted_config:
       authenticationMethod: external
   block:
-    - name: Ensure series directory exists
+    - name: Lidarr - Ensure music dir exists
       community.docker.docker_container_exec:
         container: lidarr
         command: mkdir -p {{ lidarr_root_folder }}
       changed_when: false
 
-    - name: Get config
+    - name: Lidarr - Get config
       ansible.builtin.shell:
         executable: /usr/bin/bash
         cmd: |
@@ -25,11 +25,11 @@
       register: lidarr_api_key_result
       until: lidarr_api_key_result.rc == 0 and lidarr_api_key_result.stdout != ''
 
-    - name: Export lidarr api key
+    - name: Lidarr - Export API Key
       ansible.builtin.set_fact:
         lidarr_api_key: "{{ lidarr_api_key_result.stdout }}"
 
-    - name: Get root folder
+    - name: Lidarr - Get root folder
       ansible.builtin.uri:
         method: GET
         url: "{{ lidarr_api }}/rootFolder"
@@ -39,7 +39,7 @@
       until: not lidarr_get_root_folder_response.failed
       register: lidarr_get_root_folder_response
 
-    - name: Set root folder
+    - name: Lidarr - Set root folder
       when: not lidarr_root_folder_set
       ansible.builtin.uri:
         method: POST
@@ -56,7 +56,7 @@
         status_code: 201
       until: not lidarr_get_root_folder_response.failed
 
-    - name: Get config
+    - name: Lidarr - Get config
       ansible.builtin.uri:
         method: GET
         url: "{{ lidarr_api }}/config/host"
@@ -65,7 +65,7 @@
         status_code: 200
       register: lidarr_current_config
 
-    - name: Set config
+    - name: Lidarr - Set config
       when: lidarr_current_config.json != updated_config
       vars:
         updated_config: "{{ lidarr_current_config.json | combine(lidarr_wanted_config) }}"
@@ -78,7 +78,7 @@
         body: "{{ updated_config }}"
         status_code: 202
 
-    - name: Get download clients
+    - name: Lidarr - Get download clients
       ansible.builtin.uri:
         method: GET
         url: "{{ lidarr_api }}/downloadclient"
@@ -87,7 +87,7 @@
         status_code: 200
       register: lidarr_current_download_clients
 
-    - name: Create download client
+    - name: Lidarr - Link to transmission
       when: lidarr_current_download_client | length == 0
       ansible.builtin.uri:
         method: POST

@@ -245,6 +245,11 @@ services:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
+      # {% if is_nvidia_container_runtime %}
+
+      NVIDIA_VISIBLE_DEVICES: all
+      # {% endif %}
+
     networks:
       - traefik
     ports:
@@ -260,6 +265,16 @@ services:
     volumes:
       - ./plex:/config
       - media:/media
+    # {% if is_nvidia_container_runtime %}
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    # {% endif %}
+
     labels:
       traefik.enable: true
       traefik.http.services.plex.loadbalancer.server.port: 32400
@@ -283,6 +298,11 @@ services:
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
       JELLYFIN_PublishedServerUrl: jellyfin.{{ hostname }}
+      # {% if is_nvidia_container_runtime %}
+
+      NVIDIA_VISIBLE_DEVICES: all
+      # {% endif %}
+
     networks:
       - traefik
     ports:
@@ -292,6 +312,17 @@ services:
     volumes:
       - ./jellyfin:/config
       - media:/media
+    # {% if is_nvidia_container_runtime %}
+
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    # {% endif %}
+
     labels:
       traefik.enable: true
       traefik.http.services.jellyfin.loadbalancer.server.port: 8096

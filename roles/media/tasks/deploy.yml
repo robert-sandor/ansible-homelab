@@ -16,6 +16,16 @@
     - path: plex
     - path: jellyfin
 
+- name: Check nvidia-container-runtime installed
+  ansible.builtin.command: dpkg-query -W nvidia-container-runtime
+  register: dpkg_query_nvidia
+  changed_when: false
+  ignore_errors: true
+
+- name: Set nvidia-container-runtime
+  ansible.builtin.set_fact:
+    is_nvidia_container_runtime: not dpkg_query_nvidia.failed
+
 - name: Template files
   ansible.builtin.template:
     src: "{{ item.src }}"
