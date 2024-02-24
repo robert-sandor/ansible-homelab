@@ -14,7 +14,7 @@ media_sonarr_version: 4.0.1
 media_radarr_version: 5.3.6
 media_lidarr_version: 2.1.7
 media_prowlarr_version: 1.13.3
-media_bazarr_version: 1.4.1
+media_bazarr_version: 1.4.2
 media_plex_version: 1.40.0
 media_jellyfin_version: 10.8.13
 media_overseerr_version: 1.33.2
