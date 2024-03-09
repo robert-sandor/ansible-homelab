@@ -1,0 +1,18 @@
+query ListGroups {
+  groups {
+    id
+    displayName
+  }
+}
+
+mutation CreateGroup($name: String!) {
+  createGroup(name: $name) {
+    displayName
+  }
+}
+
+mutation DeleteGroup($groupId: Int!) {
+  deleteGroup(groupId: $groupId) {
+    ok
+  }
+}

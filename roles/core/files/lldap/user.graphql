@@ -1,0 +1,38 @@
+query ListUsers {
+  users {
+    id
+    groups {
+      displayName
+    }
+  }
+}
+
+mutation CreateUser($user: CreateUserInput!) {
+  createUser(user: $user) {
+    id
+  }
+}
+
+mutation UpdateUser($user: UpdateUserInput!) {
+  updateUser(user: $user) {
+    ok
+  }
+}
+
+mutation DeleteUser($userId: String!) {
+  deleteUser(userId: $userId) {
+    ok
+  }
+}
+
+mutation AddUserToGroup($userId: String!, $groupId: Int!) {
+  addUserToGroup(userId: $userId, groupId: $groupId) {
+    ok
+  }
+}
+
+mutation RemoveUserFromGroup($userId: String!, $groupId: Int!) {
+  removeUserFromGroup(userId: $userId, groupId: $groupId) {
+    ok
+  }
+}

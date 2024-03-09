@@ -3,27 +3,106 @@
 core_lldap_version: v0.5.0
 core_lldap_postgres_version: 16
 
-### Mailrise - SMTP to notifications
+# Password for the admin user
+core_lldap_admin_password: changeme
+
+# DB password
+core_lldap_db_password: "{{ (('lldap-db@' + domain) | hash('sha1'))[:24] }}"
+
+# Password for the readonly user
+# This user is used by other applications (like mealie) to query the ldap users
+core_lldap_readonly_password: "{{ (('lldap-readonly@' + domain) | hash('sha1'))[:24] }}"
+
+# Groups to create
+#
+# Dictionary of groups, each having the key as the group name and value as either 'present' or 'absent' - defaults to 'present'
+#
+# Example:
+#   
+#   test_group:
+#   some_other_group: present
+#   group_will_be_removed: absent
+#
+core_lldap_groups: {}
+
+# Users to create
+#
+# Dictionary of users, each having the key as the username, and the value as follows
+#   - state - 'present' or 'absent', defaults to 'present'
+#   - email - used for notifications
+#   - firstName - used for display
+#   - lastName - used for display
+#   - password - seems straightforward
+#   - groups - dictionary of group names the user should be added to
+#
+# Example:
+#
+#   test:
+#     state: present
+#     email: test@example.com
+#     firstName: Test
+#     lastName: testington
+#     password: most_secure_password
+#     groups:
+#       admins:
+#       users:
+#
+core_lldap_users: {}
+
+### mailrise - smtp to notifications
 core_mailrise_version: latest
 
-### Authelia
+### authelia
 core_authelia_version: 4.37
 core_authelia_postgres_version: 16
 core_authelia_redis_version: 7
 
-### Portainer
+### portainer
 core_portainer_version: 2.19.4
 
-### Ntfy - notification service
+### ntfy - notification service
 core_ntfy_version: v2.8.0
 
-### Simplydash - dashboard
-core_simplydash_version: dev
+### homepage - dashboard
+core_homepage_version: latest
 
-core_simplydash_groups:
-  - apps
-  - media
-  - admin
+core_homepage_docker:
+  local:
+    host: "{{ hostname }}"
+    port: 2375
 
-core_simplydash_hosts:
-  - "{{ ansible_hostname }}"
+core_homepage_settings:
+  title: "{{ hostname }}"
+
+  target: _self
+
+  cardBlur: md
+  theme: dark
+  color: zinc
+
+  headerStyle: clean
+
+  layout:
+    - apps:
+        icon: mdi-application
+        style: row
+        columns: 4
+    - media:
+        icon: mdi-movie
+        style: row
+        columns: 4
+    - admin:
+        icon: mdi-security
+        style: row
+        columns: 4
+    - traefik:
+        icon: mdi-router-network
+        style: row
+        columns: 4
+
+  quicklaunch:
+    searchDescriptions: true
+    hideInternetSearch: true
+
+core_homepage_services: ""
+core_homepage_bookmarks: ""

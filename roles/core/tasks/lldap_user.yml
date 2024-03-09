@@ -1,0 +1,98 @@
+---
+- name: LLDAP - Delete user
+  when: user.key in lldap_existing_users and user.value.state is defined and user.value.state == "absent"
+  ansible.builtin.uri:
+    method: POST
+    url: "{{ lldap_api }}"
+    headers:
+      authorization: "{{ lldap_auth_header }}"
+    body_format: json
+    body:
+      operationName: DeleteUser
+      query: "{{ lookup('file', 'lldap/user.graphql') }}"
+      variables:
+        userId: "{{ user.key }}"
+    status_code: 200
+  register: delete_user_result
+
+- name: LLDAP - Upsert user
+  when: user.value.state is not defined or user.value.state == "present"
+  ansible.builtin.uri:
+    method: POST
+    url: "{{ lldap_api }}"
+    headers:
+      authorization: "{{ lldap_auth_header }}"
+    body_format: json
+    body:
+      operationName: "{{ (user.key in lldap_existing_users) | ternary('UpdateUser', 'CreateUser') }}"
+      query: "{{ lookup('file', 'lldap/user.graphql') }}"
+      variables:
+        user:
+          id: "{{ user.key }}"
+          email: "{{ user.value.email | default(user.key + '@' + domain) }}"
+          displayName: "{{ user.value.firstName | default('') }}"
+          firstName: "{{ user.value.firstName | default('') }}"
+          lastName: "{{ user.value.lastName | default('') }}"
+    status_code: 200
+  register: create_user_result
+
+- name: LLDAP - Set user password
+  when: (user.value.state is not defined or user.value.state == "present") and user.value.password is defined
+  no_log: true
+  community.docker.docker_container_exec:
+    container: lldap
+    command: >
+      /app/lldap_set_password --base-url https://lldap.{{ hostname }}
+      --username {{ user.key }} --password {{ user.value.password }}
+      --admin-password {{ core_lldap_admin_password }}
+
+- name: LLDAP - List users after updates
+  ansible.builtin.uri:
+    method: POST
+    url: "{{ lldap_api }}"
+    headers:
+      authorization: "{{ lldap_auth_header }}"
+    body_format: json
+    body:
+      operationName: ListUsers
+      query: "{{ lookup('file', 'lldap/user.graphql') }}"
+      variables: {}
+    status_code: 200
+  register: list_users_response
+
+- name: LLDAP - Handle groups
+  when: user.value.groups is defined
+  block:
+    - name: LLDAP - Remove user from group
+      when: user_group.key in lldap_existing_users[user.key] and (user_group.value.state is defined and user_group.value.state == 'absent')
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ lldap_api }}"
+        headers:
+          authorization: "{{ lldap_auth_header }}"
+        body_format: json
+        body:
+          operationName: RemoveUserFromGroup
+          query: "{{ lookup('file', 'lldap/user.graphql') }}"
+          variables: "{'userId':'{{ user.key }}', 'groupId': {{ lldap_existing_groups[user_group.key] }} }"
+        status_code: 200
+      loop: "{{ user.value.groups | dict2items }}"
+      loop_control:
+        loop_var: user_group
+
+    - name: LLDAP - Add user to group
+      when: user_group.value.state is not defined or user_group.value.state == 'present'
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ lldap_api }}"
+        headers:
+          authorization: "{{ lldap_auth_header }}"
+        body_format: json
+        body:
+          operationName: AddUserToGroup
+          query: "{{ lookup('file', 'lldap/user.graphql') }}"
+          variables: "{'userId':'{{ user.key }}', 'groupId': {{ lldap_existing_groups[user_group.key] }} }"
+        status_code: 200
+      loop: "{{ user.value.groups | dict2items }}"
+      loop_control:
+        loop_var: user_group

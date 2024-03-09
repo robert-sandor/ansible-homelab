@@ -34,31 +34,32 @@ services:
       traefik.http.routers.ntfy.rule: Host(`ntfy.{{ hostname }}`)
       traefik.http.routers.ntfy.entrypoints: https
       traefik.http.routers.ntfy.service: ntfy
-      simplydash.enable: true
-      simplydash.name: Ntfy
-      simplydash.group: admin
-      simplydash.link: https://ntfy.{{ hostname }}
-      simplydash.description: Notficiations
-      simplydash.healthcheck.enable: true
+      homepage.name: ntfy
+      homepage.group: admin
+      homepage.description: notifications
+      homepage.href: https://ntfy.{{ hostname }}
+      homepage.icon: ntfy
+      homepage.siteMonitor: https://ntfy.{{ hostname }}
 
-  simplydash:
-    container_name: simplydash
-    hostname: simplydash
-    image: ghcr.io/robert-sandor/simplydash:{{ core_simplydash_version }}
+  homepage:
+    container_name: homepage
+    hostname: homepage
+    image: ghcr.io/gethomepage/homepage:{{ core_homepage_version }}
     restart: unless-stopped
     environment:
       TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
     networks:
       - traefik
     volumes:
-      - ./simplydash:/app/config:ro
-      - simplydash-cache:/app/images
+      - ./homepage:/app/config
     labels:
       traefik.enable: true
-      traefik.http.services.simplydash.loadbalancer.server.port: 8080
-      traefik.http.routers.simplydash.rule: Host(`{{ hostname }}`)
-      traefik.http.routers.simplydash.entrypoints: https
-      traefik.http.routers.simplydash.service: simplydash
+      traefik.http.services.homepage.loadbalancer.server.port: 3000
+      traefik.http.routers.homepage.rule: Host(`{{ hostname }}`) || Host(`home.{{ hostname }}`)
+      traefik.http.routers.homepage.entrypoints: https
+      traefik.http.routers.homepage.service: homepage
 
   mailrise:
     container_name: mailrise
@@ -109,12 +110,12 @@ services:
       traefik.http.routers.lldap.rule: Host(`lldap.{{ hostname }}`)
       traefik.http.routers.lldap.entrypoints: https
       traefik.http.routers.lldap.service: lldap
-      simplydash.enable: true
-      simplydash.name: LLDAP
-      simplydash.group: admin
-      simplydash.link: https://lldap.{{ hostname }}
-      simplydash.description: User Management
-      simplydash.healthcheck.enable: true
+      homepage.name: lldap
+      homepage.group: admin
+      homepage.description: user management with ldap
+      homepage.href: https://lldap.{{ hostname }}
+      homepage.icon: mdi-security
+      homepage.siteMonitor: https://lldap.{{ hostname }}
 
   lldap-postgres:
     container_name: lldap-postgres
@@ -180,12 +181,12 @@ services:
       traefik.http.routers.authelia.rule: Host(`auth.{{ hostname }}`)
       traefik.http.routers.authelia.entrypoints: https
       traefik.http.routers.authelia.service: authelia
-      simplydash.enable: true
-      simplydash.name: Authelia
-      simplydash.group: admin
-      simplydash.link: https://auth.{{ hostname }}
-      simplydash.description: Authentication
-      simplydash.healthcheck.enable: true
+      homepage.name: authelia
+      homepage.group: admin
+      homepage.description: authentication server
+      homepage.href: https://auth.{{ hostname }}
+      homepage.icon: authelia
+      homepage.siteMonitor: https://auth.{{ hostname }}
 
   authelia-redis:
     container_name: authelia-redis
@@ -244,12 +245,12 @@ services:
       traefik.http.routers.portainer.rule: Host(`portainer.{{ hostname }}`)
       traefik.http.routers.portainer.entrypoints: https
       traefik.http.routers.portainer.service: portainer
-      simplydash.enable: true
-      simplydash.name: Portainer
-      simplydash.group: admin
-      simplydash.link: https://portainer.{{ hostname }}
-      simplydash.description: Docker Management
-      simplydash.healthcheck.enable: true
+      homepage.name: portainer
+      homepage.group: admin
+      homepage.description: manage docker environments
+      homepage.href: https://portainer.{{ hostname }}
+      homepage.icon: portainer
+      homepage.siteMonitor: https://portainer.{{ hostname }}
 
 volumes:
   lldap-postgres:
@@ -257,7 +258,6 @@ volumes:
   authelia-redis:
   portainer-data:
   ntfy-cache:
-  simplydash-cache:
 
 networks:
   authelia:

@@ -1,0 +1,5 @@
+---
+- name: Deploy mealie
+  hosts: mealie
+  roles:
+    - mealie

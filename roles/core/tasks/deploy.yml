@@ -10,7 +10,7 @@
       mode: "0700"
     - path: core/lldap
     - path: core/authelia
-    - path: core/simplydash
+    - path: core/homepage
 
 - name: Template files
   ansible.builtin.template:
@@ -28,8 +28,6 @@
     - src: authelia_configuration.yml.j2
       dest: authelia/configuration.yml
       mode: "0600"
-    - src: simplydash.yml.j2
-      dest: simplydash/config.yml
   register: core_template_updates
 
 - name: Set secrets
@@ -56,6 +54,22 @@
       content: "{{ lookup('community.general.random_string', length=32) }}"
     - dest: authelia_oidc_hmac_secret
       content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
+  register: core_secrets_updates
+
+- name: Copy homepage config
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ deploy_path }}/core/homepage/{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - dest: settings.yaml
+      content: "{{ core_homepage_settings | to_nice_yaml }}"
+    - dest: docker.yaml
+      content: "{{ core_homepage_docker | to_nice_yaml }}"
+    - dest: services.yaml
+      content: "{{ core_homepage_services | to_nice_yaml if core_homepage_services | length > 0 else '' }}"
+    - dest: bookmarks.yaml
+      content: "{{ core_homepage_bookmarks | to_nice_yaml if core_homepage_bookmarks | length > 0 else '' }}"
   register: core_secrets_updates
 
 - name: Generate authelia OIDC HMAC secret

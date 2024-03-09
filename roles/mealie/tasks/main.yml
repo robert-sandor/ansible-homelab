@@ -1,0 +1,9 @@
+---
+- name: Deploy mealie
+  vars:
+    hostname: "{{ ansible_hostname }}.{{ domain }}"
+    core_hostname: "{{ core_host }}.{{ domain }}"
+    mealie_deploy_path: "{{ deploy_path }}/mealie"
+  block:
+    - name: Deploy containers
+      ansible.builtin.import_tasks: ./deploy.yml

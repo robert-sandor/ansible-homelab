@@ -1,0 +1,6 @@
+---
+# Mealie version - link: https://github.com/mealie-recipes/mealie/pkgs/container/mealie
+mealie_version: v1.2.0
+
+# Password for the LLDAP readonly user - same as core_lldap_readonly_password
+mealie_lldap_readonly_password: "{{ (('lldap-readonly@' + domain) | hash('sha1'))[:24] }}"

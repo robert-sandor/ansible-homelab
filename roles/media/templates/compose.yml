@@ -26,12 +26,12 @@ services:
       traefik.http.routers.transmission.entrypoints: https
       traefik.http.routers.transmission.service: transmission
       traefik.http.routers.transmission.middlewares: authelia@docker
-      simplydash.enable: true
-      simplydash.name: Transmission
-      simplydash.group: media
-      simplydash.link: https://transmission.{{ hostname }}
-      simplydash.description: Torrent client
-      simplydash.healthcheck.enable: true
+      homepage.name: transmission
+      homepage.group: media
+      homepage.href: https://transmission.{{ hostname }}
+      homepage.description: torrent client
+      homepage.icon: transmission
+      homepage.siteMonitor: https://transmission.{{ hostname }}
 
   sonarr:
     container_name: sonarr
@@ -60,12 +60,12 @@ services:
       traefik.http.routers.sonarr-api.rule: Host(`sonarr.{{ hostname }}`) && PathPrefix(`/api`)
       traefik.http.routers.sonarr-api.entrypoints: https
       traefik.http.routers.sonarr-api.service: sonarr-api
-      simplydash.enable: true
-      simplydash.name: Sonarr
-      simplydash.group: media
-      simplydash.link: https://sonarr.{{ hostname }}
-      simplydash.description: TV Series Manager
-      simplydash.healthcheck.enable: true
+      homepage.name: sonarr
+      homepage.group: media
+      homepage.href: https://sonarr.{{ hostname }}
+      homepage.description: manage tv series
+      homepage.icon: sonarr
+      homepage.siteMonitor: https://sonarr.{{ hostname }}
 
   radarr:
     container_name: radarr
@@ -94,12 +94,12 @@ services:
       traefik.http.routers.radarr-api.rule: Host(`radarr.{{ hostname }}`) && PathPrefix(`/api`)
       traefik.http.routers.radarr-api.entrypoints: https
       traefik.http.routers.radarr-api.service: radarr-api
-      simplydash.enable: true
-      simplydash.name: Radarr
-      simplydash.group: media
-      simplydash.link: https://radarr.{{ hostname }}
-      simplydash.description: Movie Collection Manager
-      simplydash.healthcheck.enable: true
+      homepage.name: radarr
+      homepage.group: media
+      homepage.href: https://radarr.{{ hostname }}
+      homepage.description: manage movies
+      homepage.icon: radarr
+      homepage.siteMonitor: https://radarr.{{ hostname }}
 
   lidarr:
     container_name: lidarr
@@ -128,12 +128,12 @@ services:
       traefik.http.routers.lidarr-api.rule: Host(`lidarr.{{ hostname }}`) && PathPrefix(`/api`)
       traefik.http.routers.lidarr-api.entrypoints: https
       traefik.http.routers.lidarr-api.service: lidarr-api
-      simplydash.enable: true
-      simplydash.name: Lidarr
-      simplydash.group: media
-      simplydash.link: https://lidarr.{{ hostname }}
-      simplydash.description: Music Collection Manager
-      simplydash.healthcheck.enable: true
+      homepage.name: lidarr
+      homepage.group: media
+      homepage.href: https://lidarr.{{ hostname }}
+      homepage.description: manage music library
+      homepage.icon: lidarr
+      homepage.siteMonitor: https://lidarr.{{ hostname }}
 
   bazarr:
     container_name: bazarr
@@ -163,12 +163,12 @@ services:
       traefik.http.routers.bazarr-api.rule: Host(`bazarr.{{ hostname }}`) && PathPrefix(`/api`)
       traefik.http.routers.bazarr-api.entrypoints: https
       traefik.http.routers.bazarr-api.service: bazarr-api
-      simplydash.enable: true
-      simplydash.name: Bazarr
-      simplydash.group: media
-      simplydash.link: https://bazarr.{{ hostname }}
-      simplydash.description: Subtitles Manager
-      simplydash.healthcheck.enable: true
+      homepage.name: bazarr
+      homepage.group: media
+      homepage.href: https://bazarr.{{ hostname }}
+      homepage.description: manage subtitles
+      homepage.icon: bazarr
+      homepage.siteMonitor: https://bazarr.{{ hostname }}
 
   prowlarr:
     container_name: prowlarr
@@ -199,12 +199,12 @@ services:
       traefik.http.routers.prowlarr-api.rule: Host(`prowlarr.{{ hostname }}`) && PathPrefix(`/api`)
       traefik.http.routers.prowlarr-api.entrypoints: https
       traefik.http.routers.prowlarr-api.service: prowlarr-api
-      simplydash.enable: true
-      simplydash.name: Prowlarr
-      simplydash.group: media
-      simplydash.link: https://prowlarr.{{ hostname }}
-      simplydash.description: Indexer proxy
-      simplydash.healthcheck.enable: true
+      homepage.name: prowlarr
+      homepage.group: media
+      homepage.href: https://prowlarr.{{ hostname }}
+      homepage.description: manage indexers
+      homepage.icon: prowlarr
+      homepage.siteMonitor: https://prowlarr.{{ hostname }}
 
   overseerr:
     container_name: overseerr
@@ -229,12 +229,12 @@ services:
       traefik.http.routers.overseerr.rule: Host(`overseerr.{{ hostname }}`)
       traefik.http.routers.overseerr.entrypoints: https
       traefik.http.routers.overseerr.service: overseerr
-      simplydash.enable: true
-      simplydash.name: Overseerr
-      simplydash.group: media
-      simplydash.link: https://overseerr.{{ hostname }}
-      simplydash.description: Media Request and Discovery
-      simplydash.healthcheck.enable: true
+      homepage.name: overseerr
+      homepage.group: media
+      homepage.href: https://overseerr.{{ hostname }}
+      homepage.description: request media
+      homepage.icon: overseerr
+      homepage.siteMonitor: https://overseerr.{{ hostname }}
 
   plex:
     container_name: plex
@@ -281,12 +281,12 @@ services:
       traefik.http.routers.plex.rule: Host(`plex.{{ hostname }}`)
       traefik.http.routers.plex.entrypoints: https
       traefik.http.routers.plex.service: plex
-      simplydash.enable: true
-      simplydash.name: Plex
-      simplydash.group: media
-      simplydash.link: https://plex.{{ hostname }}/web
-      simplydash.description: Media Server
-      simplydash.healthcheck.enable: true
+      homepage.name: plex
+      homepage.group: media
+      homepage.href: https://plex.{{ hostname }}
+      homepage.description: media server
+      homepage.icon: plex
+      homepage.siteMonitor: https://plex.{{ hostname }}
 
   jellyfin:
     container_name: jellyfin
@@ -329,42 +329,12 @@ services:
       traefik.http.routers.jellyfin.rule: Host(`jellyfin.{{ hostname }}`)
       traefik.http.routers.jellyfin.entrypoints: https
       traefik.http.routers.jellyfin.service: jellyfin
-      simplydash.enable: true
-      simplydash.name: Jellyfin
-      simplydash.group: media
-      simplydash.link: https://jellyfin.{{ hostname }}
-      simplydash.description: Media Server
-      simplydash.healthcheck.enable: true
-
-  # TODO: Look into adding jellyseerr when needed, or wait until overseerr has jellyfin support
-  #
-  # jellyseerr:
-  #   container_name: jellyseerr
-  #   hostname: jellyseerr
-  #   image: fallenbagel/jellyseerr:{{ media_jellyseerr_version }}
-  #   restart: unless-stopped
-  #   environment:
-  #     TZ: "{{ timezone }}"
-  #   networks:
-  #     - traefik
-  #   volumes:
-  #     - ./jellyseerr:/app/config
-  #   depends_on:
-  #     - sonarr
-  #     - radarr
-  #     - jellyfin
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
-  #     traefik.http.routers.jellyseerr.rule: Host(`jellyseerr.{{ hostname }}`)
-  #     traefik.http.routers.jellyseerr.entrypoints: https
-  #     traefik.http.routers.jellyseerr.service: jellyseerr
-  #     simplydash.enable: true
-  #     simplydash.name: Jellyseerr
-  #     simplydash.group: media
-  #     simplydash.link: https://jellyseerr.{{ hostname }}
-  #     simplydash.description: Media requests
-  #     simplydash.healthcheck.enable: true
+      homepage.name: jellyfin
+      homepage.group: media
+      homepage.href: https://jellyfin.{{ hostname }}
+      homepage.description: media server
+      homepage.icon: jellyfin
+      homepage.siteMonitor: https://jellyfin.{{ hostname }}
 
 volumes:
   media:

@@ -38,13 +38,13 @@ services:
       traefik.http.middlewares.authelia-basic.forwardauth.address: "http://{{ core_hostname }}:9091/api/verify?auth=basic"
       traefik.http.middlewares.authelia-basic.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia-basic.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
-      # Simplydash
-      simplydash.enable: true
-      simplydash.name: Traefik
-      simplydash.group: admin
-      simplydash.link: https://traefik.{{ hostname }}
-      simplydash.description: "{{ hostname }}"
-      simplydash.healthcheck.enable: true
+      # homepage
+      homepage.name: traefik
+      homepage.group: traefik
+      homepage.description: reverse proxy @ {{ ansible_hostname }}
+      homepage.href: https://traefik.{{ hostname }}
+      homepage.icon: traefik
+      homepage.siteMonitor: https://traefik.{{ hostname }}
 
   diun:
     container_name: diun

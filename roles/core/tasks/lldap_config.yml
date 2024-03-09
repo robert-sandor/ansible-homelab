@@ -1,0 +1,117 @@
+---
+- name: LLDAP - Configure
+  vars:
+    lldap_host: "https://lldap.{{ hostname }}"
+    lldap_api: "{{ lldap_host }}/api/graphql"
+    lldap_auth_header: "Bearer {{ lldap_auth.json.token }}"
+    # groups
+    lldap_default_groups:
+      admins:
+      users:
+    lldap_all_groups: "{{ lldap_default_groups | combine(core_lldap_groups, recursive=false) }}"
+    lldap_existing_groups: "{{ list_groups_response.json | json_query('data.groups[*].{key: displayName, value: id}') | items2dict }}"
+    # users
+    lldap_default_users:
+      readonly:
+        password: "{{ core_lldap_readonly_password }}"
+        groups:
+          lldap_strict_readonly:
+    lldap_all_users: "{{ lldap_default_users | combine(core_lldap_users, recursive=false) }}"
+    lldap_existing_users: "{{ list_users_response.json | json_query('data.users[*].{key: id, value: groups[*].displayName}') | items2dict }}"
+  block:
+    - name: LLDAP - Login as admin
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ lldap_host }}/auth/simple/login"
+        body_format: json
+        body:
+          username: admin
+          password: "{{ core_lldap_admin_password }}"
+        status_code: 200
+      register: lldap_auth
+      retries: 10
+      delay: 10
+      until: lldap_auth.status < 400
+
+    - name: LLDAP - List groups
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ lldap_api }}"
+        headers:
+          authorization: "{{ lldap_auth_header }}"
+        body_format: json
+        body:
+          operationName: ListGroups
+          query: "{{ lookup('file', 'lldap/group.graphql') }}"
+          variables: {}
+        status_code: 200
+      register: list_groups_response
+
+    - name: LLDAP - Delete group
+      when: group.key in lldap_existing_groups and group.value is defined and group.value == "absent"
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ lldap_api }}"
+        headers:
+          authorization: "{{ lldap_auth_header }}"
+        body_format: json
+        body:
+          operationName: DeleteGroup
+          query: "{{ lookup('file', 'lldap/group.graphql') }}"
+          variables: "{ 'groupId': {{ lldap_existing_groups[group.key] }} }"
+        status_code: 200
+      loop: "{{ lldap_all_groups | dict2items }}"
+      loop_control:
+        loop_var: group
+
+    - name: LLDAP - Create group
+      when: group.key not in lldap_existing_groups and ( group.value is not defined or group.value == "present" )
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ lldap_api }}"
+        headers:
+          authorization: "{{ lldap_auth_header }}"
+        body_format: json
+        body:
+          operationName: CreateGroup
+          query: "{{ lookup('file', 'lldap/group.graphql') }}"
+          variables:
+            name: "{{ group.key }}"
+        status_code: 200
+      loop: "{{ lldap_all_groups | dict2items }}"
+      loop_control:
+        loop_var: group
+
+    - name: LLDAP - List groups after updates
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ lldap_api }}"
+        headers:
+          authorization: "{{ lldap_auth_header }}"
+        body_format: json
+        body:
+          operationName: ListGroups
+          query: "{{ lookup('file', 'lldap/group.graphql') }}"
+          variables: {}
+        status_code: 200
+      register: list_groups_response
+
+    - name: LLDAP - List users
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ lldap_api }}"
+        headers:
+          authorization: "{{ lldap_auth_header }}"
+        body_format: json
+        body:
+          operationName: ListUsers
+          query: "{{ lookup('file', 'lldap/user.graphql') }}"
+          variables: {}
+        status_code: 200
+      register: list_users_response
+
+    - name: Update users
+      ansible.builtin.include_tasks: lldap_user.yml
+      loop: "{{ lldap_all_users | dict2items }}"
+      loop_control:
+        loop_var: user

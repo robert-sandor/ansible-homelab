@@ -10,7 +10,7 @@ media_transmission_required_settings:
 media_transmission_settings: {}
 
 ### Sonarr - TV Series manager
-media_sonarr_version: 4.0.1
+media_sonarr_version: 4.0.2
 media_radarr_version: 5.3.6
 media_lidarr_version: 2.1.7
 media_prowlarr_version: 1.13.3
