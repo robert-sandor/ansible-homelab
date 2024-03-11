@@ -1,0 +1,17 @@
+---
+- name: Deploy adguardhome
+  vars:
+    hostname: "{{ ansible_hostname }}.{{ domain }}"
+    adguardhome_deploy_path: "{{ deploy_path }}/adguardhome"
+  block:
+    - name: Disable systemd-resolved
+      ansible.builtin.include_tasks:
+        file: ./disable_systemdresolved.yml
+        apply:
+          become: true
+
+    - name: Deploy container
+      ansible.builtin.import_tasks: ./deploy.yml
+
+    - name: Configure adguardhome
+      ansible.builtin.import_tasks: ./configure.yml

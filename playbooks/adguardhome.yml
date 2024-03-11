@@ -1,0 +1,5 @@
+---
+- name: Deploy adguardhome
+  hosts: adguardhome
+  roles:
+    - adguardhome

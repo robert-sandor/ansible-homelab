@@ -8,5 +8,11 @@
 - name: Deploy core
   ansible.builtin.import_playbook: ./core.yml
 
+- name: Deploy adguardhome
+  ansible.builtin.import_playbook: ./adguardhome.yml
+
 - name: Deploy media
   ansible.builtin.import_playbook: ./media.yml
+
+- name: Deploy mealie
+  ansible.builtin.import_playbook: ./mealie.yml

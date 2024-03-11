@@ -18,7 +18,7 @@ core_lldap_readonly_password: "{{ (('lldap-readonly@' + domain) | hash('sha1'))[
 # Dictionary of groups, each having the key as the group name and value as either 'present' or 'absent' - defaults to 'present'
 #
 # Example:
-#   
+#
 #   test_group:
 #   some_other_group: present
 #   group_will_be_removed: absent

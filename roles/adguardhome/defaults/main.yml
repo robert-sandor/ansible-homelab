@@ -1,0 +1,39 @@
+---
+# version of adguardhome to use
+# NOTE: latest will ensure auto updates to the stable version - you can set the specific versions from here https://hub.docker.com/r/adguard/adguardhome/tags
+adguardhome_version: latest
+
+# User and password for the adguardhome admin user
+# NOTE: this only applies on first deploy - changing the value after that will fail the playbook
+adguardhome_user: admin
+adguardhome_password: changeme
+
+# list of DNS servers for adguardhome to use as upstream
+# see documentation for more info https://github.com/AdguardTeam/Adguardhome/wiki/Configuration#upstreams
+adguardhome_upstream_dns:
+  - "{{ ansible_default_ipv4.gateway }}"
+
+# list of DNS servers for adguardhome to use to resolve upstreams
+adguardhome_bootstrap_dns:
+  - "1.1.1.1"
+  - "9.9.9.9"
+
+# per-client rate limit (requests / second) - setting this to 0 disables the rate limit
+adguardhome_ratelimit: 240
+
+# cache size in MiB - setting this to 0 disables the cache
+adguardhome_cache_size: 256
+
+# list of hosts for which to add wildcard rewrites, to redirect all subdomains to the same host
+# i.e. for a host named 'raspberrypi' added to this list,
+# all dns requests for subdomains of 'raspberrypi.{{ domain }}' will be redirected to 'raspberrypi.{{ domain }}'
+adguardhome_wildcard_hosts: []
+
+# list of adblocking lists for adguardhome to use - defaults to the lists adguardhome defaults to
+adguardhome_filter_lists:
+  - name: AdGuard DNS filter
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt
+    enabled: true
+  - name: AdAway Default Blocklist
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt
+    enabled: true

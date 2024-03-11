@@ -1,0 +1,35 @@
+---
+version: "3"
+
+services:
+  adguardhome:
+    container_name: adguardhome
+    hostname: adguardhome
+    image: adguard/adguardhome:{{ adguardhome_version }}
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+    networks:
+      - traefik
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+    volumes:
+      - ./work:/opt/adguardhome/work
+      - ./conf:/opt/adguardhome/conf
+    labels:
+      traefik.enable: true
+      traefik.http.services.adguardhome.loadbalancer.server.port: 3000
+      traefik.http.routers.adguardhome.rule: Host(`adguardhome.{{ hostname }}`)
+      traefik.http.routers.adguardhome.entrypoints: https
+      traefik.http.routers.adguardhome.service: adguardhome
+      homepage.name: adguardhome
+      homepage.group: admin
+      homepage.description: network adblocker
+      homepage.href: https://adguardhome.{{ hostname }}
+      homepage.icon: adguard-home
+      homepage.siteMonitor: https://adguardhome.{{ hostname }}
+
+networks:
+  traefik:
+    external: true
