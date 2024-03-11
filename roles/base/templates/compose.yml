@@ -88,6 +88,18 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+  node_exporter:
+    container_name: node_exporter
+    hostname: node_exporter
+    image: quay.io/prometheus/node-exporter:{{ base_node_exporter_version }}
+    restart: unless-stopped
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    volumes: 
+      - '/:/host:ro,rslave'
+
 networks:
   traefik:
     external: true
