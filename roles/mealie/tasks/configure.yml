@@ -1,0 +1,68 @@
+---
+- name: Initialize admin user
+  vars:
+    mealie_api: https://mealie.{{ hostname }}/api
+    mealie_token: "Bearer {{ mealie_auth_response.json.access_token }}"
+  block:
+    - name: Login with default credentials
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ mealie_api }}/auth/token"
+        body_format: form-urlencoded
+        body:
+          username: admin
+          password: "{{ mealie_default_admin_password }}"
+        status_code: [200, 401]
+      register: mealie_auth_response
+      retries: 10
+      delay: 10
+      until: mealie_auth_response.status == 401 or mealie_auth_response.status < 400
+
+    - name: Update password
+      when: mealie_auth_response.status == 200
+      ansible.builtin.uri:
+        method: PUT
+        url: "{{ mealie_api }}/users/password"
+        headers:
+          authorization: "{{ mealie_token }}"
+        body_format: json
+        body:
+          currentPassword: "{{ mealie_default_admin_password }}"
+          newPassword: "{{ mealie_admin_password }}"
+        status_code: 200
+      changed_when: true
+
+    - name: Login with updated credentials
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ mealie_api }}/auth/token"
+        body_format: form-urlencoded
+        body:
+          username: admin
+          password: "{{ mealie_admin_password }}"
+        status_code: 200
+      register: mealie_auth_response
+
+    - name: Get admin details
+      when: mealie_auth_response.status == 200
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ mealie_api }}/users/self"
+        headers:
+          authorization: "{{ mealie_token }}"
+      register: mealie_admin_data
+
+    - name: Update details
+      when: mealie_auth_response.status == 200
+      vars:
+        updates:
+          fullName: Admin
+          email: admin@{{ domain }}
+      ansible.builtin.uri:
+        method: PUT
+        url: "{{ mealie_api }}/users/{{ mealie_admin_data.json.id }}"
+        headers:
+          authorization: "{{ mealie_token }}"
+        body_format: json
+        body: "{{ mealie_admin_data.json | combine(updates, recursive=True) }}"
+        status_code: 200
