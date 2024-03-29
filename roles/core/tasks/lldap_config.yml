@@ -8,7 +8,7 @@
     lldap_default_groups:
       admins:
       users:
-    lldap_all_groups: "{{ lldap_default_groups | combine(core_lldap_groups, recursive=false) }}"
+    lldap_all_groups: "{{ lldap_default_groups | combine(core_lldap_groups, recursive=True) }}"
     lldap_existing_groups: "{{ list_groups_response.json | json_query('data.groups[*].{key: displayName, value: id}') | items2dict }}"
     # users
     lldap_default_users:
@@ -65,7 +65,7 @@
         loop_var: group
 
     - name: LLDAP - Create group
-      when: group.key not in lldap_existing_groups and ( group.value is not defined or group.value == "present" )
+      when: group.key not in lldap_existing_groups and ( group.value is not defined or group.value == None or group.value == "present" )
       ansible.builtin.uri:
         method: POST
         url: "{{ lldap_api }}"

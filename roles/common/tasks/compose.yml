@@ -19,7 +19,7 @@
 
     - name: Start containers
       ansible.builtin.command:
-        cmd: docker compose {{ compose_args }} up -d {{ force_recreate_arg }}
+        cmd: docker compose {{ compose_args }} up -d {{ force_recreate_arg }} {{ remove_orphans_arg }}
         chdir: "{{ common_project_src }}"
       register: temp_compose_up
       changed_when: "'Started' in temp_compose_up.stderr"

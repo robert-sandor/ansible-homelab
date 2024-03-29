@@ -11,6 +11,9 @@
 - name: Deploy adguardhome
   ansible.builtin.import_playbook: ./adguardhome.yml
 
+- name: Deploy monitoring
+  ansible.builtin.import_playbook: ./monitoring.yml
+
 - name: Deploy media
   ansible.builtin.import_playbook: ./media.yml
 

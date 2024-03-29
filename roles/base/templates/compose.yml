@@ -1,5 +1,4 @@
-version: "3"
-
+---
 services:
   traefik:
     container_name: traefik
@@ -10,6 +9,8 @@ services:
       - traefik.env
     networks:
       - traefik
+    extra_hosts:
+      - host.docker.internal:host-gateway
     ports:
       - "80:80"
       - "443:443"
@@ -18,6 +19,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik:/etc/traefik/file_provider:ro
       - ./traefik_secrets:/secrets:ro
       - traefik-letsencrypt:/letsencrypt
     labels:
@@ -32,12 +34,9 @@ services:
       traefik.http.routers.traefik-metrics.entrypoints: https
       traefik.http.routers.traefik-metrics.service: prometheus@internal
       # Authelia middlewares
-      traefik.http.middlewares.authelia.forwardauth.address: "http://{{ core_hostname }}:9091/api/verify?rd=https://auth.{{ core_hostname }}"
+      traefik.http.middlewares.authelia.forwardauth.address: "http://{{ core_hostname }}:9091/api/authz/forward-auth"
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
-      traefik.http.middlewares.authelia-basic.forwardauth.address: "http://{{ core_hostname }}:9091/api/verify?auth=basic"
-      traefik.http.middlewares.authelia-basic.forwardauth.trustForwardHeader: "true"
-      traefik.http.middlewares.authelia-basic.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
       # homepage
       homepage.name: traefik
       homepage.group: traefik
@@ -69,6 +68,7 @@ services:
     restart: unless-stopped
     environment:
       CONTAINERS: 1
+      LOG_LEVEL: warning
     networks:
       - docker
     ports:
@@ -93,12 +93,39 @@ services:
     hostname: node_exporter
     image: quay.io/prometheus/node-exporter:{{ base_node_exporter_version }}
     restart: unless-stopped
-    command:
-      - '--path.rootfs=/host'
+    command: --path.rootfs=/host
     network_mode: host
     pid: host
-    volumes: 
-      - '/:/host:ro,rslave'
+    volumes:
+      - "/:/host:ro,rslave"
+
+  promtail:
+    container_name: promtail
+    hostname: promtail
+    image: grafana/promtail:{{ base_promtail_version }}
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/docker-config.yml
+    networks:
+      - traefik
+    volumes:
+      - ./promtail.yml:/etc/promtail/docker-config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/log/journal:/var/log/journal:ro
+      - /run/log/journal:/run/log/journal:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.promtail.loadbalancer.server.port: 9080
+      traefik.http.routers.promtail.rule: Host(`promtail.{{ hostname }}`)
+      traefik.http.routers.promtail.entrypoints: https
+      traefik.http.routers.promtail.service: promtail
+      homepage.name: promtail
+      homepage.group: monitoring
+      homepage.description: log aggregator @ {{ ansible_hostname }}
+      homepage.href: https://promtail.{{ hostname }}
+      homepage.icon: loki
+      homepage.siteMonitor: https://promtail.{{ hostname }}
 
 networks:
   traefik:

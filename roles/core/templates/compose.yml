@@ -1,5 +1,4 @@
-version: "3"
-
+---
 services:
   ntfy:
     container_name: ntfy
@@ -134,7 +133,7 @@ services:
     volumes:
       - lldap-postgres:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -d lldap
+      test: pg_isready -d lldap -U lldap
       interval: 30s
       timeout: 60s
       retries: 5
@@ -147,7 +146,7 @@ services:
     restart: unless-stopped
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     secrets:
-      - authelia_jwt_secret
+      - authelia_identity_validation_reset_password_jwt_secret
       - lldap_user_pass
       - authelia_session_secret
       - authelia_storage_secret
@@ -156,13 +155,13 @@ services:
       - authelia_oidc_issuer_private_key
     environment:
       TZ: "{{ timezone }}"
-      AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
+      X_AUTHELIA_CONFIG_FILTERS: template
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /run/secrets/authelia_identity_validation_reset_password_jwt_secret
       AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE: /run/secrets/lldap_user_pass
       AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
       AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE: /run/secrets/authelia_postgres_password
       AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_secret
       AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET_FILE: /run/secrets/authelia_oidc_hmac_secret
-      AUTHELIA_IDENTITY_PROVIDERS_OIDC_ISSUER_PRIVATE_KEY_FILE: /run/secrets/authelia_oidc_issuer_private_key
     networks:
       - authelia
       - traefik
@@ -223,7 +222,7 @@ services:
     volumes:
       - authelia-postgres:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -d authelia
+      test: pg_isready -d authelia -u authelia
       interval: 30s
       timeout: 60s
       retries: 5
@@ -272,8 +271,8 @@ secrets:
     file: ./secrets/lldap_user_pass
   lldap_postgres_password:
     file: ./secrets/lldap_postgres_password
-  authelia_jwt_secret:
-    file: ./secrets/authelia_jwt_secret
+  authelia_identity_validation_reset_password_jwt_secret:
+    file: ./secrets/authelia_identity_validation_reset_password_jwt_secret
   authelia_session_secret:
     file: ./secrets/authelia_session_secret
   authelia_storage_secret:

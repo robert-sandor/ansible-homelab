@@ -14,21 +14,30 @@
 
 - name: Template files
   ansible.builtin.template:
-    src: "{{ item.src }}"
-    dest: "{{ deploy_path }}/core/{{ item.dest }}"
-    mode: "{{ item.mode | default('0644') }}"
-  loop:
-    - src: compose.yml
-      dest: compose.yml
-    - src: mailrise.yml
-      dest: mailrise.yml
-    - src: lldap_config.toml
-      dest: lldap/lldap_config.toml
-      mode: "0600"
-    - src: authelia_configuration.yml.j2
-      dest: authelia/configuration.yml
-      mode: "0600"
-  register: core_template_updates
+    src: compose.yml
+    dest: "{{ core_deploy_path }}/compose.yml"
+    mode: "0644"
+
+- name: Template mailrise configuration
+  ansible.builtin.template:
+    src: mailrise.yml
+    dest: "{{ core_deploy_path }}/mailrise.yml"
+    mode: "0644"
+  notify: docker-restart-mailrise
+
+- name: Template lldap configuration
+  ansible.builtin.template:
+    src: lldap_config.toml
+    dest: "{{ core_deploy_path }}/lldap/lldap_config.toml"
+    mode: "0600"
+  notify: docker-restart-lldap
+
+- name: Template authelia configuration
+  ansible.builtin.template:
+    src: authelia_configuration.yml
+    dest: "{{ core_deploy_path }}/authelia/configuration.yml"
+    mode: "0600"
+  notify: docker-restart-authelia
 
 - name: Set secrets
   no_log: true
@@ -44,7 +53,7 @@
       content: "{{ core_lldap_db_password }}"
     - dest: lldap_jwt_secret
       content: "{{ lookup('community.general.random_string', length=32) }}"
-    - dest: authelia_jwt_secret
+    - dest: authelia_identity_validation_reset_password_jwt_secret
       content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
     - dest: authelia_session_secret
       content: "{{ lookup('community.general.random_string', length=64, special=False) }}"

@@ -5,14 +5,15 @@
     path: "{{ deploy_path }}/{{ item }}"
     mode: "0755"
   loop:
-    - base
+    # - base - NOTE: likely not needed
+    - base/traefik
     - base/traefik_secrets
 
 - name: Create traefik secrets
   ansible.builtin.copy:
     content: "{{ item.value }}"
     dest: "{{ deploy_path }}/base/traefik_secrets/{{ item.key | lower }}"
-    mode: '0600'
+    mode: "0600"
   loop: "{{ base_traefik_env | dict2items }}"
 
 - name: Template files
@@ -25,21 +26,32 @@
       dest: base/compose.yml
     - src: traefik.env.j2
       dest: base/traefik.env
-      mode: '0600'
+      mode: "0600"
 
 - name: Template traefik config
   ansible.builtin.template:
-    src: traefik.yml
-    dest: "{{ deploy_path }}/base/traefik.yml"
-    mode: '0644'
-  notify: Restart traefik
+    src: "{{ item }}"
+    dest: "{{ deploy_path }}/base/{{ item }}"
+    mode: "0644"
+  notify: docker-restart-traefik
+  loop:
+    - traefik.yml
+    - traefik/docker_metrics.yml
+    - traefik/node_exporter.yml
 
 - name: Template diun config
   ansible.builtin.template:
     src: diun.yml
     dest: "{{ deploy_path }}/base/diun.yml"
-    mode: '0600'
+    mode: "0600"
   notify: Restart diun
+
+- name: Template promtail config
+  ansible.builtin.template:
+    src: promtail.yml
+    dest: "{{ deploy_path }}/base/promtail.yml"
+    mode: "0644"
+  notify: docker-restart-promtail
 
 - name: Create traefik network
   community.docker.docker_network:

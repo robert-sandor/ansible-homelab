@@ -1,0 +1,5 @@
+---
+- name: Deploy monitoring
+  hosts: monitoring
+  roles:
+    - monitoring

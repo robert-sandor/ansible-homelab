@@ -15,6 +15,7 @@
   become: true
 
 - name: Restart traefik
+  listen: docker-restart-traefik
   community.docker.docker_container:
     name: traefik
     restart: true
@@ -22,4 +23,10 @@
 - name: Restart diun
   community.docker.docker_container:
     name: diun
+    restart: true
+
+- name: Restart promtail
+  listen: docker-restart-promtail
+  community.docker.docker_container:
+    name: promtail
     restart: true

@@ -15,6 +15,9 @@ log:
   level: info
 
 providers:
+  file:
+    directory: /etc/traefik/file_provider
+    watch: true
   docker:
     network: traefik
     exposedByDefault: false

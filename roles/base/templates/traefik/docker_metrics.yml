@@ -1,0 +1,13 @@
+---
+http:
+  routers:
+    docker_metrics:
+      entryPoints:
+        - https
+      service: docker_metrics
+      rule: Host(`docker.{{ hostname }}`) && PathPrefix(`/metrics`)
+  services:
+    docker_metrics:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:9323

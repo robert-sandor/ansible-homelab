@@ -3,6 +3,7 @@
   vars:
     hostname: "{{ ansible_hostname }}.{{ domain }}"
     skip_tls: "{{ base_traefik_acme_staging }}"
+    core_deploy_path: "{{ deploy_path }}/core"
   block:
     - name: Deploy containers
       ansible.builtin.import_tasks: ./deploy.yml

@@ -1,0 +1,18 @@
+---
+- name: Restart mailrise
+  listen: docker-restart-mailrise
+  community.docker.docker_container:
+    name: mailrise
+    restart: true
+
+- name: Restart lldap
+  listen: docker-restart-lldap
+  community.docker.docker_container:
+    name: lldap
+    restart: true
+
+- name: Restart authelia
+  listen: docker-restart-authelia
+  community.docker.docker_container:
+    name: authelia
+    restart: true

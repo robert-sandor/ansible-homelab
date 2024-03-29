@@ -1,4 +1,4 @@
-verbose=false
+verbose = false
 
 http_url = "https://lldap.{{ hostname }}"
 
@@ -11,9 +11,9 @@ database_url = "postgres://lldap:{{ core_lldap_db_password }}@lldap-postgres/lld
 key_seed = "{{ hostname | b64encode }}"
 
 [smtp_options]
-enable_password_reset=true
-server="{{ hostname }}"
-port=465
-smtp_encryption = "TLS"
-from="Admin <admin@{{ domain }}>"
-reply_to="Do not reply <noreply@{{ domain }}>"
+enable_password_reset = true
+server = "mailrise"
+port = 8025
+smtp_encryption = "NONE"
+from = "Admin <admin@{{ domain }}>"
+reply_to = "Do not reply <noreply@{{ domain }}>"

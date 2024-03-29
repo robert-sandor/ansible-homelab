@@ -1,0 +1,13 @@
+---
+http:
+  routers:
+    node_exporter:
+      entryPoints:
+        - https
+      service: node_exporter
+      rule: Host(`node.{{ hostname }}`) && PathPrefix(`/metrics`)
+  services:
+    node_exporter:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:9100

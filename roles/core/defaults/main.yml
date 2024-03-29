@@ -53,7 +53,7 @@ core_lldap_users: {}
 core_mailrise_version: latest
 
 ### authelia
-core_authelia_version: 4.37
+core_authelia_version: 4.38
 core_authelia_postgres_version: 16
 core_authelia_redis_version: 7
 
@@ -93,6 +93,10 @@ core_homepage_settings:
         columns: 4
     - admin:
         icon: mdi-security
+        style: row
+        columns: 4
+    - monitoring:
+        icon: mdi-chart-line
         style: row
         columns: 4
     - traefik:

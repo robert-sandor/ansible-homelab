@@ -2,4 +2,5 @@
 - name: Deploy base
   hosts: base
   roles:
+    - system
     - base
