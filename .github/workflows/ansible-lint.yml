@@ -8,20 +8,9 @@ on:
 
 jobs:
   lint:
-    name: Run Ansible Lint
+    name: Ansible Lint
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Install python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-
-      - name: Install pip dependencies
-        run: pip3 install yamllint ansible-lint
-
-      - name: Run Ansible Lint
-        run: ansible-lint
+      - uses: actions/checkout@v4
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@main
