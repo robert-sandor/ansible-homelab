@@ -222,7 +222,7 @@ services:
     volumes:
       - authelia-postgres:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -d authelia -u authelia
+      test: pg_isready -d authelia -U authelia
       interval: 30s
       timeout: 60s
       retries: 5

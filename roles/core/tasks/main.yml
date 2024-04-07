@@ -2,11 +2,10 @@
 - name: Deploy core services
   vars:
     hostname: "{{ ansible_hostname }}.{{ domain }}"
-    skip_tls: "{{ base_traefik_acme_staging }}"
     core_deploy_path: "{{ deploy_path }}/core"
   block:
     - name: Deploy containers
-      ansible.builtin.import_tasks: ./deploy.yml
+      ansible.builtin.import_tasks: ./containers.yml
 
     - name: Configure LLDAP
       ansible.builtin.import_tasks: ./lldap_config.yml
