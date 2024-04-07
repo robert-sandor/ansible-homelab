@@ -3,7 +3,7 @@ services:
   gitea:
     container_name: gitea
     hostname: gitea
-    image: gitea/gitea:{{ cicd_gitea_version }}-rootless
+    image: gitea/gitea:{{ gitea_gitea_version }}-rootless
     restart: unless-stopped
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     secrets:
@@ -58,7 +58,7 @@ services:
   gitea-db:
     container_name: gitea-db
     hostname: gitea-db
-    image: postgres:{{ cicd_gitea_postgres_version }}
+    image: postgres:{{ gitea_gitea_postgres_version }}
     restart: unless-stopped
     secrets:
       - gitea_postgres_password
