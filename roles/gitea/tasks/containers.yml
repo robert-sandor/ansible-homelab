@@ -1,0 +1,37 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ cicd_deploy_path }}/{{ item.path }}"
+    mode: "{{ item.mode | default('0755') }}"
+  loop:
+    - path: gitea
+    - path: secrets
+      mode: "0700"
+
+- name: Template compose
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ cicd_deploy_path }}/compose.yml"
+    mode: "0755"
+
+- name: Set secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ cicd_deploy_path }}/secrets/{{ item.dest }}"
+    mode: "0600"
+  loop:
+    - dest: gitea_postgres_password
+      content: "{{ (('gitea-db@' + domain) | hash('sha1'))[:24] }}"
+    - dest: gitea_jwt_secret
+      content: "{{ ('gitea-jwt@' + hostname | hash('sha1'))[:24] }}"
+    - dest: gitea_secret_key
+      content: "{{ ('gitea-secret@' + hostname | hash('sha1'))[:24] }}"
+
+- name: Deploy containers
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: compose
+  vars:
+    common_project_src: "{{ cicd_deploy_path }}"

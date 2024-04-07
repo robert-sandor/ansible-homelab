@@ -1,0 +1,3 @@
+---
+cicd_gitea_version: 1.21
+cicd_gitea_postgres_version: 16
