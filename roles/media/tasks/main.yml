@@ -6,7 +6,7 @@
     skip_tls: "{{ base_traefik_acme_staging }}"
   block:
     - name: Deploy containers
-      ansible.builtin.import_tasks: ./deploy.yml
+      ansible.builtin.import_tasks: ./containers.yml
 
     - name: Configure transmission
       ansible.builtin.import_tasks: ./transmission.yml

@@ -11,7 +11,7 @@
           become: true
 
     - name: Deploy container
-      ansible.builtin.import_tasks: ./deploy.yml
+      ansible.builtin.import_tasks: ./containers.yml
 
     - name: Configure adguardhome
       ansible.builtin.import_tasks: ./configure.yml

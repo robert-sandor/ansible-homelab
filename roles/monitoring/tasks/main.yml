@@ -6,4 +6,4 @@
     monitoring_deploy_path: "{{ deploy_path }}/monitoring"
   block:
     - name: Deploy containers
-      ansible.builtin.import_tasks: ./deploy.yml
+      ansible.builtin.import_tasks: ./containers.yml
