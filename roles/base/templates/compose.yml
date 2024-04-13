@@ -64,7 +64,7 @@ services:
   docker_socket_proxy:
     container_name: docker_socket_proxy
     hostname: docker_socket_proxy
-    image: tecnativa/docker-socket-proxy:{{ base_dsp_version }}
+    image: linuxserver/socket-proxy:{{ base_dsp_version }}
     restart: unless-stopped
     environment:
       CONTAINERS: 1
