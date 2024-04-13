@@ -8,6 +8,9 @@
 - name: Deploy core
   ansible.builtin.import_playbook: ./core.yml
 
+- name: Deploy Vaultwarden
+  ansible.builtin.import_playbook: ./vaultwarden.yml
+
 - name: Deploy adguardhome
   ansible.builtin.import_playbook: ./adguardhome.yml
 
