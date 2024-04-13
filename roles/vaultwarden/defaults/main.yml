@@ -1,0 +1,10 @@
+---
+vaultwarden_version: 1.30.5
+vaultwarden_postgres_version: 16
+
+# Whether to allow new signups - for better security, disable once accounts are created
+vaultwarden_allow_signups: true
+
+# Postgres user and database - only change if you know what you are doing
+vaultwarden_postgres_user: vaultwarden
+vaultwarden_postgres_database: vaultwarden

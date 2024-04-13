@@ -1,0 +1,37 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ vaultwarden_deploy_path }}/{{ item.path }}"
+    mode: "{{ item.mode | default('0755') }}"
+  loop:
+    - path: data
+    - path: secrets
+      mode: "0700"
+
+- name: Template compose
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ vaultwarden_deploy_path }}/compose.yml"
+    mode: "0755"
+
+- name: Set secrets
+  no_log: true
+  vars:
+    db_pass: "{{ (('vaultwarden-db@' + domain) | hash('sha1'))[:24] }}"
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ vaultwarden_deploy_path }}/secrets/{{ item.dest }}"
+    mode: "0600"
+  loop:
+    - dest: vaultwarden_postgres_password
+      content: "{{ db_pass }}"
+    - dest: vaultwarden_postgres_url
+      content: "postgresql://{{ vaultwarden_postgres_user }}:{{ db_pass }}@vaultwarden-db:5432/{{ vaultwarden_postgres_database }}"
+
+- name: Deploy containers
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: compose
+  vars:
+    common_project_src: "{{ vaultwarden_deploy_path }}"

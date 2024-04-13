@@ -1,0 +1,8 @@
+---
+- name: Deploy Vaultwarden
+  vars:
+    hostname: "{{ ansible_hostname }}.{{ domain }}"
+    vaultwarden_deploy_path: "{{ deploy_path }}/vaultwarden"
+  block:
+    - name: Deploy containers
+      ansible.builtin.import_tasks: ./containers.yml

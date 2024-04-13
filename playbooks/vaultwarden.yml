@@ -1,0 +1,5 @@
+---
+- name: Deploy vaultwarden
+  hosts: vaultwarden
+  roles:
+    - vaultwarden
