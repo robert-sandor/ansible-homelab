@@ -335,6 +335,40 @@ services:
       homepage.icon: jellyfin
       homepage.siteMonitor: https://jellyfin.{{ hostname }}
 
+  navidrome:
+    container_name: navidrome
+    hostname: navidrome
+    image: deluan/navidrome:{{ media_navidrome_version }}
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    restart: unless-stopped
+    environment:
+      # Optional: put your config options customization here. Examples:
+      ND_MUSICFOLDER: /media/music
+      ND_DATAFOLDER: /data
+      ND_BASEURL: https://navidrome.{{ hostname }}
+      ND_REVERSEPROXYWHITELIST: 172.0.0.0/8
+      ND_SCANSCHEDULE: 24h
+      ND_LOGLEVEL: info
+      ND_SESSIONTIMEOUT: 24h
+    networks:
+      - traefik
+    volumes:
+      - ./navidrome:/data
+      - media:/media:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.navidrome.loadbalancer.server.port: 4533
+      traefik.http.routers.navidrome.rule: Host(`navidrome.{{ hostname }}`)
+      traefik.http.routers.navidrome.entrypoints: https
+      traefik.http.routers.navidrome.service: navidrome
+      traefik.http.routers.navidrome.middlewares: authelia@docker
+      homepage.name: navidrome
+      homepage.group: media
+      homepage.href: https://navidrome.{{ hostname }}
+      homepage.description: media server
+      homepage.icon: navidrome
+      homepage.siteMonitor: https://navidrome.{{ hostname }}
+
 volumes:
   media:
     driver_opts:

@@ -15,6 +15,7 @@
     - path: overseerr
     - path: plex
     - path: jellyfin
+    - path: navidrome
 
 - name: Check nvidia-container-runtime installed
   ansible.builtin.command: dpkg-query -W nvidia-container-runtime

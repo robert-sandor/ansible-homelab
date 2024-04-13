@@ -18,7 +18,7 @@ media_bazarr_version: 1.4.2
 media_plex_version: 1.40.1
 media_jellyfin_version: 10.8.13
 media_overseerr_version: 1.33.2
-media_jellyseerr_version: 1.7.0
+media_navidrome_version: 0.51.1
 
 media_mount_host: localhost
 media_mount_path: /media
