@@ -23,11 +23,11 @@
     mode: "0600"
   loop:
     - dest: gitea_postgres_password
-      content: "{{ (('gitea-db@' + domain) | hash('sha1'))[:24] }}"
+      content: "{{ (('gitea-db@' + deployment_secret) | hash('sha256'))[:64] }}"
     - dest: gitea_jwt_secret
-      content: "{{ ('gitea-jwt@' + hostname | hash('sha1'))[:24] }}"
+      content: "{{ (('gitea-jwt@' + deployment_secret) | hash('sha256'))[:64] }}"
     - dest: gitea_secret_key
-      content: "{{ ('gitea-secret@' + hostname | hash('sha1'))[:24] }}"
+      content: "{{ (('gitea-secret@' + deployment_secret) | hash('sha256'))[:64] }}"
 
 - name: Deploy containers
   ansible.builtin.import_role:

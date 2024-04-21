@@ -7,11 +7,11 @@ core_lldap_postgres_version: 16
 core_lldap_admin_password: changeme
 
 # DB password
-core_lldap_db_password: "{{ (('lldap-db@' + domain) | hash('sha1'))[:24] }}"
+core_lldap_db_password: "{{ (('lldap-db@' + deployment_secret) | hash('sha256'))[:64] }}"
 
 # Password for the readonly user
 # This user is used by other applications (like mealie) to query the ldap users
-core_lldap_readonly_password: "{{ (('lldap-readonly@' + domain) | hash('sha1'))[:24] }}"
+core_lldap_readonly_password: "{{ (('lldap-readonly@' + deployment_secret) | hash('sha256'))[:64] }}"
 
 # Groups to create
 #
@@ -57,8 +57,30 @@ core_authelia_version: 4.38
 core_authelia_postgres_version: 16
 core_authelia_redis_version: 7
 
-### portainer
-core_portainer_version: 2.19.4
+core_authelia_portainer_client: true
+core_authelia_portainer_host: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
+core_authelia_portainer_secret: "{{ (('portainer@' + deployment_secret) | hash('sha256'))[:64] }}"
+
+core_authelia_grafana_client: true
+core_authelia_grafana_host: "{{ (groups['monitoring'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
+core_authelia_grafana_secret: "{{ (('grafana@' + deployment_secret) | hash('sha256'))[:64] }}"
+
+core_authelia_vikunja_client: true
+core_authelia_vikunja_host: "{{ (groups['vikunja'] | intersect(groups[deployment_env]))[0] }}"
+core_authelia_vikunja_secret: "{{ (('vikunja@' + deployment_secret) | hash('sha256'))[:64] }}"
+
+core_authelia_mealie_client: true
+core_authelia_mealie_host: "{{ (groups['mealie'] | intersect(groups[deployment_env]))[0] }}"
+
+### Portainer
+core_portainer_version: 2.20.1
+
+# admin user and password
+core_portainer_admin_user: rsandor
+core_portainer_admin_password: portainer@yavin # TODO: move into vaultwarden
+
+# list of portainer agents to add to portainer
+core_portainer_agents: "{{ groups['base'] | intersect(groups[deployment_env]) | product(['.' + domain]) | map('join') | list }}"
 
 ### ntfy - notification service
 core_ntfy_version: v2.8.0
@@ -66,10 +88,12 @@ core_ntfy_version: v2.8.0
 ### homepage - dashboard
 core_homepage_version: latest
 
-core_homepage_docker:
-  local:
-    host: "{{ hostname }}"
-    port: 2375
+core_homepage_docker: >-
+  [
+  {% for host in groups['base'] | intersect(groups[deployment_env]) | sort %}
+  { 'host': '{{ host }}.{{ domain }}', 'port': 2375 },
+  {% endfor %}
+  ]
 
 core_homepage_settings:
   title: "{{ hostname }}"

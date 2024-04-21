@@ -130,10 +130,15 @@ services:
 networks:
   traefik:
     external: true
-  diun: {}
-  docker: {}
-  portainer: {}
+  diun:
+    name: diun
+  docker:
+    name: docker
+  portainer:
+    name: portainer
 
 volumes:
   traefik-letsencrypt:
+    name: traefik-letsencrypt
   diun-data:
+    name: diun-data

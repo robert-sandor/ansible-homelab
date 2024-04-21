@@ -56,7 +56,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.homepage.loadbalancer.server.port: 3000
-      traefik.http.routers.homepage.rule: Host(`{{ hostname }}`) || Host(`home.{{ hostname }}`)
+      traefik.http.routers.homepage.rule: Host(`{{ hostname }}`) || Host(`home.{{ hostname }}`) || Host(`home.{{ domain }}`)
       traefik.http.routers.homepage.entrypoints: https
       traefik.http.routers.homepage.service: homepage
 
@@ -101,8 +101,10 @@ services:
     volumes:
       - ./lldap:/data
     depends_on:
-      - lldap-postgres
-      - mailrise
+      lldap-postgres:
+        condition: service_healthy
+      mailrise:
+        condition: service_started
     labels:
       traefik.enable: true
       traefik.http.services.lldap.loadbalancer.server.port: 17170
@@ -170,10 +172,14 @@ services:
     volumes:
       - ./authelia:/config
     depends_on:
-      - authelia-postgres
-      - authelia-redis
-      - lldap
-      - mailrise
+      authelia-postgres:
+        condition: service_healthy
+      authelia-redis:
+        condition: service_healthy
+      lldap:
+        condition: service_healthy
+      mailrise:
+        condition: service_started
     labels:
       traefik.enable: true
       traefik.http.services.authelia.loadbalancer.server.port: 9091
@@ -237,7 +243,6 @@ services:
       - traefik
     volumes:
       - portainer-data:/data
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       traefik.enable: true
       traefik.http.services.portainer.loadbalancer.server.port: 9000
@@ -253,14 +258,21 @@ services:
 
 volumes:
   lldap-postgres:
+    name: lldap-db
   authelia-postgres:
+    name: authelia-db
   authelia-redis:
+    name: authelia-cache
   portainer-data:
+    name: portainer-data
   ntfy-cache:
+    name: ntfy-cache
 
 networks:
   authelia:
+    name: authelia
   lldap:
+    name: lldap
   traefik:
     external: true
 

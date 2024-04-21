@@ -5,9 +5,6 @@ timezone: Etc/UTC
 # Domain for the deployment
 domain: example.xyz
 
-# Hostname of the host where core is deployed
-core_host: core
-
 # Path on the host system where to deploy
 deploy_path: /home/{{ ansible_facts.user_id }}/docker
 

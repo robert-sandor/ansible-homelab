@@ -2,7 +2,7 @@
 - name: Base configuration
   vars:
     hostname: "{{ ansible_hostname }}.{{ domain }}"
-    core_hostname: "{{ core_host }}.{{ domain }}"
+    core_hostname: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] }}.{{ domain }}"
   block:
     - name: Install docker
       ansible.builtin.import_tasks: ./docker.yml

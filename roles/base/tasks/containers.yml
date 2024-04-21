@@ -5,11 +5,11 @@
     path: "{{ deploy_path }}/{{ item }}"
     mode: "0755"
   loop:
-    # - base - NOTE: likely not needed
     - base/traefik
     - base/traefik_secrets
 
 - name: Create traefik secrets
+  no_log: true
   ansible.builtin.copy:
     content: "{{ item.value }}"
     dest: "{{ deploy_path }}/base/traefik_secrets/{{ item.key | lower }}"

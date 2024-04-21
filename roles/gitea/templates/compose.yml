@@ -6,6 +6,9 @@ services:
     image: gitea/gitea:{{ gitea_gitea_version }}-rootless
     restart: unless-stopped
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    depends_on:
+      gitea-db:
+        condition: service_healthy
     secrets:
       - gitea_postgres_password
       - gitea_jwt_secret
@@ -42,6 +45,13 @@ services:
       - ./gitea:/var/lib/gitea
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+    # healthcheck:
+    #   test: curl --fail 127.0.0.1:3000/api/healtz
+    #   start_period: 10s
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 3
+
     labels:
       traefik.enable: true
       traefik.http.services.gitea.loadbalancer.server.port: 3000

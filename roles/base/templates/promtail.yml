@@ -6,7 +6,7 @@ positions:
   filename: /tmp/positions.yml
 
 clients:
-  - url: https://loki.staging.{{ domain }}/loki/api/v1/push
+  - url: https://loki.{{ base_promtail_loki_host }}.{{ domain }}/loki/api/v1/push
 
 scrape_configs:
   - job_name: system

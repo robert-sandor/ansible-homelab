@@ -35,6 +35,7 @@ entryPoints:
       tls:
         certResolver: letsencrypt
         domains:
+          - main: home.{{ domain }}
           - main: "{{ ansible_hostname }}.{{ domain }}"
             sans:
               - "*.{{ ansible_hostname }}.{{ domain }}"

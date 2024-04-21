@@ -11,20 +11,33 @@ base_gpu_nvidia: false
 
 ### Traefik - reverse proxy
 base_traefik_version: v3.0
+# Email to use for the letsencrypt certificate
+base_traefik_acme_email: admin@{{ domain }}
+# Toggle to use the staging letsencrypt server
+base_traefik_acme_staging: true
+# DNS provider for acme DNS-01 challenge
+base_traefik_dns_provider: cloudflare
+# Environment variables to add to traefik for the above DNS provider - example is for cloudflare
+base_traefik_env:
+  CF_API_EMAIL: admin@{{ domain }}
+  CF_DNS_API_TOKEN: ""
 
 ### DIUN - docker image update notifier
 base_diun_version: 4
 # Cron schedule on when diun runs and checks for updates
 base_diun_schedule: 0 0 * * sat
+# Discord webhook
+base_diun_discord_webhook: https://discord.com/api/webhooks/.../...
 
 ### Docker Socket Proxy - a proxy to control exposed docker api resources
 base_dsp_version: 1.24.0
 
 ### Portainer agent - used by Portainer to connect to this host
-base_portainer_agent_version: 2.19.4
+base_portainer_agent_version: 2.20.1
 
 ### Prometheus node exporter - expose host metrics for prometheus
 base_node_exporter_version: v1.7.0
 
 ### Grafana promtail - expose host logs for loki
 base_promtail_version: 2.9.4
+base_promtail_loki_host: "{{ (groups['monitoring'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"

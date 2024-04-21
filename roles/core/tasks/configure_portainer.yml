@@ -49,7 +49,7 @@
           authenticationMethod: 3
           oauthSettings:
             clientId: portainer
-            clientSecret: "{{ core_authelia_oidc_portainer_secret.plain }}"
+            clientSecret: "{{ core_authelia_portainer_secret }}"
             accessTokenUri: https://auth.{{ hostname }}/api/oidc/token
             authorizationUri: https://auth.{{ hostname }}/api/oidc/authorization
             resourceUri: https://auth.{{ hostname }}/api/oidc/userinfo
@@ -68,23 +68,6 @@
           authorization: "{{ auth_header }}"
         validate_certs: "{{ validate_certs }}"
       register: core_portainer_endpoints
-
-    - name: Local environment
-      when: core_portainer_endpoints.json | json_query(query) | length == 0
-      vars:
-        query: "[?contains(URL,'unix:///var/run/docker.sock')]"
-      ansible.builtin.uri:
-        method: POST
-        url: "{{ portainer_api }}/endpoints"
-        body_format: form-urlencoded
-        body:
-          Name: local
-          EndpointCreationType: "1"
-          URL: "unix:///var/run/docker.sock"
-          TLS: "false"
-        headers:
-          authorization: "{{ auth_header }}"
-        validate_certs: "{{ validate_certs }}"
 
     - name: Update agents
       vars:

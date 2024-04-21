@@ -1,4 +1,7 @@
 ---
+- name: Authelia hash secrets
+  ansible.builtin.import_tasks: ./authelia_config.yml
+
 - name: Create directory structure
   ansible.builtin.file:
     state: directory
