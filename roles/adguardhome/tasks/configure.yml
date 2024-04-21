@@ -1,11 +1,17 @@
 ---
 - name: Configure adguardhome
   vars:
-    adguardhome_api: "https://adguardhome.{{ hostname }}/control"
+    adguardhome_api: "http://127.0.0.1:3000/control"
     adguardhome_cookie: agh_session={{ adguardhome_auth_response.cookies.agh_session }}
-    adguardhome_rewrite_list: "[{% for host in adguardhome_wildcard_hosts %}\
-      {'domain': '*.{{ host }}.{{ domain }}', 'answer': '{{ host }}.{{ domain }}'},\
-      {% endfor %}]"
+    adguardhome_rewrite_list: >-
+      [
+      {% for host in adguardhome_wildcard_hosts %}
+      {'domain': '*.{{ host }}.{{ domain }}', 'answer': '{{ host }}.{{ domain }}'},
+      {% endfor %}
+      {% for rewrite in adguardhome_rewrites %}
+      {'domain': '{{ rewrite.domain }}', 'answer': '{{ rewrite.answer }}'},
+      {% endfor %}
+      ]
     adguardhome_existing_filters: "{{ adguardhome_filters_response.json | json_query('filters[].{ enabled: enabled, name: name, url: url }') }}"
   block:
     - name: Initialize

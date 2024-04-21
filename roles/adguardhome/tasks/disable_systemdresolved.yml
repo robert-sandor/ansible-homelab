@@ -1,24 +1,34 @@
 ---
-- name: Ensure /etc/systemd/resolved.conf.d exists
-  ansible.builtin.file:
-    state: directory
-    path: /etc/systemd/resolved.conf.d
-    mode: "0755"
+- name: Get services
+  ansible.builtin.service_facts: {}
+  register: system_services
 
-- name: Copy /etc/systemd/resolved.conf.d/adguardhome.conf
-  ansible.builtin.copy:
-    dest: /etc/systemd/resolved.conf.d/adguardhome.conf
-    content: |
-      [Resolve]
-      DNS=127.0.0.1
-      DNSStubListener=no
-    mode: "0644"
-  notify: restart-systemd-resolved
+- name: Disable systemd resolved
+  when: >
+    'systemd-resolved.service' in system_services.ansible_facts.services and
+    system_services.ansible_facts.services['systemd-resolved.service'].status == 'enabled'
+  block:
+    - name: Ensure /etc/systemd/resolved.conf.d exists
+      ansible.builtin.file:
+        state: directory
+        path: /etc/systemd/resolved.conf.d
+        mode: "0755"
 
-- name: Relink /etc/resolv.conf
-  ansible.builtin.file:
-    src: /run/systemd/resolve/resolv.conf
-    dest: /etc/resolv.conf
-    state: link
-    force: true
-  notify: restart-systemd-resolved
+    - name: Copy /etc/systemd/resolved.conf.d/adguardhome.conf
+      ansible.builtin.copy:
+        dest: /etc/systemd/resolved.conf.d/adguardhome.conf
+        content: |
+          [Resolve]
+          DNS=127.0.0.1
+          DNSStubListener=no
+        mode: "0644"
+      notify: restart-systemd-resolved
+
+    - name: Relink /etc/resolv.conf
+      ansible.builtin.file:
+        src: /run/systemd/resolve/resolv.conf
+        dest: /etc/resolv.conf
+        state: link
+        force: true
+        follow: false
+      notify: restart-systemd-resolved
