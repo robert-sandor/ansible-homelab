@@ -6,12 +6,13 @@ services:
     image: vaultwarden/server:{{ vaultwarden_version }}
     restart: unless-stopped
     depends_on:
-      - vaultwarden-db
+      vaultwarden-db:
+        condition: service_healthy
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     secrets:
-      - vaultwarden_postgres_url
+      - vaultwarden_db_url
     environment:
-      DATABASE_URL_FILE: /run/secrets/vaultwarden_postgres_url
+      DATABASE_URL_FILE: /run/secrets/vaultwarden_db_url
       DOMAIN: https://vaultwarden.{{ hostname }}
       SIGNUPS_ALLOWED: "{{ vaultwarden_allow_signups }}"
       SHOW_PASSWORD_HINT: false
@@ -39,12 +40,12 @@ services:
     image: postgres:{{ vaultwarden_postgres_version }}
     restart: unless-stopped
     secrets:
-      - vaultwarden_postgres_password
+      - vaultwarden_db_password
     environment:
       TZ: "{{ timezone }}"
-      POSTGRES_USER: "{{ vaultwarden_postgres_user }}"
-      POSTGRES_DB: "{{ vaultwarden_postgres_database }}"
-      POSTGRES_PASSWORD_FILE: /run/secrets/vaultwarden_postgres_password
+      POSTGRES_USER: "{{ vaultwarden_db_user }}"
+      POSTGRES_DB: "{{ vaultwarden_db_name }}"
+      POSTGRES_PASSWORD_FILE: /run/secrets/vaultwarden_db_password
     networks:
       - vaultwarden
     volumes:
@@ -61,10 +62,10 @@ volumes:
     name: vaultwarden-db
 
 secrets:
-  vaultwarden_postgres_password:
-    file: ./secrets/vaultwarden_postgres_password
-  vaultwarden_postgres_url:
-    file: ./secrets/vaultwarden_postgres_url
+  vaultwarden_db_password:
+    file: ./secrets/vaultwarden_db_password
+  vaultwarden_db_url:
+    file: ./secrets/vaultwarden_db_url
 
 networks:
   traefik:

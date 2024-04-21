@@ -17,17 +17,15 @@
 
 - name: Set secrets
   no_log: true
-  vars:
-    db_pass: "{{ (('vaultwarden-db@' + domain) | hash('sha1'))[:24] }}"
   ansible.builtin.copy:
     content: "{{ item.content }}"
     dest: "{{ vaultwarden_deploy_path }}/secrets/{{ item.dest }}"
     mode: "0600"
   loop:
-    - dest: vaultwarden_postgres_password
-      content: "{{ db_pass }}"
-    - dest: vaultwarden_postgres_url
-      content: "postgresql://{{ vaultwarden_postgres_user }}:{{ db_pass }}@vaultwarden-db:5432/{{ vaultwarden_postgres_database }}"
+    - dest: vaultwarden_db_password
+      content: "{{ vaultwarden_db_password }}"
+    - dest: vaultwarden_db_url
+      content: "postgresql://{{ vaultwarden_db_user }}:{{ vaultwarden_db_password }}@vaultwarden-db:5432/{{ vaultwarden_db_name }}"
 
 - name: Deploy containers
   ansible.builtin.import_role:
