@@ -2,7 +2,6 @@
 - name: Base configuration
   vars:
     hostname: "{{ ansible_hostname }}.{{ domain }}"
-    core_hostname: "{{ core_host }}.{{ domain }}"
   block:
     - name: Set hostname
       become: true
@@ -24,12 +23,15 @@
           - python3-virtualenv
           - git
           - lshw
-          - zsh
+          - fish
           - bat
           - ncdu
           - exa
           - dnsutils
           - yq
+          - tmux
+          - vim
+          - btop
 
     - name: Install VM dependencies
       become: true
@@ -39,23 +41,20 @@
       when: ansible_facts.virtualization_role == 'guest'
       notify: Reboot
 
-    - name: Change shell to zsh
-      become: true
-      ansible.builtin.user:
-        name: "{{ ansible_facts.user_id }}"
-        shell: /bin/zsh
-
-    - name: Copy zshrc
+    - name: Copy config.fish
       ansible.builtin.copy:
-        src: zshrc
-        dest: ~/.zshrc
+        src: config.fish
+        dest: ~/.config/fish/
         mode: "0644"
 
-    - name: Copy p10k.zsh
-      ansible.builtin.copy:
-        src: p10k.zsh
-        dest: ~/.p10k.zsh
-        mode: "0644"
+    - name: Install starship
+      ansible.builtin.import_tasks: ./starship.yml
+
+    - name: Configure bashrc to auto-open fish when interactive
+      ansible.builtin.lineinfile:
+        path: ~/.bashrc
+        state: present
+        line: "if command -v fish &> /dev/null; then exec fish; fi"
 
     - name: Create virtualenv
       ansible.builtin.command:
