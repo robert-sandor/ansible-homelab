@@ -22,3 +22,6 @@
 
 - name: Deploy mealie
   ansible.builtin.import_playbook: ./mealie.yml
+
+- name: Vikunja
+  ansible.builtin.import_playbook: ./vikunja.yml

@@ -1,0 +1,39 @@
+---
+- name: Directory structure
+  ansible.builtin.file:
+    state: directory
+    path: "{{ vikunja_deploy_path }}/{{ item.path }}"
+    mode: "{{ item.mode | default('0755') }}"
+  loop:
+    - path: files
+    - path: secrets
+      mode: "0700"
+
+- name: Template compose
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ vikunja_deploy_path }}/compose.yml"
+    mode: "0644"
+
+- name: Template config
+  ansible.builtin.template:
+    src: config.yml
+    dest: "{{ vikunja_deploy_path }}/config.yml"
+    mode: "0600"
+
+- name: Set secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ vikunja_deploy_path }}/secrets/{{ item.dest }}"
+    mode: "0600"
+  loop:
+    - dest: vikunja_db_password
+      content: "{{ vikunja_db_password }}"
+
+- name: Deploy containers
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: compose
+  vars:
+    common_project_src: "{{ vikunja_deploy_path }}"

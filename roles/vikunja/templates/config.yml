@@ -1,0 +1,94 @@
+service:
+  JWTSecret: "{{ vikunja_jwt_secret }}"
+  publicurl: https://vikunja.{{ hostname }}
+  enablecaldav: false # disabling for now as it's unstable
+  enableregistration: true
+  timezone: "{{ timezone }}"
+  # If enabled, vikunja will send an email to everyone who is either assigned to a task or created it when a task reminder
+  # is due.
+  enableemailreminders: true
+  allowiconchanges: false
+
+database:
+  type: postgres
+  host: vikunja-db
+  user: "{{ vikunja_db_user }}"
+  password: "{{ vikunja_db_password }}"
+  database: "{{ vikunja_db_name }}"
+
+typesense:
+  # Whether to enable the Typesense integration. If true, all tasks will be synced to the configured Typesense
+  # instance and all search and filtering will run through Typesense instead of only through the database.
+  # Typesense allows fast fulltext search including fuzzy matching support. It may return different results than
+  # what you'd get with a database-only search.
+  enabled: false
+  # The url to the Typesense instance you want to use. Can be hosted locally or in Typesense Cloud as long
+  # as Vikunja is able to reach it.
+  url: ""
+  # The Typesense API key you want to use.
+  apikey: ""
+
+mailer:
+  enabled: true
+  # SMTP Host
+  host: "{{ core_hostname }}"
+  # SMTP Host port.
+  # **NOTE:** If you're unable to send mail and the only error you see in the logs is an `EOF`, try setting the port to `25`.
+  port: 465
+  # SMTP Auth Type. Can be either `plain`, `login` or `cram-md5`.
+  authtype: "plain"
+  # SMTP username
+  username: "user"
+  # SMTP password
+  password: ""
+  # Wether to skip verification of the tls certificate on the server
+  skiptlsverify: false
+  # The default from address when sending emails
+  fromemail: "vikunja@{{ domain }}"
+  # The length of the mail queue.
+  queuelength: 100
+  # The timeout in seconds after which the current open connection to the mailserver will be closed.
+  queuetimeout: 30
+  # By default, vikunja will try to connect with starttls, use this option to force it to use ssl.
+  forcessl: false
+
+files:
+  basepath: ./files
+  maxsize: 20MB
+
+backgrounds:
+  enabled: false
+
+auth:
+  local:
+    enabled: false
+  # OpenID configuration will allow users to authenticate through a third-party OpenID Connect compatible provider.<br/>
+  # The provider needs to support the `openid`, `profile` and `email` scopes.<br/>
+  # **Note:** Some openid providers (like Gitlab) only make the email of the user available through OpenID if they have set it to be publicly visible.
+  # If the email is not public in those cases, authenticating will fail.
+  # **Note 2:** The frontend expects the third party to rediect the user <frontend-url>/auth/openid/<auth key> after authentication. Please make sure to configure the redirect url in your third party auth service accordingly if you're using the default vikunja frontend.
+  # The frontend will automatically provide the API with the redirect url, composed from the current url where it's hosted.
+  # If you want to use the desktop client with OpenID, make sure to allow redirects to `127.0.0.1`.
+  # Take a look at the [default config file](https://kolaente.dev/vikunja/vikunja/src/branch/main/config.yml.sample) for more information about how to configure openid authentication.
+  openid:
+    enabled: true
+    providers:
+      - name: Authelia
+        authurl: https://auth.{{ core_hostname }}
+        clientid: vikunja
+        clientsecret: "{{ vikunja_openid_secret }}"
+        scope: openid email profile
+
+# Prometheus metrics endpoint
+metrics:
+  # If set to true, enables a /metrics endpoint for prometheus to collect metrics about Vikunja. You can query it from `/api/v1/metrics`.
+  enabled: false
+  # If set to a non-empty value the /metrics endpoint will require this as a username via basic auth in combination with the password below.
+  username:
+  # If set to a non-empty value the /metrics endpoint will require this as a password via basic auth in combination with the username below.
+  password:
+
+defaultsettings:
+  avatar_provider: initials
+  week_start: 1
+  timezone: "{{ timezone }}"

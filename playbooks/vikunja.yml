@@ -1,0 +1,5 @@
+---
+- name: Deploy vikunja
+  hosts: vikunja
+  roles:
+    - vikunja
