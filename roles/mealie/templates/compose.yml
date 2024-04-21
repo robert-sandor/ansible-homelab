@@ -13,17 +13,26 @@ services:
       TZ: "{{ timezone }}"
       BASE_URL: https://mealie.{{ hostname }}
       # LDAP
-      LDAP_AUTH_ENABLED: "true"
-      LDAP_SERVER_URL: ldap://{{ core_hostname }}:3890
-      LDAP_TLS_INSECURE: "true"
-      LDAP_BASE_DN: "ou=people,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
-      LDAP_USER_FILTER: "(memberof=cn=users,ou=groups,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }})"
-      LDAP_ADMIN_FILTER: "(memberOf=cn=admins,ou=groups,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }})"
-      LDAP_QUERY_BIND: "cn=readonly,ou=people,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
-      LDAP_QUERY_PASSWORD: "{{ mealie_lldap_readonly_password }}"
-      LDAP_ID_ATTRIBUTE: "uid"
-      LDAP_NAME_ATTRIBUTE: "displayName"
-      LDAP_MAIL_ATTRIBUTE: "mail"
+      # LDAP_AUTH_ENABLED: "true"
+      # LDAP_SERVER_URL: ldap://{{ core_hostname }}:3890
+      # LDAP_TLS_INSECURE: "true"
+      # LDAP_BASE_DN: "ou=people,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
+      # LDAP_USER_FILTER: "(memberof=cn=users,ou=groups,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }})"
+      # LDAP_ADMIN_FILTER: "(memberOf=cn=admins,ou=groups,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }})"
+      # LDAP_QUERY_BIND: "cn=readonly,ou=people,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
+      # LDAP_QUERY_PASSWORD: "{{ mealie_lldap_readonly_password }}"
+      # LDAP_ID_ATTRIBUTE: "uid"
+      # LDAP_NAME_ATTRIBUTE: "displayName"
+      # LDAP_MAIL_ATTRIBUTE: "mail"
+      # OIDC
+      OIDC_AUTH_ENABLED: true
+      OIDC_SIGNUP_ENABLED: true
+      OIDC_PROVIDER_NAME: Authelia
+      OIDC_CONFIGURATION_URL: https://auth.{{ core_hostname }}/.well-known/openid-configuration
+      OIDC_CLIENT_ID: mealie
+      OIDC_AUTO_REDIRECT: false
+      OIDC_ADMIN_GROUP: admins
+      OIDC_USER_GROUP: users
       # SMTP
 
     networks:

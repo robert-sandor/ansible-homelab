@@ -2,7 +2,7 @@
 - name: Deploy mealie
   vars:
     hostname: "{{ ansible_hostname }}.{{ domain }}"
-    core_hostname: "{{ core_host }}.{{ domain }}"
+    core_hostname: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] }}.{{ domain }}"
     mealie_deploy_path: "{{ deploy_path }}/mealie"
   block:
     - name: Deploy containers
