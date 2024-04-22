@@ -19,6 +19,11 @@ if status is-interactive
   abbr mv "mv -iv"
   abbr rm "rm -rIv" # remove verbose, recursive and interactive if > 3 files
   
+  # docker
+  abbr dl "docker logs -f"
+  abbr dp "docker ps -a"
+  abbr dr "docker restart"
+
   # docker compose
   abbr dcu "docker compose up -d"
   abbr dcd "docker compose down"
@@ -29,4 +34,6 @@ if status is-interactive
   # aliases 
   type -q eza; and alias l="eza -la"
   type -q exa; and alias l="exa -la"
+  type -q bat; and alias cat="bat -p"
+  type -q batcat; and alias cat="batcat -p"
 end
