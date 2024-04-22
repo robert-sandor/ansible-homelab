@@ -14,6 +14,7 @@ base_traefik_version: v3.0
 # Email to use for the letsencrypt certificate
 base_traefik_acme_email: admin@{{ domain }}
 # Toggle to use the staging letsencrypt server
+# recommend leaving as true until the dns provider and Environment are set up correctly
 base_traefik_acme_staging: true
 # DNS provider for acme DNS-01 challenge
 base_traefik_dns_provider: cloudflare

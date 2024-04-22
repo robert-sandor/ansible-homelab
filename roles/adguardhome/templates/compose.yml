@@ -22,9 +22,9 @@ services:
       traefik.http.routers.adguardhome.rule: Host(`adguardhome.{{ hostname }}`)
       traefik.http.routers.adguardhome.entrypoints: https
       traefik.http.routers.adguardhome.service: adguardhome
-      homepage.name: adguardhome @ {{ ansible_hostname }}
+      homepage.name: adguardhome
       homepage.group: admin
-      homepage.description: network adblocker
+      homepage.description: network adblocker @ {{ ansible_hostname }}
       homepage.href: https://adguardhome.{{ hostname }}
       homepage.icon: adguard-home
       homepage.siteMonitor: https://adguardhome.{{ hostname }}
