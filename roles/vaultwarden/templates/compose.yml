@@ -28,7 +28,7 @@ services:
       traefik.http.routers.vaultwarden.entrypoints: https
       traefik.http.routers.vaultwarden.service: vaultwarden
       homepage.name: vaultwarden
-      homepage.group: admin
+      homepage.group: apps
       homepage.description: password manager
       homepage.href: https://vaultwarden.{{ hostname }}
       homepage.icon: vaultwarden
