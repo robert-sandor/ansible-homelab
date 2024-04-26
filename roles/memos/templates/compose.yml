@@ -1,0 +1,31 @@
+---
+services:
+  memos:
+    container_name: memos
+    hostname: memos
+    image: neosmemo/memos:{{ memos_version }}
+    restart: unless-stopped
+    networks:
+      - traefik
+    volumes:
+      - memos:/var/opt/memos
+    labels:
+      traefik.enable: true
+      traefik.http.services.memos.loadbalancer.server.port: 5230
+      traefik.http.routers.memos.rule: Host(`memos.{{ hostname }}`)
+      traefik.http.routers.memos.entrypoints: https
+      traefik.http.routers.memos.service: memos
+      homepage.name: memos
+      homepage.group: apps
+      homepage.description: notes
+      homepage.href: https://memos.{{ hostname }}
+      homepage.icon: memos
+      homepage.siteMonitor: https://memos.{{ hostname }}
+
+volumes:
+  memos:
+    name: memos
+
+networks:
+  traefik:
+    external: true

@@ -25,3 +25,6 @@
 
 - name: Vikunja
   ansible.builtin.import_playbook: ./vikunja.yml
+
+- name: Memos
+  ansible.builtin.import_playbook: ./memos.yml
