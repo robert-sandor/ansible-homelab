@@ -3,7 +3,6 @@ monitoring_grafana_version: 10.4.0
 
 monitoring_prometheus_version: v2.50.1
 
-monitoring_prometheus_scrape_hosts:
-  - "{{ ansible_hostname }}"
+monitoring_prometheus_scrape_hosts: "{{ groups['base'] | intersect(groups[deployment_env]) }}"
 
 monitoring_loki_version: 2.9.6

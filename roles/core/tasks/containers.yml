@@ -42,31 +42,39 @@
     mode: "0600"
   notify: docker-restart-authelia
 
-- name: Set secrets
+- name: Set LLDAP secrets
   no_log: true
   ansible.builtin.copy:
     content: "{{ item.content }}"
     dest: "{{ deploy_path }}/core/secrets/{{ item.dest }}"
     mode: "0600"
-    force: false
+  notify: docker-restart-lldap
   loop:
     - dest: lldap_user_pass
       content: "{{ core_lldap_admin_password }}"
     - dest: lldap_postgres_password
       content: "{{ core_lldap_db_password }}"
     - dest: lldap_jwt_secret
-      content: "{{ lookup('community.general.random_string', length=32) }}"
+      content: "{{ core_lldap_jwt_secret }}"
+
+- name: Set Authelia secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ deploy_path }}/core/secrets/{{ item.dest }}"
+    mode: "0600"
+  notify: docker-restart-authelia
+  loop:
     - dest: authelia_identity_validation_reset_password_jwt_secret
-      content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
+      content: "{{ core_authelia_identity_validation_reset_password_jwt_secret }}"
     - dest: authelia_session_secret
-      content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
+      content: "{{ core_authelia_session_secret }}"
     - dest: authelia_storage_secret
-      content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
+      content: "{{ core_authelia_storage_secret }}"
     - dest: authelia_postgres_password
-      content: "{{ lookup('community.general.random_string', length=32) }}"
+      content: "{{ core_authelia_postgres_password }}"
     - dest: authelia_oidc_hmac_secret
-      content: "{{ lookup('community.general.random_string', length=64, special=False) }}"
-  register: core_secrets_updates
+      content: "{{ core_authelia_oidc_hmac_secret }}"
 
 - name: Copy homepage config
   ansible.builtin.copy:
@@ -82,7 +90,7 @@
       content: "{{ core_homepage_services | to_nice_yaml if core_homepage_services | length > 0 else '' }}"
     - dest: bookmarks.yaml
       content: "{{ core_homepage_bookmarks | to_nice_yaml if core_homepage_bookmarks | length > 0 else '' }}"
-  register: core_secrets_updates
+  notify: docker-restart-homepage
 
 - name: Generate authelia OIDC HMAC secret
   ansible.builtin.command:
@@ -94,7 +102,7 @@
       --file.private-key authelia_oidc_issuer_private_key
       --file.public-key authelia_oidc_issuer_public_key
     creates: "{{ deploy_path }}/core/secrets/authelia_oidc_issuer_private_key"
-  register: core_authelia_oidc_update
+  notify: docker-restart-authelia
 
 - name: Deploy containers
   ansible.builtin.import_role:
@@ -102,4 +110,6 @@
     tasks_from: compose
   vars:
     common_project_src: "{{ deploy_path }}/core"
-    common_force_recreate: "{{ core_template_updates.changed or core_secrets_updates.changed or core_authelia_oidc_update.changed }}"
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

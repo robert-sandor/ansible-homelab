@@ -78,6 +78,7 @@ services:
       traefik.tcp.routers.mailrise.entrypoints: smtp
       traefik.tcp.routers.mailrise.tls.certresolver: letsencrypt
       traefik.tcp.routers.mailrise.tls.domains[0].main: "mailrise.{{ hostname }}"
+      traefik.tcp.routers.mailrise.tls.domains[0].sans: ""
 
   lldap:
     container_name: lldap
@@ -147,14 +148,6 @@ services:
     image: authelia/authelia:{{ core_authelia_version }}
     restart: unless-stopped
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
-    secrets:
-      - authelia_identity_validation_reset_password_jwt_secret
-      - lldap_user_pass
-      - authelia_session_secret
-      - authelia_storage_secret
-      - authelia_postgres_password
-      - authelia_oidc_hmac_secret
-      - authelia_oidc_issuer_private_key
     environment:
       TZ: "{{ timezone }}"
       X_AUTHELIA_CONFIG_FILTERS: template
@@ -171,6 +164,7 @@ services:
       - "9091:9091"
     volumes:
       - ./authelia:/config
+      - ./secrets:/run/secrets:ro
     depends_on:
       authelia-postgres:
         condition: service_healthy

@@ -13,6 +13,9 @@ core_lldap_db_password: "{{ (('lldap-db@' + deployment_secret) | hash('sha256'))
 # This user is used by other applications (like mealie) to query the ldap users
 core_lldap_readonly_password: "{{ (('lldap-readonly@' + deployment_secret) | hash('sha256'))[:64] }}"
 
+# LLDAP JWT secret
+core_lldap_jwt_secret: "{{ (('lldap-jwt@' + deployment_secret) | hash('sha256'))[:64] }}"
+
 # Groups to create
 #
 # Dictionary of groups, each having the key as the group name and value as either 'present' or 'absent' - defaults to 'present'
@@ -57,6 +60,12 @@ core_authelia_version: 4.38
 core_authelia_postgres_version: 16
 core_authelia_redis_version: 7
 
+core_authelia_postgres_password: "{{ (('portainer@' + deployment_secret) | hash('sha256'))[:64] }}"
+core_authelia_identity_validation_reset_password_jwt_secret: "{{ (('jwt-authelia@' + deployment_secret) | hash('sha256'))[:64] }}"
+core_authelia_session_secret: "{{ (('session-authelia@' + deployment_secret) | hash('sha256'))[:64] }}"
+core_authelia_storage_secret: "{{ (('storage-authelia@' + deployment_secret) | hash('sha256'))[:64] }}"
+core_authelia_oidc_hmac_secret: "{{ (('oidc-hmac-authelia@' + deployment_secret) | hash('sha256'))[:64] }}"
+
 core_authelia_portainer_client: true
 core_authelia_portainer_host: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
 core_authelia_portainer_secret: "{{ (('portainer@' + deployment_secret) | hash('sha256'))[:64] }}"
@@ -71,6 +80,10 @@ core_authelia_vikunja_secret: "{{ (('vikunja@' + deployment_secret) | hash('sha2
 
 core_authelia_mealie_client: true
 core_authelia_mealie_host: "{{ (groups['mealie'] | intersect(groups[deployment_env]))[0] }}"
+
+core_authelia_memos_client: true
+core_authelia_memos_host: "{{ (groups['memos'] | intersect(groups[deployment_env]))[0] }}"
+core_authelia_memos_secret: "{{ (('memos@' + deployment_secret) | hash('sha256'))[:64] }}"
 
 ### Portainer
 core_portainer_version: 2.20.1

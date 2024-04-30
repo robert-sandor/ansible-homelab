@@ -5,14 +5,26 @@
     name: mailrise
     restart: true
 
+- name: Restart homepage
+  listen: docker-restart-homepage
+  community.docker.docker_container:
+    name: homepage
+    restart: true
+
 - name: Restart lldap
   listen: docker-restart-lldap
   community.docker.docker_container:
-    name: lldap
+    name: "{{ item }}"
     restart: true
+  loop:
+    - lldap
+    - lldap-postgres
 
 - name: Restart authelia
   listen: docker-restart-authelia
   community.docker.docker_container:
-    name: authelia
+    name: "{{ item }}"
     restart: true
+  loop:
+    - authelia
+    - authelia-postgres

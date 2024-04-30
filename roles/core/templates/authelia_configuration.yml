@@ -88,7 +88,8 @@ identity_providers:
 
       - client_id: portainer
         client_name: Portainer
-        client_secret: "{{ authelia_hashed_oidc_secrets[core_authelia_portainer_secret] }}"
+        client_secret: >-
+          {{ '{{ secret "/run/secrets/authelia_portainer_client_secret" }}' }}
         authorization_policy: one_factor
         redirect_uris:
           - https://portainer.{{ core_authelia_portainer_host }}.{{ domain }}
@@ -103,7 +104,8 @@ identity_providers:
 
       - client_id: grafana
         client_name: Grafana
-        client_secret: "{{ authelia_hashed_oidc_secrets[core_authelia_grafana_secret] }}"
+        client_secret: >-
+          {{ '{{ secret "/run/secrets/authelia_grafana_client_secret" }}' }}
         public: false
         authorization_policy: one_factor
         redirect_uris:
@@ -120,7 +122,8 @@ identity_providers:
 
       - client_id: vikunja
         client_name: vikunja
-        client_secret: "{{ authelia_hashed_oidc_secrets[core_authelia_vikunja_secret] }}"
+        client_secret: >-
+          {{ '{{ secret "/run/secrets/authelia_vikunja_client_secret" }}' }}
         public: false
         authorization_policy: one_factor
         redirect_uris:
@@ -149,4 +152,23 @@ identity_providers:
           - groups
         userinfo_signed_response_alg: none
         token_endpoint_auth_method: none
+      # {% endif %}
+      # memos {% if core_authelia_memos_client %}
+
+      - client_id: memos
+        client_name: Memos
+        client_secret: >-
+          {{ '{{ secret "/run/secrets/authelia_memos_client_secret" }}' }}
+        public: false
+        authorization_policy: one_factor
+        redirect_uris:
+          - "https://memos.{{ core_authelia_memos_host }}.{{ domain }}/auth/callback"
+        scopes:
+          - openid
+          - profile
+          - email
+        grant_types:
+          - authorization_code
+        userinfo_signed_response_alg: none
+        token_endpoint_auth_method: client_secret_post
       # {% endif %}

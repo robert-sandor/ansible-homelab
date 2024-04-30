@@ -34,7 +34,10 @@ services:
       OIDC_ADMIN_GROUP: admins
       OIDC_USER_GROUP: users
       # SMTP
-
+      SMTP_HOST: mailrise.{{ core_hostname }}
+      SMTP_PORT: 465
+      SMTP_AUTH_STRATEGY: NONE
+      SMTP_FROM_EMAIL: mealie@{{ domain }}
     networks:
       - traefik
     volumes:

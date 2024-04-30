@@ -4,9 +4,10 @@
 - name: Authelia hash secrets
   vars:
     to_hash:
-      - "{{ core_authelia_portainer_secret }}"
-      - "{{ core_authelia_grafana_secret }}"
-      - "{{ core_authelia_vikunja_secret }}"
+      authelia_portainer_client_secret: "{{ core_authelia_portainer_secret }}"
+      authelia_grafana_client_secret: "{{ core_authelia_grafana_secret }}"
+      authelia_vikunja_client_secret: "{{ core_authelia_vikunja_secret }}"
+      authelia_memos_client_secret: "{{ core_authelia_memos_secret }}"
   block:
     - name: Authelia hash OIDC secret
       no_log: true
@@ -14,20 +15,9 @@
         executable: /usr/bin/bash
         cmd: >-
           set -o pipefail;
-          TMP=$(docker run --rm authelia/authelia:{{ core_authelia_version }} authelia crypto hash generate argon2 --password "{{ item }}");
-          echo $TMP | awk -F ' ' '{ print $2 }'
+          TMP=$(docker run --rm authelia/authelia:{{ core_authelia_version }} authelia crypto hash generate argon2 --password "{{ item.value }}");
+          echo $TMP | awk -F ' ' '{ print $2 }' > {{ core_deploy_path }}/secrets/{{ item.key }}
+        creates: "{{ core_deploy_path }}/secrets/{{ item.key }}"
       register: authelia_hashed_oidc_secret_results
       changed_when: false
-      loop: "{{ to_hash }}"
-
-    - name: Authelia save hashed secrets
-      no_log: true
-      ansible.builtin.set_fact:
-        authelia_hashed_oidc_secrets: >-
-          {{
-          authelia_hashed_oidc_secrets | default({})
-          | combine({item: authelia_hashed_oidc_secret_results.results[index].stdout})
-          }}
-      loop: "{{ to_hash }}"
-      loop_control:
-        index_var: index
+      loop: "{{ to_hash | dict2items }}"
