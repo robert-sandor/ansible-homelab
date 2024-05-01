@@ -86,6 +86,13 @@
   changed_when: false
   register: docker_daemon_config
 
+- name: Cleanup docker
+  community.docker.docker_prune:
+    containers: true
+    images: true
+    networks: true
+    volumes: false
+
 - name: Set docker daemon config
   vars:
     docker_config: "{{ docker_daemon_config.stdout | from_json if docker_daemon_config.stdout | length > 0 else {} }}"
