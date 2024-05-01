@@ -5,7 +5,9 @@ services:
     hostname: grafana
     image: grafana/grafana-oss:{{ monitoring_grafana_version }}
     restart: unless-stopped
-    # user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    depends_on:
+      - loki
+      - prometheus
     networks:
       - traefik
     volumes:
@@ -61,7 +63,7 @@ services:
       traefik.http.routers.prometheus.service: prometheus
       homepage.name: prometheus
       homepage.group: monitoring
-      homepage.description: metrics and logs viewer
+      homepage.description: time series database for metrics
       homepage.href: https://prometheus.{{ hostname }}
       homepage.icon: prometheus
       homepage.siteMonitor: https://prometheus.{{ hostname }}
