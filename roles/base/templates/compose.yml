@@ -28,11 +28,6 @@ services:
       traefik.http.routers.traefik.rule: Host(`traefik.{{ hostname }}`)
       traefik.http.routers.traefik.entrypoints: https
       traefik.http.routers.traefik.service: api@internal
-      traefik.http.routers.traefik.middlewares: authelia@docker
-      # Access to metrics
-      traefik.http.routers.traefik-metrics.rule: Host(`traefik.{{ hostname }}`) && PathPrefix(`/metrics`)
-      traefik.http.routers.traefik-metrics.entrypoints: https
-      traefik.http.routers.traefik-metrics.service: prometheus@internal
       # Authelia middlewares
       traefik.http.middlewares.authelia.forwardauth.address: http://{{ core_hostname }}:9091/api/authz/forward-auth
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: true
@@ -129,6 +124,7 @@ services:
 
 networks:
   traefik:
+    # name: traefik
     external: true
   diun:
     name: diun
