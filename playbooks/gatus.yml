@@ -1,0 +1,5 @@
+---
+- name: Deploy gatus
+  hosts: gatus
+  roles:
+    - gatus

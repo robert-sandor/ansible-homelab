@@ -1,0 +1,23 @@
+---
+gatus_version: v5.10.0
+
+gatus_postgres_version: 16
+
+gatus_discord_webhook: ""
+
+gatus_db_user: gatus
+gatus_db_password: "{{ ('gatus-db@' + deployment_secret) | hash('sha256') }}"
+gatus_db_name: gatus
+
+gatus_roles:
+  - adguardhome
+  - base
+  - core
+  - gatus
+  - gitea
+  - mealie
+  - media
+  - memos
+  - monitoring
+  - vaultwarden
+  - vikunja

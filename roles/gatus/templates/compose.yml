@@ -1,0 +1,64 @@
+---
+services:
+  gatus:
+    container_name: gatus
+    hostname: gatus
+    image: ghcr.io/twin/gatus:{{ gatus_version }}
+    restart: unless-stopped
+    depends_on:
+      gatus-db:
+        condition: service_healthy
+    networks:
+      - traefik
+      - gatus
+    volumes:
+      - ./config.yml:/config/config.yaml
+    labels:
+      traefik.enable: true
+      traefik.http.services.gatus.loadbalancer.server.port: 8080
+      traefik.http.routers.gatus.rule: Host(`gatus.{{ hostname }}`)
+      traefik.http.routers.gatus.entrypoints: https
+      traefik.http.routers.gatus.service: gatus
+      homepage.name: gatus
+      homepage.group: monitoring
+      homepage.description: uptime monitor @ {{ ansible_hostname }}
+      homepage.href: https://gatus.{{ hostname }}
+      homepage.icon: gatus
+      homepage.siteMonitor: https://gatus.{{ hostname }}
+
+  gatus-db:
+    container_name: gatus-db
+    hostname: gatus-db
+    image: postgres:{{ gatus_postgres_version }}
+    restart: unless-stopped
+    secrets:
+      - gatus_db_password
+    environment:
+      TZ: "{{ timezone }}"
+      POSTGRES_USER: "{{ gatus_db_user }}"
+      POSTGRES_DB: "{{ gatus_db_name }}"
+      POSTGRES_PASSWORD_FILE: /run/secrets/gatus_db_password
+    networks:
+      - gatus
+    volumes:
+      - gatus-db:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -d gatus -U gatus
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+secrets:
+  gatus_db_password:
+    file: ./secrets/gatus_db_password
+
+volumes:
+  gatus-db:
+    name: gatus-db
+
+networks:
+  gatus:
+    name: gatus
+  traefik:
+    external: true

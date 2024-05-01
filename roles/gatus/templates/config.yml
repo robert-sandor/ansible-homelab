@@ -1,0 +1,181 @@
+default-endpoint: &defaults
+  interval: 5m
+  client:
+    timeout: 30s
+  conditions:
+    - "[STATUS] < 400"
+    - "[RESPONSE_TIME] < 300"
+    - "[CERTIFICATE_EXPIRATION] > 48h"
+  alerts:
+    - type: ntfy
+    # discord {% if gatus_discord_webhook | length > 0 +%}
+    - type: discord
+    # end discord {% endif +%}
+
+connectivity:
+  checker:
+    target: 1.1.1.1:53
+    interval: 5m
+
+storage:
+  type: postgres
+  path: "postgres://{{ gatus_db_user }}:{{ gatus_db_password }}@gatus-db:5432/{{ gatus_db_name }}?sslmode=disable"
+  caching: true
+
+ui:
+  title: Gatus @ {{ hostname }}
+  header: Gatus @ {{ hostname }}
+
+alerting:
+  ntfy:
+    topic: gatus
+    url: https://ntfy.{{ core_hostname }}
+    priority: 1
+    default-alert:
+      failure-threshold: 3
+      send-on-resolved: true
+  # discord {% if gatus_discord_webhook | length > 0 +%}
+  discord:
+    webhook-url: "{{ gatus_discord_webhook }}"
+    title: "@everyone :sos: gatus"
+    default-alert:
+      failure-threshold: 3
+      send-on-resolved: true
+  # end discord {% endif +%}
+
+endpoints:
+  # Start gatus {% if 'gatus' in gatus_roles +%}
+  # {% for host in groups['gatus'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: gatus @ {{ host }}
+    group: gatus
+    url: https://gatus.{{ host }}.{{ domain }}
+    <<: *defaults
+  # end {{ host }}{% endfor +%}
+  # End gatus {% endif +%}
+  # Start adguardhome {% if 'adguardhome' in gatus_roles +%}
+  # {% for host in groups['adguardhome'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: adguardhome @ {{ host }}
+    group: adguardhome
+    url: https://adguardhome.{{ host }}.{{ domain }}
+    <<: *defaults
+  # end {{ host }}{% endfor +%}
+  # End adguardhome {% endif +%}
+  # Start dns {% if 'adguardhome' in gatus_roles +%}
+  # {% for host in groups['adguardhome'] | intersect(groups[deployment_env]) | difference([ansible_host]) | sort %} start {{ host }}
+  - name: dns @ {{ host }}
+    group: dns
+    url: "{{ host }}.{{ domain }}"
+    dns:
+      query-name: "{{ ansible_host }}.{{ domain }}"
+      query-type: A
+    conditions:
+      - "[BODY] == {{ ansible_default_ipv4.address }}"
+      - "[DNS_RCODE] == NOERROR"
+    alerts:
+      - type: ntfy
+        description: dns resolution failed for host {{ host }}.{{ domain }}
+  # end {{ host }}{% endfor +%}
+  # End dns {% endif +%}
+  # Start base {% if 'base' in gatus_roles +%}
+  # {% for host in groups['base'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: traefik @ {{ host }}
+    group: base
+    url: https://traefik.{{ host }}.{{ domain }}
+    <<: *defaults
+
+  - name: promtail @ {{ host }}
+    group: base
+    url: https://promtail.{{ host }}.{{ domain }}
+    <<: *defaults
+
+  - name: docker-metrics @ {{ host }}
+    group: base
+    url: https://docker.{{ host }}.{{ domain }}/metrics
+    <<: *defaults
+
+  - name: node-metrics @ {{ host }}
+    group: base
+    url: https://node.{{ host }}.{{ domain }}/metrics
+    <<: *defaults
+
+  - name: docker-api @ {{ host }}
+    group: base
+    url: tcp://{{ host }}.{{ domain }}:2375
+    <<: *defaults
+    conditions:
+      - "[CONNECTED] == true"
+  # end {{ host }}{% endfor +%}
+  # End base {% endif +%}
+  # Start core {% if 'core' in gatus_roles +%}
+  # {% for host in groups['core'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: ntfy @ {{ host }}
+    group: core
+    url: https://ntfy.{{ host }}.{{ domain }}
+    <<: *defaults
+
+  - name: homepage @ {{ host }}
+    group: core
+    url: https://home.{{ host }}.{{ domain }}
+    <<: *defaults
+
+  - name: lldap @ {{ host }}
+    group: core
+    url: https://lldap.{{ host }}.{{ domain }}
+    <<: *defaults
+
+  - name: authelia @ {{ host }}
+    group: core
+    url: https://auth.{{ host }}.{{ domain }}
+    <<: *defaults
+
+  - name: portainer @ {{ host }}
+    group: core
+    url: https://portainer.{{ host }}.{{ domain }}
+    <<: *defaults
+  # end {{ host }}{% endfor +%}
+  # End core {% endif +%}
+  # Start monitoring {% if 'monitoring' in gatus_roles +%}
+  # {% for host in groups['monitoring'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: grafana @ {{ host }}
+    group: monitoring
+    url: https://grafana.{{ host }}.{{ domain }}
+    <<: *defaults
+
+  - name: prometheus @ {{ host }}
+    group: monitoring
+    url: https://prometheus.{{ host }}.{{ domain }}
+    <<: *defaults
+  # end {{ host }}{% endfor +%}
+  # End monitoring {% endif +%}
+  # Start mealie {% if 'mealie' in gatus_roles +%}
+  # {% for host in groups['mealie'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: mealie @ {{ host }}
+    group: apps
+    url: https://mealie.{{ host }}.{{ domain }}
+    <<: *defaults
+  # end {{ host }}{% endfor +%}
+  # End mealie {% endif +%}
+  # Start memos {% if 'memos' in gatus_roles +%}
+  # {% for host in groups['memos'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: memos @ {{ host }}
+    group: apps
+    url: https://memos.{{ host }}.{{ domain }}
+    <<: *defaults
+  # end {{ host }}{% endfor +%}
+  # End memos {% endif +%}
+  # Start vaultwarden {% if 'vaultwarden' in gatus_roles +%}
+  # {% for host in groups['vaultwarden'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: vaultwarden @ {{ host }}
+    group: apps
+    url: https://vaultwarden.{{ host }}.{{ domain }}
+    <<: *defaults
+  # end {{ host }}{% endfor +%}
+  # End vaultwarden {% endif +%}
+  # Start vikunja {% if 'vikunja' in gatus_roles +%}
+  # {% for host in groups['vikunja'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+  - name: vikunja @ {{ host }}
+    group: apps
+    url: https://vikunja.{{ host }}.{{ domain }}
+    <<: *defaults
+  # end {{ host }}{% endfor +%}
+  # End vikunja {% endif +%}

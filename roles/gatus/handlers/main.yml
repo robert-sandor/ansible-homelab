@@ -1,0 +1,6 @@
+---
+- name: Restart gatus
+  listen: docker-restart-gatus
+  community.docker.docker_container:
+    name: gatus
+    restart: true

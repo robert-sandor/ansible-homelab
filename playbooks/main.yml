@@ -28,3 +28,6 @@
 
 - name: Memos
   ansible.builtin.import_playbook: ./memos.yml
+
+- name: Gatus
+  ansible.builtin.import_playbook: ./gatus.yml
