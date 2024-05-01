@@ -1,6 +1,4 @@
 ---
-# TODO: this unfortunately makes it so that the config is always changing given the random salt being added ...
-# see if there's some kind of better solution
 - name: Authelia hash secrets
   vars:
     to_hash:
@@ -17,6 +15,7 @@
           set -o pipefail;
           TMP=$(docker run --rm authelia/authelia:{{ core_authelia_version }} authelia crypto hash generate argon2 --password "{{ item.value }}");
           echo $TMP | awk -F ' ' '{ print $2 }' > {{ core_deploy_path }}/secrets/{{ item.key }}
+          chmod 0600 {{ core_deploy_path }}/secrets/{{ item.key }}
         creates: "{{ core_deploy_path }}/secrets/{{ item.key }}"
       register: authelia_hashed_oidc_secret_results
       changed_when: false

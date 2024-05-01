@@ -66,6 +66,8 @@ core_authelia_session_secret: "{{ (('session-authelia@' + deployment_secret) | h
 core_authelia_storage_secret: "{{ (('storage-authelia@' + deployment_secret) | hash('sha256'))[:64] }}"
 core_authelia_oidc_hmac_secret: "{{ (('oidc-hmac-authelia@' + deployment_secret) | hash('sha256'))[:64] }}"
 
+core_authelia_users_allowed_hosts: []
+
 core_authelia_portainer_client: true
 core_authelia_portainer_host: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
 core_authelia_portainer_secret: "{{ (('portainer@' + deployment_secret) | hash('sha256'))[:64] }}"
