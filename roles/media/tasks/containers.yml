@@ -25,7 +25,7 @@
 
 - name: Set nvidia-container-runtime
   ansible.builtin.set_fact:
-    is_nvidia_container_runtime: not dpkg_query_nvidia.failed
+    is_nvidia_container_runtime: "{{ not dpkg_query_nvidia.failed }}"
 
 - name: Template files
   ansible.builtin.template:

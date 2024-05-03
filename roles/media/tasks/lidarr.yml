@@ -112,7 +112,7 @@
             - name: urlBase
               value: "/transmission/"
             - name: musicCategory
-              value: series
+              value: music
             - name: recentMusicPriority
               value: 0
             - name: olderMusicPriority
