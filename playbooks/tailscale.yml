@@ -1,0 +1,5 @@
+---
+- name: Deploy tailscale
+  hosts: tailscale
+  roles:
+    - tailscale

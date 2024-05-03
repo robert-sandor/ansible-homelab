@@ -1,0 +1,102 @@
+---
+- name: Allow IP forwarding
+  become: true
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: 1
+    sysctl_set: true
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding
+
+- name: Install tailscale
+  ansible.builtin.include_tasks: install_{{ ansible_facts.os_family }}.yml
+
+- name: Check tailscale status
+  ansible.builtin.command: tailscale status --json
+  register: status_response
+  changed_when: false
+
+- name: Authenticate tailscale if needs login
+  vars:
+    query: "Health[?contains(@, 'NeedsLogin')] | [0]"
+    health: "{{ status_response.stdout | from_json | json_query(query) }}"
+  when: health | length > 0
+  block:
+    - name: Generate one-time auth key
+      # no_log: true
+      ansible.builtin.uri:
+        method: POST
+        url: https://api.tailscale.com/api/v2/tailnet/{{ tailscale_tailnet }}/keys
+        user: "{{ tailscale_api_key }}"
+        password: ""
+        force_basic_auth: true
+        body_format: json
+        body:
+          capabilities:
+            devices:
+              create:
+                reusable: false
+                ephemeral: false
+                preauthorized: false
+                tags: []
+        status_code: 200
+      register: create_authkey_response
+
+    - name: Use authkey to login
+      become: true
+      ansible.builtin.command: tailscale up --auth-key {{ create_authkey_response.json.key }}
+      changed_when: true
+
+- name: Get devices
+  ansible.builtin.uri:
+    method: GET
+    url: https://api.tailscale.com/api/v2/tailnet/{{ tailscale_tailnet }}/devices
+    user: "{{ tailscale_api_key }}"
+    password: ""
+    force_basic_auth: true
+    status_code: 200
+  no_log: true
+  register: devices_response
+
+- name: Update device
+  vars:
+    query: "devices[?contains(hostname, '{{ ansible_facts.hostname }}')] | [0].id"
+    device_id: "{{ devices_response.json | json_query(query) }}"
+  block:
+    - name: Get advertised and enabled routes for device {{ device_id }}
+      ansible.builtin.uri:
+        method: GET
+        url: https://api.tailscale.com/api/v2/device/{{ device_id }}/routes
+        user: "{{ tailscale_api_key }}"
+        password: ""
+        force_basic_auth: true
+        status_code: 200
+      no_log: true
+      register: get_routes_response
+
+    - name: Update advertised routes
+      become: true
+      vars:
+        advertised_routes: "{{ get_routes_response.json.advertisedRoutes | default([]) }}"
+      ansible.builtin.command:
+        "tailscale up --advertise-routes={{ tailscale_routes | join(',') }} \
+        {{ tailscale_exit_node | ternary('--advertise-exit-node', '') }}"
+      when: tailscale_routes | difference(advertised_routes) | length > 0
+      changed_when: true
+
+    - name: Enable routes
+      vars:
+        enabled_routes: "{{ get_routes_response.json.enabledRoutes }}"
+      ansible.builtin.uri:
+        method: POST
+        url: https://api.tailscale.com/api/v2/device/{{ device_id }}/routes
+        user: "{{ tailscale_api_key }}"
+        password: ""
+        force_basic_auth: true
+        body_format: json
+        body:
+          routes: "{{ tailscale_routes }}"
+        status_code: 200
+      no_log: true
+      when: tailscale_routes | length > 0 and tailscale_routes | difference(enabled_routes) | length > 0

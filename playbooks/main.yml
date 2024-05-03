@@ -1,26 +1,29 @@
 ---
-- name: Configure system
+- name: System
   ansible.builtin.import_playbook: ./system.yml
 
-- name: Deploy base
+- name: Base
   ansible.builtin.import_playbook: ./base.yml
 
-- name: Deploy core
+- name: Tailscale
+  ansible.builtin.import_playbook: ./tailscale.yml
+
+- name: Core
   ansible.builtin.import_playbook: ./core.yml
 
-- name: Deploy Vaultwarden
+- name: Vaultwarden
   ansible.builtin.import_playbook: ./vaultwarden.yml
 
-- name: Deploy adguardhome
+- name: Adguardhome
   ansible.builtin.import_playbook: ./adguardhome.yml
 
-- name: Deploy monitoring
+- name: Monitoring
   ansible.builtin.import_playbook: ./monitoring.yml
 
-- name: Deploy media
+- name: Media
   ansible.builtin.import_playbook: ./media.yml
 
-- name: Deploy mealie
+- name: Mealie
   ansible.builtin.import_playbook: ./mealie.yml
 
 - name: Vikunja
