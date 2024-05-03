@@ -83,21 +83,19 @@ identity_providers:
         - revocation
         - introspection
     clients:
-      # Grafana {% if core_authelia_portainer_client +%}
       - client_id: portainer
         client_name: Portainer
         client_secret: >-
           {{ '{{ secret "/run/secrets/authelia_portainer_client_secret" }}' }}
         authorization_policy: one_factor
         redirect_uris:
-          - https://portainer.{{ core_authelia_portainer_host }}.{{ domain }}
+          - https://portainer.{{ hostname }}
         scopes:
           - openid
           - profile
           - groups
           - email
         userinfo_signed_response_alg: none
-      # {% endif %}
       # Grafana {% if core_authelia_grafana_client +%}
       - client_id: grafana
         client_name: Grafana

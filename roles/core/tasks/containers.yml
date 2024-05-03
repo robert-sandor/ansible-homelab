@@ -1,7 +1,4 @@
 ---
-- name: Authelia hash secrets
-  ansible.builtin.import_tasks: ./authelia_config.yml
-
 - name: Create directory structure
   ansible.builtin.file:
     state: directory
@@ -52,6 +49,8 @@
   loop:
     - dest: lldap_user_pass
       content: "{{ core_lldap_admin_password }}"
+    - dest: lldap_readonly_user_pass
+      content: "{{ core_lldap_readonly_password }}"
     - dest: lldap_postgres_password
       content: "{{ core_lldap_db_password }}"
     - dest: lldap_jwt_secret
@@ -75,6 +74,9 @@
       content: "{{ core_authelia_postgres_password }}"
     - dest: authelia_oidc_hmac_secret
       content: "{{ core_authelia_oidc_hmac_secret }}"
+
+- name: Authelia hash secrets
+  ansible.builtin.import_tasks: ./authelia_config.yml
 
 - name: Copy homepage config
   ansible.builtin.copy:
