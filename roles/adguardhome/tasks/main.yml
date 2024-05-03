@@ -10,6 +10,9 @@
         apply:
           become: true
 
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
     - name: Deploy container
       ansible.builtin.import_tasks: ./containers.yml
 
