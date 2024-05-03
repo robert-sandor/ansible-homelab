@@ -34,11 +34,11 @@ base_diun_discord_webhook: https://discord.com/api/webhooks/.../...
 base_dsp_version: 1.24.0
 
 ### Portainer agent - used by Portainer to connect to this host
-base_portainer_agent_version: 2.20.1
+base_portainer_agent_version: 2.20.2
 
 ### Prometheus node exporter - expose host metrics for prometheus
-base_node_exporter_version: v1.7.0
+base_node_exporter_version: v1.8.0
 
 ### Grafana promtail - expose host logs for loki
-base_promtail_version: 2.9.4
+base_promtail_version: 2.9.8
 base_promtail_loki_host: "{{ (groups['monitoring'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
