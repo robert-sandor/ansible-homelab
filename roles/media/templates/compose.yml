@@ -331,10 +331,11 @@ services:
 
 volumes:
   media:
+    name: media
     driver_opts:
       type: cifs
       device: "//{{ media_mount_host }}{{ media_mount_path }}"
-      o: addr={{ media_mount_host }},username={{ media_mount_user }},password={{ media_mount_password }},{{ media_mount_opts }}
+      o: user={{ media_mount_user }},pass={{ media_mount_password }},{{ media_mount_opts }}
 
 networks:
   traefik:

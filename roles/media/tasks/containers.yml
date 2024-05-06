@@ -17,15 +17,12 @@
     - path: jellyfin
     - path: navidrome
 
-- name: Check nvidia-container-runtime installed
-  ansible.builtin.command: dpkg-query -W nvidia-container-runtime
-  register: dpkg_query_nvidia
-  changed_when: false
-  ignore_errors: true
+- name: Get list of packages
+  ansible.builtin.package_facts: {}
 
-- name: Set nvidia-container-runtime
+- name: Check whether nvidia-container-toolkit is installed
   ansible.builtin.set_fact:
-    is_nvidia_container_runtime: "{{ not dpkg_query_nvidia.failed }}"
+    is_nvidia_container_runtime: "{{ ansible_facts.packages['nvidia-container-toolkit'] | default([]) | length > 0 }}"
 
 - name: Template files
   ansible.builtin.template:
