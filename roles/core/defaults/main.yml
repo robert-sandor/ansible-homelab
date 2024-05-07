@@ -85,6 +85,10 @@ core_authelia_memos_client: "{{ groups['memos'] | intersect(groups[deployment_en
 core_authelia_memos_host: "{{ (groups['memos'] | intersect(groups[deployment_env]))[0] }}"
 core_authelia_memos_secret: "{{ ('memos@' + deployment_secret) | hash('sha256') }}"
 
+core_authelia_gitea_client: "{{ groups['gitea'] | intersect(groups[deployment_env]) | length == 1 }}"
+core_authelia_gitea_host: "{{ (groups['gitea'] | intersect(groups[deployment_env]))[0] }}"
+core_authelia_gitea_secret: "{{ ('gitea@' + deployment_secret) | hash('sha256') }}"
+
 ### Portainer
 core_portainer_version: 2.20.2
 

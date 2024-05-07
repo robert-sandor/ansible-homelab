@@ -6,6 +6,7 @@
       authelia_grafana_client_secret: "{{ core_authelia_grafana_secret }}"
       authelia_vikunja_client_secret: "{{ core_authelia_vikunja_secret }}"
       authelia_memos_client_secret: "{{ core_authelia_memos_secret }}"
+      authelia_gitea_client_secret: "{{ core_authelia_gitea_secret }}"
   block:
     - name: Authelia hash OIDC secret
       no_log: true
@@ -18,5 +19,5 @@
           chmod 0600 {{ core_deploy_path }}/secrets/{{ item.key }};
         creates: "{{ core_deploy_path }}/secrets/{{ item.key }}"
       register: authelia_hashed_oidc_secret_results
-      changed_when: false
+      notify: docker-restart-authelia
       loop: "{{ to_hash | dict2items }}"

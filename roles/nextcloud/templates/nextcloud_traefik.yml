@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://json.schemastore.org/traefik-v2-file-provider.json
+---
+http:
+  routers:
+    nextcloud:
+      service: nextcloud
+      rule: Host(`nextcloud.{{ hostname }}`)
+      entryPoints:
+        - https
+      middlewares:
+        - nextcloud-chain
+
+  services:
+    nextcloud:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:11000
+
+  middlewares:
+    nextcloud-secure-headers:
+      headers:
+        hostsProxyHeaders:
+          - X-Forwarded-Host
+        referrerPolicy: same-origin
+
+    nextcloud-redirect-wellknown:
+      redirectRegex:
+        permanent: true
+        regex: https://(.*)/.well-known/(card|cal)dav
+        replacement: https://${1}/remote.php/dav/
+
+    nextcloud-chain:
+      chain:
+        middlewares:
+          - nextcloud-redirect-wellknown
+          - nextcloud-secure-headers

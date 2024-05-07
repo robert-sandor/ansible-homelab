@@ -4,3 +4,9 @@
   community.docker.docker_container:
     name: gitea
     restart: true
+
+- name: Restart act-runner
+  listen: restart-act-runner
+  community.docker.docker_container:
+    name: gitea-act-runner
+    restart: true

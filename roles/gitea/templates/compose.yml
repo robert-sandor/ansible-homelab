@@ -5,6 +5,7 @@ services:
     hostname: gitea
     image: gitea/gitea:{{ gitea_gitea_version }}-rootless
     restart: unless-stopped
+    pull_policy: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     depends_on:
       gitea-db:
@@ -36,6 +37,13 @@ services:
       GITEA__security__SECRET_KEY__FILE: /run/secrets/gitea_secret_key
       GITEA__security__REVERSE_PROXY_LIMIT: 1
       GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES: 172.0.0.0/8
+      # OIDC
+      GITEA__openid__ENABLE_OPENID_SIGNIN: false
+      GITEA__openid__ENABLE_OPENID_SIGNUP: false
+      GITEA__openid__WHITELISTED_URIS: "{{ core_hostname }}"
+      GITEA__service__DISABLE_REGISTRATION: false
+      GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+      GITEA__service__SHOW_REGISTRATION_BUTTON: false
     networks:
       - gitea
       - traefik
@@ -45,13 +53,6 @@ services:
       - ./gitea:/var/lib/gitea
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    # healthcheck:
-    #   test: curl --fail 127.0.0.1:3000/api/healtz
-    #   start_period: 10s
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 3
-
     labels:
       traefik.enable: true
       traefik.http.services.gitea.loadbalancer.server.port: 3000
@@ -59,7 +60,7 @@ services:
       traefik.http.routers.gitea.entrypoints: https
       traefik.http.routers.gitea.service: gitea
       homepage.name: gitea
-      homepage.group: admin
+      homepage.group: apps
       homepage.description: git server
       homepage.href: https://gitea.{{ hostname }}
       homepage.icon: gitea
@@ -70,6 +71,7 @@ services:
     hostname: gitea-db
     image: postgres:{{ gitea_gitea_postgres_version }}
     restart: unless-stopped
+    pull_policy: always
     secrets:
       - gitea_postgres_password
     environment:
@@ -88,6 +90,25 @@ services:
       retries: 5
       start_period: 80s
 
+  gitea-act-runner:
+    container_name: gitea-act-runner
+    hostname: gitea-act-runner
+    image: gitea/act_runner:{{ gitea_act_runner_version }}
+    restart: unless-stopped
+    pull_policy: always
+    secrets:
+      - runner_registration_token
+    depends_on:
+      - gitea
+    networks:
+      - gitea
+    volumes:
+      - ./act_runner:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      GITEA_INSTANCE_URL: https://gitea.{{ hostname }}
+      GITEA_RUNNER_REGISTRATION_TOKEN_FILE: /run/secrets/runner_registration_token
+
 secrets:
   gitea_postgres_password:
     file: ./secrets/gitea_postgres_password
@@ -95,6 +116,8 @@ secrets:
     file: ./secrets/gitea_jwt_secret
   gitea_secret_key:
     file: ./secrets/gitea_secret_key
+  runner_registration_token:
+    file: ./secrets/runner_registration_token
 
 networks:
   gitea:
@@ -105,3 +128,5 @@ networks:
 volumes:
   gitea-db:
     name: gitea-db
+  # gitea-act-runner:
+  #   name: gitea-act-runner

@@ -5,6 +5,7 @@ services:
     hostname: ntfy
     image: binwiederhier/ntfy:{{ core_ntfy_version }}
     restart: unless-stopped
+    pull_policy: always
     command: serve
     environment:
       TZ: "{{ timezone }}"
@@ -45,6 +46,7 @@ services:
     hostname: homepage
     image: ghcr.io/gethomepage/homepage:{{ core_homepage_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -65,6 +67,7 @@ services:
     hostname: mailrise
     image: ghcr.io/yoryan/mailrise:{{ core_mailrise_version }}
     restart: unless-stopped
+    pull_policy: always
     networks:
       - traefik
     volumes:
@@ -85,6 +88,7 @@ services:
     hostname: lldap
     image: lldap/lldap:{{ core_lldap_version }}
     restart: unless-stopped
+    pull_policy: always
     secrets:
       - lldap_jwt_secret
       - lldap_user_pass
@@ -124,6 +128,7 @@ services:
     hostname: lldap-postgres
     image: postgres:{{ core_lldap_postgres_version }}
     restart: unless-stopped
+    pull_policy: always
     secrets:
       - lldap_postgres_password
     environment:
@@ -147,6 +152,7 @@ services:
     hostname: authelia
     image: authelia/authelia:{{ core_authelia_version }}
     restart: unless-stopped
+    pull_policy: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     environment:
       TZ: "{{ timezone }}"
@@ -192,6 +198,7 @@ services:
     hostname: authelia-redis
     image: redis:{{ core_authelia_redis_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
     networks:
@@ -210,6 +217,7 @@ services:
     hostname: authelia-postgres
     image: postgres:{{ core_authelia_postgres_version }}
     restart: unless-stopped
+    pull_policy: always
     secrets:
       - authelia_postgres_password
     environment:
@@ -233,6 +241,7 @@ services:
     hostname: portainer
     image: portainer/portainer-ce:{{ core_portainer_version }}
     restart: unless-stopped
+    pull_policy: always
     networks:
       - traefik
     volumes:

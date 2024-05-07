@@ -34,3 +34,9 @@
 
 - name: Gatus
   ansible.builtin.import_playbook: ./gatus.yml
+
+- name: Nextcloud
+  ansible.builtin.import_playbook: ./nextcloud.yml
+
+- name: Gitea
+  ansible.builtin.import_playbook: ./gitea.yml

@@ -107,11 +107,9 @@
   notify: docker-restart-authelia
 
 - name: Deploy containers
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: compose
-  vars:
-    common_project_src: "{{ deploy_path }}/core"
+  community.docker.docker_compose_v2:
+    project_src: "{{ core_deploy_path }}"
+    remove_orphans: true
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

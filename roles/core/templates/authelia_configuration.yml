@@ -67,7 +67,6 @@ notifier:
     sender: Authelia <authelia@{{ domain }}>
     identifier: auth.{{ ansible_hostname }}.{{ domain }}
     disable_require_tls: true
-    disable_starttls: true
     disable_html_emails: true
 
 identity_providers:
@@ -163,4 +162,20 @@ identity_providers:
           - authorization_code
         userinfo_signed_response_alg: none
         token_endpoint_auth_method: client_secret_post
+      # {% endif %}
+      # gitea {% if core_authelia_gitea_client +%}
+      - client_id: gitea
+        client_name: Gitea
+        client_secret: >-
+          {{ '{{ secret "/run/secrets/authelia_gitea_client_secret" }}' }}
+        public: false
+        authorization_policy: one_factor
+        redirect_uris:
+          - https://gitea.{{ core_authelia_gitea_host }}.{{ domain }}/user/oauth2/authelia/callback
+        scopes:
+          - openid
+          - email
+          - profile
+        userinfo_signed_response_alg: none
+        token_endpoint_auth_method: client_secret_basic
       # {% endif %}

@@ -1,0 +1,42 @@
+---
+- name: Gitea list auth sources
+  community.docker.docker_container_exec:
+    container: gitea
+    command: gitea admin auth list
+  changed_when: false
+  register: gitea_auth_list
+
+- name: Gitea configure LLDAP
+  when: not 'lldap' in gitea_auth_list.stdout
+  vars:
+    ldap_basedn: "{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
+  community.docker.docker_container_exec:
+    container: gitea
+    command: >-
+      gitea admin auth add-ldap --name lldap
+      --security-protocol unencrypted
+      --host {{ core_hostname }}
+      --port 3890
+      --bind-dn "uid=readonly,ou=people,{{ ldap_basedn }}"
+      --bind-password "{{ ('lldap-readonly@' + deployment_secret) | hash('sha256') }}"
+      --user-search-base "ou=people,{{ ldap_basedn }}"
+      --user-filter "(&(memberof=cn=users,ou=groups,{{ ldap_basedn }})(|(uid=%[1]s)(mail=%[1]s)))"
+      --admin-filter "(memberof=cn=admins,ou=groups,{{ ldap_basedn }})"
+      --username-attribute uid
+      --firstname-attribute givenName
+      --surname-attribute sn
+      --email-attribute mail
+      --avatar-attribute jpegPhoto
+      --synchronize-users
+
+- name: Gitea configure Authelia
+  when: not 'authelia' in gitea_auth_list.stdout
+  community.docker.docker_container_exec:
+    container: gitea
+    command: >-
+      gitea admin auth add-oauth --name authelia
+      --provider openidConnect
+      --key gitea
+      --secret "{{ ('gitea@' + deployment_secret) | hash('sha256') }}"
+      --auto-discover-url https://auth.{{ core_hostname }}/.well-known/openid-configuration
+      --skip-local-2fa

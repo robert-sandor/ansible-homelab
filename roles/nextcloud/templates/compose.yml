@@ -1,0 +1,38 @@
+---
+services:
+  nextcloud-aio-mastercontainer:
+    container_name: nextcloud-aio-mastercontainer
+    hostname: nextcloud-aio-mastercontainer
+    image: nextcloud/all-in-one:{{ nextcloud_version }}
+    restart: unless-stopped
+    pull_policy: always
+    init: true
+    environment:
+      APACHE_IP_BINDING: 0.0.0.0
+      APACHE_PORT: 11000
+      NEXTCLOUD_DATADIR: nextcloud_aio_nextcloud_datadir
+    ports:
+      - 8088:8080
+    networks:
+      - traefik
+      - nextcloud
+    volumes:
+      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      homepage.name: nextcloud
+      homepage.group: apps
+      homepage.description: selfhosted cloud
+      homepage.href: https://nextcloud.{{ hostname }}
+      homepage.icon: nextcloud
+      homepage.siteMonitor: https://nextcloud.{{ hostname }}
+
+volumes:
+  nextcloud_aio_mastercontainer:
+    name: nextcloud_aio_mastercontainer
+
+networks:
+  traefik:
+    external: true
+  nextcloud:
+    name: nextcloud
