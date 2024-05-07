@@ -17,9 +17,9 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets:
-# {% for host in monitoring_prometheus_scrape_hosts +%}
+          # {% for host in monitoring_prometheus_scrape_hosts | sort +%}
           - traefik.{{ host }}.{{ domain }}
-# {% endfor +%}
+          # {% endfor +%}
     relabel_configs:
       - source_labels:
           - __address__
@@ -30,9 +30,9 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets:
-# {% for host in monitoring_prometheus_scrape_hosts +%}
+          # {% for host in monitoring_prometheus_scrape_hosts | sort +%}
           - docker.{{ host }}.{{ domain }}
-# {% endfor +%}
+          # {% endfor +%}
     relabel_configs:
       - source_labels:
           - __address__
@@ -43,9 +43,9 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets:
-# {% for host in monitoring_prometheus_scrape_hosts +%}
+          # {% for host in monitoring_prometheus_scrape_hosts | sort +%}
           - node.{{ host }}.{{ domain }}
-# {% endfor +%}
+          # {% endfor +%}
     relabel_configs:
       - source_labels:
           - __address__

@@ -24,30 +24,13 @@
   ansible.builtin.set_fact:
     is_nvidia_container_runtime: "{{ ansible_facts.packages['nvidia-container-toolkit'] | default([]) | length > 0 }}"
 
-- name: Template files
+- name: Template compose
   ansible.builtin.template:
-    src: "{{ item.src }}"
-    dest: "{{ media_deploy_path }}/{{ item.dest }}"
-    mode: "{{ item.mode | default('0644') }}"
-  loop:
-    - src: compose.yml
-      dest: compose.yml
-  register: media_template_updates
-
-- name: Set secrets
-  no_log: true
-  ansible.builtin.copy:
-    content: "{{ item.content }}"
-    dest: "{{ media_deploy_path }}/secrets/{{ item.dest }}"
-    mode: "0600"
-    force: false
-  loop: []
-  register: media_secrets_updates
+    src: compose.yml
+    dest: "{{ media_deploy_path }}/compose.yml"
+    mode: "0644"
 
 - name: Deploy containers
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: compose
-  vars:
-    common_project_src: "{{ media_deploy_path }}"
-    common_force_recreate: "{{ media_template_updates.changed or media_secrets_updates.changed }}"
+  community.docker.docker_compose_v2:
+    project_src: "{{ media_deploy_path }}"
+    remove_orphans: true

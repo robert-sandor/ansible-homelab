@@ -12,7 +12,7 @@
   no_log: true
   ansible.builtin.copy:
     content: "{{ item.value }}"
-    dest: "{{ deploy_path }}/base/traefik_secrets/{{ item.key | lower }}"
+    dest: "{{ base_deploy_path }}/traefik_secrets/{{ item.key | lower }}"
     mode: "0600"
   loop: "{{ base_traefik_env | dict2items }}"
 
@@ -31,7 +31,7 @@
 - name: Template traefik config
   ansible.builtin.template:
     src: "{{ item }}"
-    dest: "{{ deploy_path }}/base/{{ item }}"
+    dest: "{{ base_deploy_path }}/{{ item }}"
     mode: "0644"
   notify: docker-restart-traefik
   loop:
@@ -42,14 +42,14 @@
 - name: Template diun config
   ansible.builtin.template:
     src: diun.yml
-    dest: "{{ deploy_path }}/base/diun.yml"
+    dest: "{{ base_deploy_path }}/diun.yml"
     mode: "0600"
   notify: Restart diun
 
 - name: Template promtail config
   ansible.builtin.template:
     src: promtail.yml
-    dest: "{{ deploy_path }}/base/promtail.yml"
+    dest: "{{ base_deploy_path }}/promtail.yml"
     mode: "0644"
   notify: docker-restart-promtail
 
@@ -58,8 +58,6 @@
     name: traefik
 
 - name: Deploy containers
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: compose
-  vars:
-    common_project_src: "{{ deploy_path }}/base"
+  community.docker.docker_compose_v2:
+    project_src: "{{ base_deploy_path }}"
+    remove_orphans: true

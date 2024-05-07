@@ -42,8 +42,6 @@
   notify: docker-restart-grafana
 
 - name: Docker compose up
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: compose
-  vars:
-    common_project_src: "{{ monitoring_deploy_path }}"
+  community.docker.docker_compose_v2:
+    project_src: "{{ monitoring_deploy_path }}"
+    remove_orphans: true

@@ -15,9 +15,6 @@
     mode: "0644"
 
 - name: Docker compose up
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: compose
-  vars:
-    common_project_src: "{{ adguardhome_deploy_path }}"
-    common_force_recreate: false
+  community.docker.docker_compose_v2:
+    project_src: "{{ adguardhome_deploy_path }}"
+    remove_orphans: true

@@ -32,8 +32,6 @@
       content: "{{ vikunja_db_password }}"
 
 - name: Deploy containers
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: compose
-  vars:
-    common_project_src: "{{ vikunja_deploy_path }}"
+  community.docker.docker_compose_v2:
+    project_src: "{{ vikunja_deploy_path }}"
+    remove_orphans: true
