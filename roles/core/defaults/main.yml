@@ -93,8 +93,8 @@ core_authelia_gitea_secret: "{{ ('gitea@' + deployment_secret) | hash('sha256') 
 core_portainer_version: 2.20.2
 
 # admin user and password
-core_portainer_admin_user: rsandor
-core_portainer_admin_password: portainer@yavin # TODO: move into vaultwarden
+core_portainer_admin_user: admin
+core_portainer_admin_password: changeme
 
 # list of portainer agents to add to portainer
 core_portainer_agents: "{{ groups['base'] | intersect(groups[deployment_env]) | product(['.' + domain]) | map('join') | list }}"
