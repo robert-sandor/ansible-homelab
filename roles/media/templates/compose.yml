@@ -5,6 +5,7 @@ services:
     hostname: transmission
     image: ghcr.io/linuxserver/transmission:{{ media_transmission_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -37,6 +38,7 @@ services:
     hostname: sonarr
     image: ghcr.io/linuxserver/sonarr:{{ media_sonarr_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -71,6 +73,7 @@ services:
     hostname: radarr
     image: ghcr.io/linuxserver/radarr:{{ media_radarr_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -105,6 +108,7 @@ services:
     hostname: lidarr
     image: ghcr.io/linuxserver/lidarr:{{ media_lidarr_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -139,6 +143,7 @@ services:
     hostname: bazarr
     image: ghcr.io/linuxserver/bazarr:{{ media_bazarr_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -174,6 +179,7 @@ services:
     hostname: prowlarr
     image: ghcr.io/linuxserver/prowlarr:{{ media_prowlarr_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -210,6 +216,7 @@ services:
     hostname: overseerr
     image: ghcr.io/linuxserver/overseerr:{{ media_overseerr_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -240,6 +247,7 @@ services:
     hostname: plex
     image: ghcr.io/linuxserver/plex:{{ media_plex_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -290,6 +298,7 @@ services:
     hostname: jellyfin
     image: ghcr.io/linuxserver/jellyfin:{{ media_jellyfin_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"

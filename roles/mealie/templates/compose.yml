@@ -5,6 +5,7 @@ services:
     hostname: mealie
     image: ghcr.io/mealie-recipes/mealie:{{ mealie_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       # Base settings
       ALLOW_SIGNUP: "false"

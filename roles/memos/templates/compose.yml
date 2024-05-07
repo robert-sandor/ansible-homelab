@@ -5,6 +5,7 @@ services:
     hostname: memos
     image: neosmemo/memos:{{ memos_version }}
     restart: unless-stopped
+    pull_policy: always
     networks:
       - traefik
     volumes:

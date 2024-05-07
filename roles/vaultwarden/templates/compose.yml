@@ -5,6 +5,7 @@ services:
     hostname: vaultwarden
     image: vaultwarden/server:{{ vaultwarden_version }}
     restart: unless-stopped
+    pull_policy: always
     depends_on:
       vaultwarden-db:
         condition: service_healthy
@@ -39,6 +40,7 @@ services:
     hostname: vaultwarden-db
     image: postgres:{{ vaultwarden_postgres_version }}
     restart: unless-stopped
+    pull_policy: always
     secrets:
       - vaultwarden_db_password
     environment:

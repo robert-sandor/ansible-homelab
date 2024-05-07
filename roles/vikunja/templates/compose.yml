@@ -5,6 +5,7 @@ services:
     hostname: vikunja
     image: vikunja/vikunja:{{ vikunja_version }}
     restart: unless-stopped
+    pull_policy: always
     depends_on:
       vikunja-db:
         condition: service_healthy
@@ -40,6 +41,7 @@ services:
     hostname: vikunja-db
     image: postgres:{{ vikunja_postgres_version }}
     restart: unless-stopped
+    pull_policy: always
     secrets:
       - vikunja_db_password
     environment:

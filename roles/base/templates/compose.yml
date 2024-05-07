@@ -5,6 +5,7 @@ services:
     hostname: traefik
     image: traefik:{{ base_traefik_version }}
     restart: unless-stopped
+    pull_policy: always
     env_file:
       - traefik.env
     networks:
@@ -45,6 +46,7 @@ services:
     hostname: diun.{{ hostname }}
     image: crazymax/diun:{{ base_diun_version }}
     restart: unless-stopped
+    pull_policy: always
     command: serve
     environment:
       LOG_LEVEL: info
@@ -61,6 +63,7 @@ services:
     hostname: docker_socket_proxy
     image: linuxserver/socket-proxy:{{ base_dsp_version }}
     restart: unless-stopped
+    pull_policy: always
     environment:
       CONTAINERS: 1
       LOG_LEVEL: warning
@@ -76,6 +79,7 @@ services:
     hostname: portainer_agent
     image: portainer/agent:{{ base_portainer_agent_version }}
     restart: unless-stopped
+    pull_policy: always
     networks:
       - portainer
     ports:
@@ -88,6 +92,7 @@ services:
     hostname: node_exporter
     image: quay.io/prometheus/node-exporter:{{ base_node_exporter_version }}
     restart: unless-stopped
+    pull_policy: always
     command: --path.rootfs=/host
     network_mode: host
     pid: host
@@ -99,6 +104,7 @@ services:
     hostname: promtail
     image: grafana/promtail:{{ base_promtail_version }}
     restart: unless-stopped
+    pull_policy: always
     command: -config.file=/etc/promtail/docker-config.yml
     networks:
       - traefik

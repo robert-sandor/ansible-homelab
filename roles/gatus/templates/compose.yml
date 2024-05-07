@@ -5,6 +5,7 @@ services:
     hostname: gatus
     image: ghcr.io/twin/gatus:{{ gatus_version }}
     restart: unless-stopped
+    pull_policy: always
     depends_on:
       gatus-db:
         condition: service_healthy
@@ -31,6 +32,7 @@ services:
     hostname: gatus-db
     image: postgres:{{ gatus_postgres_version }}
     restart: unless-stopped
+    pull_policy: always
     secrets:
       - gatus_db_password
     environment:
