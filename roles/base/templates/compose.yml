@@ -128,6 +128,41 @@ services:
       homepage.icon: loki
       homepage.siteMonitor: https://promtail.{{ hostname }}
 
+  glances:
+    container_name: glances
+    hostname: glances
+    image: nicolargo/glances:ubuntu-{{ base_glances_version }}-full
+    restart: unless-stopped
+    pull_policy: always
+    pid: host
+    network_mode: host
+    environment:
+      GLANCES_OPT: -w
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # {% if ansible_facts.packages['nvidia-container-toolkit'] | default([]) | length > 0 +%}
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # {% endif +%}
+    labels:
+      traefik.enable: true
+      traefik.http.services.glances.loadbalancer.server.port: 61208
+      traefik.http.routers.glances.rule: Host(`glances.{{ hostname }}`)
+      traefik.http.routers.glances.entrypoints: https
+      traefik.http.routers.glances.service: glances
+      homepage.name: glances
+      homepage.group: monitoring
+      homepage.description: system monitoring @ {{ ansible_hostname }}
+      homepage.href: https://glances.{{ hostname }}
+      homepage.icon: glances
+      homepage.siteMonitor: https://glances.{{ hostname }}
+
 networks:
   traefik:
     # name: traefik

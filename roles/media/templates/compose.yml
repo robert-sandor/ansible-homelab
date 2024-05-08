@@ -278,6 +278,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
+              count: all
               capabilities: [gpu]
     # {% endif +%}
     labels:
@@ -323,6 +324,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
+              count: all
               capabilities: [gpu]
     # {% endif +%}
     labels:

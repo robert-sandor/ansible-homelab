@@ -1,4 +1,7 @@
 ---
+- name: Get package list
+  ansible.builtin.package_facts: {}
+
 - name: Create directory structure
   ansible.builtin.file:
     state: directory

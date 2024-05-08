@@ -42,3 +42,6 @@ base_node_exporter_version: v1.8.0
 ### Grafana promtail - expose host logs for loki
 base_promtail_version: 2.9.8
 base_promtail_loki_host: "{{ (groups['monitoring'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
+
+### Glances
+base_glances_version: latest
