@@ -19,7 +19,7 @@
 
 - name: Template config
   ansible.builtin.template:
-    src: config.yml
+    src: config.yml.j2
     dest: "{{ gatus_deploy_path }}/config.yml"
     mode: "0644"
   notify: docker-restart-gatus

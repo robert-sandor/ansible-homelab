@@ -21,3 +21,5 @@ gatus_roles:
   - monitoring
   - vaultwarden
   - vikunja
+
+gatus_custom_monitors: []

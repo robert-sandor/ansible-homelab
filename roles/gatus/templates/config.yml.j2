@@ -5,12 +5,12 @@ default-endpoint: &defaults
   conditions:
     - "[STATUS] < 400"
     - "[RESPONSE_TIME] < 300"
-    - "[CERTIFICATE_EXPIRATION] > 48h"
+    - "[CERTIFICATE_EXPIRATION] > 7d"
   alerts:
     - type: ntfy
-    # discord {% if gatus_discord_webhook | length > 0 +%}
+{% if gatus_discord_webhook | length > 0 %}
     - type: discord
-    # end discord {% endif +%}
+{% endif %}
 
 connectivity:
   checker:
@@ -19,7 +19,7 @@ connectivity:
 
 storage:
   type: postgres
-  path: "postgres://{{ gatus_db_user }}:{{ gatus_db_password }}@gatus-db:5432/{{ gatus_db_name }}?sslmode=disable"
+  path: postgres://{{ gatus_db_user }}:{{ gatus_db_password }}@gatus-db:5432/{{ gatus_db_name }}?sslmode=disable
   caching: true
 
 ui:
@@ -34,34 +34,37 @@ alerting:
     default-alert:
       failure-threshold: 3
       send-on-resolved: true
-  # discord {% if gatus_discord_webhook | length > 0 +%}
+{% if gatus_discord_webhook | length > 0 %}
   discord:
     webhook-url: "{{ gatus_discord_webhook }}"
     title: "@everyone :sos: gatus"
     default-alert:
       failure-threshold: 3
       send-on-resolved: true
-  # end discord {% endif +%}
+{% endif %}
 
 endpoints:
-  # Start gatus {% if 'gatus' in gatus_roles +%}
-  # {% for host in groups['gatus'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% if 'gatus' in gatus_roles %}
+# Gatus
+{% for host in groups['gatus'] | intersect(groups[deployment_env]) | sort %} 
   - name: gatus @ {{ host }}
     group: gatus
     url: https://gatus.{{ host }}.{{ domain }}
     <<: *defaults
-  # end {{ host }}{% endfor +%}
-  # End gatus {% endif +%}
-  # Start adguardhome {% if 'adguardhome' in gatus_roles +%}
-  # {% for host in groups['adguardhome'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if 'adguardhome' in gatus_roles %}
+# Adguardhome Web
+{% for host in groups['adguardhome'] | intersect(groups[deployment_env]) | sort %} 
   - name: adguardhome @ {{ host }}
     group: adguardhome
     url: https://adguardhome.{{ host }}.{{ domain }}
     <<: *defaults
-  # end {{ host }}{% endfor +%}
-  # End adguardhome {% endif +%}
-  # Start dns {% if 'adguardhome' in gatus_roles +%}
-  # {% for host in groups['adguardhome'] | intersect(groups[deployment_env]) | difference([ansible_host]) | sort %} start {{ host }}
+{% endfor %}
+
+# Adguardhome DNS
+{% for host in groups['adguardhome'] | intersect(groups[deployment_env]) | difference([ansible_host]) | sort %} 
   - name: dns @ {{ host }}
     group: dns
     url: "{{ host }}.{{ domain }}"
@@ -74,10 +77,12 @@ endpoints:
     alerts:
       - type: ntfy
         description: dns resolution failed for host {{ host }}.{{ domain }}
-  # end {{ host }}{% endfor +%}
-  # End dns {% endif +%}
-  # Start base {% if 'base' in gatus_roles +%}
-  # {% for host in groups['base'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if 'base' in gatus_roles %}
+# Base
+{% for host in groups['base'] | intersect(groups[deployment_env]) | sort %} 
   - name: traefik @ {{ host }}
     group: base
     url: https://traefik.{{ host }}.{{ domain }}
@@ -104,10 +109,12 @@ endpoints:
     <<: *defaults
     conditions:
       - "[CONNECTED] == true"
-  # end {{ host }}{% endfor +%}
-  # End base {% endif +%}
-  # Start core {% if 'core' in gatus_roles +%}
-  # {% for host in groups['core'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if 'core' in gatus_roles %}
+# Core apps
+{% for host in groups['core'] | intersect(groups[deployment_env]) | sort %} 
   - name: ntfy @ {{ host }}
     group: core
     url: https://ntfy.{{ host }}.{{ domain }}
@@ -132,10 +139,12 @@ endpoints:
     group: core
     url: https://portainer.{{ host }}.{{ domain }}
     <<: *defaults
-  # end {{ host }}{% endfor +%}
-  # End core {% endif +%}
-  # Start monitoring {% if 'monitoring' in gatus_roles +%}
-  # {% for host in groups['monitoring'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if 'monitoring' in gatus_roles %}
+# Monitoring
+{% for host in groups['monitoring'] | intersect(groups[deployment_env]) | sort %} 
   - name: grafana @ {{ host }}
     group: monitoring
     url: https://grafana.{{ host }}.{{ domain }}
@@ -145,37 +154,51 @@ endpoints:
     group: monitoring
     url: https://prometheus.{{ host }}.{{ domain }}
     <<: *defaults
-  # end {{ host }}{% endfor +%}
-  # End monitoring {% endif +%}
-  # Start mealie {% if 'mealie' in gatus_roles +%}
-  # {% for host in groups['mealie'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if 'mealie' in gatus_roles %}
+# Mealie
+{% for host in groups['mealie'] | intersect(groups[deployment_env]) | sort %} 
   - name: mealie @ {{ host }}
     group: apps
     url: https://mealie.{{ host }}.{{ domain }}
     <<: *defaults
-  # end {{ host }}{% endfor +%}
-  # End mealie {% endif +%}
-  # Start memos {% if 'memos' in gatus_roles +%}
-  # {% for host in groups['memos'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if 'memos' in gatus_roles %}
+# Memos
+{% for host in groups['memos'] | intersect(groups[deployment_env]) | sort %} 
   - name: memos @ {{ host }}
     group: apps
     url: https://memos.{{ host }}.{{ domain }}
     <<: *defaults
-  # end {{ host }}{% endfor +%}
-  # End memos {% endif +%}
-  # Start vaultwarden {% if 'vaultwarden' in gatus_roles +%}
-  # {% for host in groups['vaultwarden'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if 'vaultwarden' in gatus_roles %}
+# Vaultwarden
+{% for host in groups['vaultwarden'] | intersect(groups[deployment_env]) | sort %}
   - name: vaultwarden @ {{ host }}
     group: apps
     url: https://vaultwarden.{{ host }}.{{ domain }}
     <<: *defaults
-  # end {{ host }}{% endfor +%}
-  # End vaultwarden {% endif +%}
-  # Start vikunja {% if 'vikunja' in gatus_roles +%}
-  # {% for host in groups['vikunja'] | intersect(groups[deployment_env]) | sort %} start {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if 'vikunja' in gatus_roles %}
+# Vikunja
+{% for host in groups['vikunja'] | intersect(groups[deployment_env]) | sort %} 
   - name: vikunja @ {{ host }}
     group: apps
     url: https://vikunja.{{ host }}.{{ domain }}
     <<: *defaults
-  # end {{ host }}{% endfor +%}
-  # End vikunja {% endif +%}
+{% endfor %}
+{% endif %}
+
+# Custom
+{% for mon in gatus_custom_monitors %}
+  - <<: *defaults
+    {{ mon | to_nice_yaml | indent(4, False) }}
+{% endfor %}
