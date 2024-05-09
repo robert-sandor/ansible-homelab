@@ -5,7 +5,7 @@ default-endpoint: &defaults
   conditions:
     - "[STATUS] < 400"
     - "[RESPONSE_TIME] < 300"
-    - "[CERTIFICATE_EXPIRATION] > 7d"
+    - "[CERTIFICATE_EXPIRATION] > 21d"
   alerts:
     - type: ntfy
 {% if gatus_discord_webhook | length > 0 %}
@@ -202,3 +202,5 @@ endpoints:
   - <<: *defaults
     {{ mon | to_nice_yaml | indent(4, False) }}
 {% endfor %}
+
+# vim: ft=jinja2.yaml
