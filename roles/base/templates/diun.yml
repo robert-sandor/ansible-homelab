@@ -1,4 +1,5 @@
 watch:
+  runOnStartup: false
   schedule: "{{ base_diun_schedule }}"
 
 providers:
