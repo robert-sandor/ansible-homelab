@@ -17,6 +17,9 @@
     - name: Configure radarr
       ansible.builtin.import_tasks: ./radarr.yml
 
+    - name: Configure recyclarr
+      ansible.builtin.import_tasks: ./recyclarr.yml
+
     - name: Configure lidarr
       ansible.builtin.import_tasks: ./lidarr.yml
 

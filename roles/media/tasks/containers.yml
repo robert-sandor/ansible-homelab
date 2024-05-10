@@ -9,6 +9,7 @@
     - path: transmission/flood
     - path: sonarr
     - path: radarr
+    - path: recyclarr
     - path: lidarr
     - path: bazarr
     - path: prowlarr

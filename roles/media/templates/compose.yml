@@ -45,6 +45,7 @@ services:
       PGID: "{{ ansible_facts.user_gid }}"
     networks:
       - traefik
+      - recyclarr
     volumes:
       - ./sonarr:/config
       - media:/media
@@ -80,6 +81,7 @@ services:
       PGID: "{{ ansible_facts.user_gid }}"
     networks:
       - traefik
+      - recyclarr
     volumes:
       - ./radarr:/config
       - media:/media
@@ -102,6 +104,25 @@ services:
       homepage.description: manage movies
       homepage.icon: radarr
       homepage.siteMonitor: https://radarr.{{ hostname }}
+
+  recyclarr:
+    container_name: recyclarr
+    hostname: recyclarr
+    image: ghcr.io/recyclarr/recyclarr:{{ media_recyclarr_version }}
+    restart: unless-stopped
+    pull_policy: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    read_only: true
+    tmpfs: /tmp
+    environment:
+      TZ: "{{ timezone }}"
+    networks:
+      - recyclarr
+    volumes:
+      - ./recyclarr:/config
+    depends_on:
+      - sonarr
+      - radarr
 
   lidarr:
     container_name: lidarr
@@ -351,3 +372,5 @@ volumes:
 networks:
   traefik:
     external: true
+  recyclarr:
+    name: recyclarr

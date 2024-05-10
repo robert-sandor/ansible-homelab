@@ -18,6 +18,7 @@ media_bazarr_version: 1.4.2
 media_plex_version: 1.40.2
 media_jellyfin_version: 10.8.13
 media_overseerr_version: 1.33.2
+media_recyclarr_version: 6
 
 media_mount_host: localhost
 media_mount_path: /media
