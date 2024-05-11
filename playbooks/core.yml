@@ -1,5 +1,7 @@
 ---
 - name: Deploy core
   hosts: core
+  vars_files:
+    - ./_vars.yml
   roles:
     - core

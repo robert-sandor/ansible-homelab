@@ -13,7 +13,13 @@
   ansible.builtin.template:
     src: compose.yml
     dest: "{{ vaultwarden_deploy_path }}/compose.yml"
-    mode: "0755"
+    mode: "0644"
+
+- name: Template backup script
+  ansible.builtin.template:
+    src: backup.sh
+    dest: "{{ vaultwarden_deploy_path }}/backup.sh"
+    mode: "0700"
 
 - name: Set secrets
   no_log: true
@@ -25,9 +31,10 @@
     - dest: vaultwarden_db_password
       content: "{{ vaultwarden_db_password }}"
     - dest: vaultwarden_db_url
-      content: "postgresql://{{ vaultwarden_db_user }}:{{ vaultwarden_db_password }}@vaultwarden-db:5432/{{ vaultwarden_db_name }}"
+      content: "postgresql://{{ vaultwarden_db_user }}:{{ vaultwarden_db_password }}@db:5432/{{ vaultwarden_db_name }}"
 
 - name: Deploy containers
   community.docker.docker_compose_v2:
     project_src: "{{ vaultwarden_deploy_path }}"
+    pull: always
     remove_orphans: true

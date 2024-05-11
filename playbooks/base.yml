@@ -1,5 +1,7 @@
 ---
 - name: Deploy base
   hosts: base
+  vars_files:
+    - ./_vars.yml
   roles:
     - base

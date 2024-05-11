@@ -1,5 +1,7 @@
 ---
 - name: Deploy mealie
   hosts: mealie
+  vars_files:
+    - ./_vars.yml
   roles:
     - mealie

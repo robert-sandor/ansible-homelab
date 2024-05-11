@@ -1,15 +1,11 @@
 ---
 services:
-  vaultwarden:
-    container_name: vaultwarden
-    hostname: vaultwarden
+  server:
     image: vaultwarden/server:{{ vaultwarden_version }}
-    restart: unless-stopped
-    pull_policy: always
-    depends_on:
-      vaultwarden-db:
-        condition: service_healthy
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    restart: unless-stopped
+    depends_on:
+      - db
     secrets:
       - vaultwarden_db_url
     environment:
@@ -18,8 +14,8 @@ services:
       SIGNUPS_ALLOWED: "{{ vaultwarden_allow_signups }}"
       SHOW_PASSWORD_HINT: false
     networks:
+      - default
       - traefik
-      - vaultwarden
     volumes:
       - ./data:/data
     labels:
@@ -35,33 +31,23 @@ services:
       homepage.icon: vaultwarden
       homepage.siteMonitor: https://vaultwarden.{{ hostname }}
 
-  vaultwarden-db:
-    container_name: vaultwarden-db
-    hostname: vaultwarden-db
+  db:
     image: postgres:{{ vaultwarden_postgres_version }}
     restart: unless-stopped
-    pull_policy: always
     secrets:
       - vaultwarden_db_password
     environment:
-      TZ: "{{ timezone }}"
       POSTGRES_USER: "{{ vaultwarden_db_user }}"
       POSTGRES_DB: "{{ vaultwarden_db_name }}"
       POSTGRES_PASSWORD_FILE: /run/secrets/vaultwarden_db_password
-    networks:
-      - vaultwarden
+      PGUSER: "{{ vaultwarden_db_user }}"
+      PGDATABASE: "{{ vaultwarden_db_name }}"
+      PGPASSFILE: /run/secrets/vaultwarden_db_password
     volumes:
-      - vaultwarden-db:/var/lib/postgresql/data
-    healthcheck:
-      test: pg_isready -d vaultwarden -U vaultwarden
-      interval: 30s
-      timeout: 60s
-      retries: 5
-      start_period: 80s
+      - db:/var/lib/postgresql/data
 
 volumes:
-  vaultwarden-db:
-    name: vaultwarden-db
+  db:
 
 secrets:
   vaultwarden_db_password:
@@ -72,5 +58,3 @@ secrets:
 networks:
   traefik:
     external: true
-  vaultwarden:
-    name: vaultwarden

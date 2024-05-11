@@ -1,6 +1,8 @@
 ---
 - name: Deploy media
   hosts: media
+  vars_files:
+    - ./_vars.yml
   roles:
     - system
     - media

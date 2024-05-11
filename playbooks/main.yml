@@ -40,3 +40,6 @@
 
 - name: Gitea
   ansible.builtin.import_playbook: ./gitea.yml
+
+- name: Paperless
+  ansible.builtin.import_playbook: ./paperless.yml

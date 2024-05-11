@@ -6,6 +6,6 @@ vaultwarden_postgres_version: 16
 vaultwarden_allow_signups: true
 
 # Postgres user and database - only change if you know what you are doing
-vaultwarden_db_password: "{{ (('vaultwarden-db@' + deployment_secret) | hash('sha256'))[:64] }}"
+vaultwarden_db_password: "{{ ('vaultwarden-db@' + deployment_secret) | hash('sha256') }}"
 vaultwarden_db_user: vaultwarden
 vaultwarden_db_name: vaultwarden

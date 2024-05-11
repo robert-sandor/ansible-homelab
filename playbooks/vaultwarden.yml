@@ -1,5 +1,7 @@
 ---
 - name: Deploy vaultwarden
   hosts: vaultwarden
+  vars_files:
+    - ./_vars.yml
   roles:
     - vaultwarden
