@@ -1,11 +1,8 @@
 ---
 services:
   mealie:
-    container_name: mealie
-    hostname: mealie
     image: ghcr.io/mealie-recipes/mealie:{{ mealie_version }}
     restart: unless-stopped
-    pull_policy: always
     environment:
       # Base settings
       ALLOW_SIGNUP: "false"
@@ -13,18 +10,6 @@ services:
       PGID: "{{ ansible_facts.user_gid }}"
       TZ: "{{ timezone }}"
       BASE_URL: https://mealie.{{ hostname }}
-      # LDAP
-      # LDAP_AUTH_ENABLED: "true"
-      # LDAP_SERVER_URL: ldap://{{ core_hostname }}:3890
-      # LDAP_TLS_INSECURE: "true"
-      # LDAP_BASE_DN: "ou=people,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
-      # LDAP_USER_FILTER: "(memberof=cn=users,ou=groups,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }})"
-      # LDAP_ADMIN_FILTER: "(memberOf=cn=admins,ou=groups,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }})"
-      # LDAP_QUERY_BIND: "cn=readonly,ou=people,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
-      # LDAP_QUERY_PASSWORD: "{{ mealie_lldap_readonly_password }}"
-      # LDAP_ID_ATTRIBUTE: "uid"
-      # LDAP_NAME_ATTRIBUTE: "displayName"
-      # LDAP_MAIL_ATTRIBUTE: "mail"
       # OIDC
       OIDC_AUTH_ENABLED: true
       OIDC_SIGNUP_ENABLED: true
