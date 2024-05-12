@@ -1,4 +1,16 @@
 ---
+- name: Create deploy path
+  ansible.builtin.file:
+    state: directory
+    path: "{{ deploy_path }}"
+    mode: "0755"
+
+- name: Create backup path
+  ansible.builtin.file:
+    state: directory
+    path: "{{ backup_path }}"
+    mode: "0700"
+
 - name: Get package list
   ansible.builtin.package_facts: {}
 

@@ -36,4 +36,7 @@ if status is-interactive
   type -q exa; and alias l="exa -la"
   type -q bat; and alias cat="bat -p"
   type -q batcat; and alias cat="batcat -p"
+
+  # docker completion
+  type -q docker; and docker completion fish | source
 end
