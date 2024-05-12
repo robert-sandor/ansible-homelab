@@ -1,15 +1,12 @@
 ---
 services:
-  memos:
-    container_name: memos
-    hostname: memos
+  server:
     image: neosmemo/memos:{{ memos_version }}
     restart: unless-stopped
-    pull_policy: always
     networks:
       - traefik
     volumes:
-      - memos:/var/opt/memos
+      - ./data:/var/opt/memos
     labels:
       traefik.enable: true
       traefik.http.services.memos.loadbalancer.server.port: 5230
@@ -22,10 +19,6 @@ services:
       homepage.href: https://memos.{{ hostname }}
       homepage.icon: memos
       homepage.siteMonitor: https://memos.{{ hostname }}
-
-volumes:
-  memos:
-    name: memos
 
 networks:
   traefik:

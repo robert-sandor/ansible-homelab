@@ -1,0 +1,12 @@
+---
+- name: Create directory structure
+  ansible.builtin.file:
+    state: directory
+    path: "{{ backup_path }}/memos"
+    mode: "0750"
+
+- name: Template backup.sh
+  ansible.builtin.template:
+    src: backup.sh
+    dest: "{{ memos_deploy_path }}/backup.sh"
+    mode: "0750"

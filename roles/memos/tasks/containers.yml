@@ -2,8 +2,8 @@
 - name: Directory structure
   ansible.builtin.file:
     state: directory
-    path: "{{ memos_deploy_path }}"
-    mode: "0755"
+    path: "{{ memos_deploy_path }}/data"
+    mode: "0750"
 
 - name: Template compose
   ansible.builtin.template:
