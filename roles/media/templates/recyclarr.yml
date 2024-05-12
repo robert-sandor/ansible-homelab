@@ -110,11 +110,13 @@ radarr:
         min_format_score: 0
         qualities:
           - name: Remux-2160p
+          - name: Bluray-2160p
           - name: WEB 2160p
             qualities:
               - WEBRip-2160p
               - WEBDL-2160p
           - name: Remux-1080p
+          - name: Bluray-1080p
           - name: WEB 1080p
             qualities:
               - WEBRip-1080p
@@ -165,6 +167,12 @@ radarr:
           - 3a3ff47579026e76d6504ebea39390de # Remux Tier 01
           - 9f98181fe5a3fbeb0cc29340da2a468a # Remux Tier 02
           - 8baaf0b3142bf4d94c42a724f034e27a # Remux Tier 03
+          - 4d74ac4c4db0b64bff6ce0cffef99bf0 # UHD Bluray Tier 01
+          - a58f517a70193f8e578056642178419d # UHD Bluray Tier 02
+          - e71939fae578037e7aed3ee219bbe7c1 # UHD Bluray Tier 03
+          - ed27ebfef2f323e964fb1f61391bcb35 # HD Bluray Tier 01
+          - c20c8647f2746a1f4c4262b0fbbeeeae # HD Bluray Tier 02
+          - 5608c71bcebba0a5e666223bae8c9227 # HD Bluray Tier 03
           - c20f169ef63c5f40c2def54abaf4438e # WEB Tier 01
           - 403816d65392c79236dcb6dd591aeda4 # WEB Tier 02
           - af94e0fe497124d1f9ce732069ec8c3b # WEB Tier 03
