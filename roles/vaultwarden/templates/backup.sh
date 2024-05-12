@@ -5,7 +5,7 @@ export COMPOSE_FILE="$DEPLOY_PATH/compose.yml"
 
 function backup {
   echo "copying data files"
-  cp -vr "$DEPLOY_PATH/data" "$BACKUP_PATH/data"
+  cp -vr "$DEPLOY_PATH/data" "$BACKUP_PATH/"
 
   echo "dumping database"
   docker compose exec -T db pg_dump >"$BACKUP_PATH/pg_dump.sql"
@@ -31,7 +31,7 @@ function restore {
   docker compose exec -T db psql <"$BACKUP_PATH/pg_dump.sql"
 
   echo "copying data files"
-  cp -vr "$BACKUP_PATH/data" "$DEPLOY_PATH/data"
+  cp -vr "$BACKUP_PATH/data" "$DEPLOY_PATH/"
 
   echo "starting server"
   docker compose up -d
