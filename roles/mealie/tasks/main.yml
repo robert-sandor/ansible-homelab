@@ -8,3 +8,6 @@
 
     - name: Configure
       ansible.builtin.import_tasks: ./configure.yml
+
+    - name: Init backup
+      ansible.builtin.import_tasks: ./backup_init.yml

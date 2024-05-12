@@ -1,6 +1,6 @@
 ---
 services:
-  mealie:
+  server:
     image: ghcr.io/mealie-recipes/mealie:{{ mealie_version }}
     restart: unless-stopped
     environment:
