@@ -1,7 +1,5 @@
 ---
 - name: Deploy vikunja
   hosts: vikunja
-  vars_files:
-    - ./_vars.yml
   roles:
     - vikunja

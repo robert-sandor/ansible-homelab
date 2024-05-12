@@ -1,7 +1,5 @@
 ---
 - name: Deploy nextcloud
   hosts: nextcloud
-  vars_files:
-    - ./_vars.yml
   roles:
     - nextcloud

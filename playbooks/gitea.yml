@@ -1,7 +1,5 @@
 ---
 - name: Deploy gitea
   hosts: gitea
-  vars_files:
-    - ./_vars.yml
   roles:
     - gitea

@@ -1,7 +1,5 @@
 ---
 - name: Deploy gatus
   hosts: gatus
-  vars_files:
-    - ./_vars.yml
   roles:
     - gatus

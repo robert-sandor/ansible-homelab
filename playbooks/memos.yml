@@ -1,7 +1,5 @@
 ---
 - name: Deploy memos
   hosts: memos
-  vars_files:
-    - ./_vars.yml
   roles:
     - memos

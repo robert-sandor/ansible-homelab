@@ -1,7 +1,5 @@
 ---
 - name: Deploy tailscale
   hosts: tailscale
-  vars_files:
-    - ./_vars.yml
   roles:
     - tailscale
