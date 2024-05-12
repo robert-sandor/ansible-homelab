@@ -11,7 +11,7 @@ service:
 
 database:
   type: postgres
-  host: vikunja-db
+  host: db
   user: "{{ vikunja_db_user }}"
   password: "{{ vikunja_db_password }}"
   database: "{{ vikunja_db_name }}"

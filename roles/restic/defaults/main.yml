@@ -1,0 +1,4 @@
+---
+restic_version: 0.16.4
+restic_repo: /change/me
+restic_password: changeme

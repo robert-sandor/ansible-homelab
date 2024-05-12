@@ -1,28 +1,17 @@
 ---
 services:
-  vikunja:
-    container_name: vikunja
-    hostname: vikunja
+  server:
     image: vikunja/vikunja:{{ vikunja_version }}
     restart: unless-stopped
-    pull_policy: always
     depends_on:
-      vikunja-db:
+      db:
         condition: service_healthy
-    environment:
-      VIKUNJA_SERVICE_PUBLICURL: https://vikunja.{{ hostname }}
-      VIKUNJA_DATABASE_HOST: vikunja-db
-      VIKUNJA_DATABASE_PASSWORD: "{{ vikunja_db_password }}"
-      VIKUNJA_DATABASE_TYPE: postgres
-      VIKUNJA_DATABASE_USER: "{{ vikunja_db_user }}"
-      VIKUNJA_DATABASE_DATABASE: "{{ vikunja_db_name }}"
-      VIKUNJA_SERVICE_JWTSECRET: "changemeplease"
     networks:
+      - default
       - traefik
-      - vikunja
     volumes:
       - ./config.yml:/app/vikunja/config.yml:ro
-      - ./files:/app/vikunja/files
+      - files:/app/vikunja/files
     labels:
       traefik.enable: true
       traefik.http.services.vikunja.loadbalancer.server.port: 3456
@@ -36,12 +25,9 @@ services:
       homepage.icon: vikunja
       homepage.siteMonitor: https://vikunja.{{ hostname }}
 
-  vikunja-db:
-    container_name: vikunja-db
-    hostname: vikunja-db
+  db:
     image: postgres:{{ vikunja_postgres_version }}
     restart: unless-stopped
-    pull_policy: always
     secrets:
       - vikunja_db_password
     environment:
@@ -49,20 +35,21 @@ services:
       POSTGRES_USER: "{{ vikunja_db_user }}"
       POSTGRES_DB: "{{ vikunja_db_name }}"
       POSTGRES_PASSWORD_FILE: /run/secrets/vikunja_db_password
-    networks:
-      - vikunja
+      PGUSER: "{{ vikunja_db_user }}"
+      PGDATABASE: "{{ vikunja_db_name }}"
+      PGPASSFILE: /run/secrets/vikunja_db_password
     volumes:
-      - vikunja-db:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -d vikunja -U vikunja
-      interval: 30s
-      timeout: 60s
+      test: pg_isready
+      interval: 5s
+      timeout: 2s
       retries: 5
-      start_period: 80s
+      start_period: 5s
 
 volumes:
-  vikunja-db:
-    name: vikunja-db
+  files:
+  db:
 
 secrets:
   vikunja_db_password:
@@ -71,5 +58,3 @@ secrets:
 networks:
   traefik:
     external: true
-  vikunja:
-    name: vikunja

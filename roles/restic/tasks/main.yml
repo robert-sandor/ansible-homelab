@@ -1,0 +1,5 @@
+---
+- name: Containers
+  ansible.builtin.import_tasks: ./containers.yml
+  vars:
+    restic_deploy_path: "{{ deploy_path }}/restic"

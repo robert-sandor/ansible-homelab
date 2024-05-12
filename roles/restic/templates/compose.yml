@@ -1,0 +1,19 @@
+---
+services:
+  restic:
+    hostname: restic.{{ hostname }}
+    image: restic/restic:{{ restic_version }}
+    secrets:
+      - restic-repo
+      - restic-password
+    environment:
+      RESTIC_REPOSITORY_FILE: /run/secrets/restic-repo
+      RESTIC_PASSWORD_FILE: /run/secrets/restic-password
+    volumes:
+      - "{{ backup_path }}:/backup"
+
+secrets:
+  restic-repo:
+    file: ./secrets/restic-repo
+  restic-password:
+    file: ./secrets/restic-password

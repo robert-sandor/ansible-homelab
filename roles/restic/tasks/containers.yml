@@ -1,0 +1,30 @@
+---
+- name: Create secrets dir
+  ansible.builtin.file:
+    state: directory
+    path: "{{ restic_deploy_path }}/secrets"
+    mode: "0700"
+
+- name: Template compose
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ restic_deploy_path }}/compose.yml"
+    mode: "0644"
+
+- name: Template backup script
+  ansible.builtin.template:
+    src: backup.sh
+    dest: "{{ restic_deploy_path }}/backup.sh"
+    mode: "0750"
+
+- name: Set secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ restic_deploy_path }}/secrets/{{ item.dest }}"
+    mode: "0600"
+  loop:
+    - dest: restic-repo
+      content: "{{ restic_repo }}"
+    - dest: restic-password
+      content: "{{ restic_password }}"

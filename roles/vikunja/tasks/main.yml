@@ -1,9 +1,10 @@
 ---
 - name: Vikunja
   vars:
-    hostname: "{{ ansible_hostname }}.{{ domain }}"
-    core_hostname: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] }}.{{ domain }}"
     vikunja_deploy_path: "{{ deploy_path }}/vikunja"
   block:
     - name: Containers
       ansible.builtin.import_tasks: ./containers.yml
+
+    - name: Backup script
+      ansible.builtin.import_tasks: ./backup_init.yml
