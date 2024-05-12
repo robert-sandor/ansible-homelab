@@ -1,0 +1,112 @@
+---
+services:
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:{{ paperless_version }}
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+      - gotenberg
+      - tika
+    secrets:
+      - paperless-secret-key
+      - paperless-db-pass
+      - paperless-admin-pass
+      - paperless-socialaccount-providers
+    environment:
+      USERMAP_UID: "{{ ansible_facts.user_uid }}"
+      USERMAP_GID: "{{ ansible_facts.user_gid }}"
+      # Redis
+      PAPERLESS_REDIS: redis://redis:6379
+      # Database
+      PAPERLESS_DBENGINE: postgresql
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBNAME: "{{ paperless_db_name }}"
+      PAPERLESS_DBUSER: "{{ paperless_db_user }}"
+      PAPERLESS_DBPASS_FILE: /run/secrets/paperless-db-pass
+      # Tika
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      # Admin user
+      PAPERLESS_ADMIN_USER: "{{ paperless_admin_user }}"
+      PAPERLESS_ADMIN_MAIL: "{{ paperless_admin_user }}@{{ domain }}"
+      PAPERLESS_ADMIN_PASSWORD_FILE: /run/secrets/paperless-admin-pass
+      # Settings
+      PAPERLESS_SECRET_KEY_FILE: /run/secrets/paperless-secret-key
+      PAPERLESS_URL: https://paperless.{{ hostname }}
+      PAPERLESS_TIMEZONE: "{{ timezone }}"
+      PAPERLESS_OCR_LANGUAGE: "{{ paperless_ocr_language }}"
+      PAPERLESS_OCR_LANGUAGES: "{{ paperless_additional_ocr_languages }}"
+      PAPERLESS_USE_X_FORWARD_HOST: true
+      PAPERLESS_USE_X_FORWARD_PORT: true
+      # Authelia
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS_FILE: /run/secrets/paperless-socialaccount-providers
+    networks:
+      - default
+      - traefik
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export # TODO: review this and below
+      - ./consume:/usr/src/paperless/consume
+    labels:
+      traefik.enable: true
+      traefik.http.services.paperless.loadbalancer.server.port: 8000
+      traefik.http.routers.paperless.rule: Host(`paperless.{{ hostname }}`)
+      traefik.http.routers.paperless.entrypoints: https
+      traefik.http.routers.paperless.service: paperless
+      homepage.name: paperless
+      homepage.group: apps
+      homepage.description: ocr for documents
+      homepage.href: https://paperless.{{ hostname }}
+      homepage.icon: paperless
+      homepage.siteMonitor: https://paperless.{{ hostname }}
+
+  gotenberg:
+    image: gotenberg/gotenberg:{{ paperless_gotenberg_version }}
+    restart: unless-stopped
+    command: gotenberg --chromium-disable-javascript=true --chromium-allow-list=file:///tmp/.*
+
+  tika:
+    image: ghcr.io/paperless-ngx/tika:{{ paperless_tika_version }}
+    restart: unless-stopped
+
+  redis:
+    image: redis:{{ paperless_redis_version }}
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+
+  db:
+    image: postgres:{{ paperless_postgres_version }}
+    restart: unless-stopped
+    secrets:
+      - paperless-db-pass
+    environment:
+      POSTGRES_DB: "{{ paperless_db_name }}"
+      POSTGRES_USER: "{{ paperless_db_user }}"
+      POSTGRES_PASSWORD_FILE: /run/secrets/paperless-db-pass
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  data:
+  media:
+  redis:
+  db:
+
+networks:
+  traefik:
+    external: true
+
+secrets:
+  paperless-secret-key:
+    file: ./secrets/paperless-secret-key
+  paperless-admin-pass:
+    file: ./secrets/paperless-admin-pass
+  paperless-db-pass:
+    file: ./secrets/paperless-db-pass
+  paperless-socialaccount-providers:
+    file: ./secrets/paperless-socialaccount-providers

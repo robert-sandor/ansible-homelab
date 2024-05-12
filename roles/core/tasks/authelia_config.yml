@@ -7,6 +7,7 @@
       authelia_vikunja_client_secret: "{{ core_authelia_vikunja_secret }}"
       authelia_memos_client_secret: "{{ core_authelia_memos_secret }}"
       authelia_gitea_client_secret: "{{ core_authelia_gitea_secret }}"
+      authelia_paperless_client_secret: "{{ core_authelia_paperless_secret }}"
   block:
     - name: Authelia hash OIDC secret
       no_log: true

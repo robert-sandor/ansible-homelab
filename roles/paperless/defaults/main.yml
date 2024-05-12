@@ -1,0 +1,31 @@
+---
+paperless_version: 2.8
+paperless_gotenberg_version: 7
+paperless_tika_version: latest
+paperless_redis_version: 7
+paperless_postgres_version: 16
+
+paperless_admin_user: admin
+paperless_admin_pass: changeme
+
+paperless_ocr_language: eng+ron
+paperless_additional_ocr_languages: ron
+
+paperless_db_name: paperless
+paperless_db_user: paperless
+paperless_db_pass: "{{ ('paperless-db@' + deployment_secret) | hash('sha256') }}"
+
+paperless_secret_key: tktk
+
+paperless_socialaccount_providers:
+  openid_connect:
+    SCOPE: ["openid", "profile", "email"]
+    OAUTH_PKCE_ENABLED: true,
+    APPS:
+      - provider_id: authelia
+        name: Authelia
+        client_id: paperless
+        secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
+        settings:
+          server_url: https://auth.{{ core_hostname }}
+          token_auth_method: client_secret_basic
