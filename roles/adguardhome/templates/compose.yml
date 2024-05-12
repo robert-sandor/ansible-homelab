@@ -1,11 +1,8 @@
 ---
 services:
-  adguardhome:
-    container_name: adguardhome
-    hostname: adguardhome
+  server:
     image: adguard/adguardhome:{{ adguardhome_version }}
     restart: unless-stopped
-    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
     networks:

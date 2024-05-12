@@ -1,5 +1,5 @@
 ---
 - name: Deploy adguardhome
   hosts: adguardhome
-  vars_files:
+  roles:
     - adguardhome

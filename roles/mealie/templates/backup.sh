@@ -10,7 +10,7 @@ function backup {
   docker compose down
 
   echo "copying data files"
-  cp -vr "$DEPLOY_PATH/data" "$BACKUP_PATH/data"
+  cp -vr "$DEPLOY_PATH/data" "$BACKUP_PATH/"
 
   echo "starting mealie"
   docker compose up -d
@@ -21,7 +21,7 @@ function restore {
   docker compose down
 
   echo "copying data files"
-  cp -vr "$BACKUP_PATH/data" "$DEPLOY_PATH/data"
+  cp -vr "$BACKUP_PATH/data" "$DEPLOY_PATH/"
 
   echo "starting mealie"
   docker compose up -d

@@ -2,11 +2,11 @@
 - name: Create directory structure
   ansible.builtin.file:
     state: directory
-    path: "{{ backup_path }}/mealie"
+    path: "{{ backup_path }}/adguardhome"
     mode: "0750"
 
 - name: Template backup.sh
   ansible.builtin.template:
     src: backup.sh
-    dest: "{{ mealie_deploy_path }}/backup.sh"
+    dest: "{{ adguardhome_deploy_path }}/backup.sh"
     mode: "0750"
