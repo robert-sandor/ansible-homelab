@@ -1,11 +1,8 @@
 ---
 services:
   traefik:
-    container_name: traefik
-    hostname: traefik
     image: traefik:{{ base_traefik_version }}
     restart: unless-stopped
-    pull_policy: always
     env_file:
       - traefik.env
     networks:
@@ -22,7 +19,7 @@ services:
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik:/etc/traefik/file_provider:ro
       - ./traefik_secrets:/secrets:ro
-      - traefik-letsencrypt:/letsencrypt
+      - traefik:/letsencrypt
     labels:
       traefik.enable: true
       # Access to dashboard
@@ -42,11 +39,9 @@ services:
       homepage.siteMonitor: https://traefik.{{ hostname }}
 
   diun:
-    container_name: diun
     hostname: diun.{{ hostname }}
-    image: crazymax/diun:{{ base_diun_version }}
+    image: ghcr.io/crazy-max/diun:{{ base_diun_version }}
     restart: unless-stopped
-    pull_policy: always
     command: serve
     environment:
       LOG_LEVEL: info
@@ -55,15 +50,12 @@ services:
       - diun
     volumes:
       - ./diun.yml:/etc/diun/diun.yml
-      - diun-data:/data
+      - diun:/data
       - /var/run/docker.sock:/var/run/docker.sock
 
   docker_socket_proxy:
-    container_name: docker_socket_proxy
-    hostname: docker_socket_proxy
     image: linuxserver/socket-proxy:{{ base_dsp_version }}
     restart: unless-stopped
-    pull_policy: always
     environment:
       CONTAINERS: 1
       LOG_LEVEL: warning
@@ -75,11 +67,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   portainer_agent:
-    container_name: portainer_agent
-    hostname: portainer_agent
     image: portainer/agent:{{ base_portainer_agent_version }}
     restart: unless-stopped
-    pull_policy: always
     networks:
       - portainer
     ports:
@@ -88,11 +77,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   node_exporter:
-    container_name: node_exporter
-    hostname: node_exporter
     image: quay.io/prometheus/node-exporter:{{ base_node_exporter_version }}
     restart: unless-stopped
-    pull_policy: always
     command: --path.rootfs=/host
     network_mode: host
     pid: host
@@ -100,11 +86,8 @@ services:
       - "/:/host:ro,rslave"
 
   promtail:
-    container_name: promtail
-    hostname: promtail
     image: grafana/promtail:{{ base_promtail_version }}
     restart: unless-stopped
-    pull_policy: always
     command: -config.file=/etc/promtail/docker-config.yml
     networks:
       - traefik
@@ -129,11 +112,8 @@ services:
       homepage.siteMonitor: https://promtail.{{ hostname }}
 
   glances:
-    container_name: glances
-    hostname: glances
     image: nicolargo/glances:ubuntu-{{ base_glances_version }}-full
     restart: unless-stopped
-    pull_policy: always
     pid: host
     network_mode: host
     environment:
@@ -168,14 +148,9 @@ networks:
     # name: traefik
     external: true
   diun:
-    name: diun
   docker:
-    name: docker
   portainer:
-    name: portainer
 
 volumes:
-  traefik-letsencrypt:
-    name: traefik-letsencrypt
-  diun-data:
-    name: diun-data
+  traefik:
+  diun:
