@@ -109,6 +109,7 @@
 - name: Deploy containers
   community.docker.docker_compose_v2:
     project_src: "{{ core_deploy_path }}"
+    pull: always
     remove_orphans: true
 
 - name: Flush handlers

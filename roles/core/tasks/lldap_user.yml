@@ -39,9 +39,10 @@
 - name: LLDAP - Set user password
   when: (user.value.state is not defined or user.value.state == "present") and user.value.password is defined
   no_log: true
-  community.docker.docker_container_exec:
-    container: lldap
-    command: >
+  changed_when: true
+  ansible.builtin.command:
+    cmd: >
+      docker compose -f {{ core_deploy_path }}/compose.yml exec lldap
       /app/lldap_set_password --base-url https://lldap.{{ hostname }}
       --username {{ user.key }} --password {{ user.value.password }}
       --admin-password {{ core_lldap_admin_password }}

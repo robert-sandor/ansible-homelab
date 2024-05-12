@@ -1,11 +1,8 @@
 ---
 services:
   ntfy:
-    container_name: ntfy
-    hostname: ntfy
     image: binwiederhier/ntfy:{{ core_ntfy_version }}
     restart: unless-stopped
-    pull_policy: always
     command: serve
     environment:
       TZ: "{{ timezone }}"
@@ -24,10 +21,10 @@ services:
           "CMD-SHELL",
           "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1",
         ]
-      interval: 60s
+      interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 10s
     labels:
       traefik.enable: true
       traefik.http.services.ntfy.loadbalancer.server.port: 80
@@ -42,11 +39,8 @@ services:
       homepage.siteMonitor: https://ntfy.{{ hostname }}
 
   homepage:
-    container_name: homepage
-    hostname: homepage
     image: ghcr.io/gethomepage/homepage:{{ core_homepage_version }}
     restart: unless-stopped
-    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -63,11 +57,8 @@ services:
       traefik.http.routers.homepage.service: homepage
 
   mailrise:
-    container_name: mailrise
-    hostname: mailrise
     image: ghcr.io/yoryan/mailrise:{{ core_mailrise_version }}
     restart: unless-stopped
-    pull_policy: always
     networks:
       - traefik
     volumes:
@@ -84,11 +75,8 @@ services:
       traefik.tcp.routers.mailrise.tls.domains[0].sans: ""
 
   lldap:
-    container_name: lldap
-    hostname: lldap
     image: lldap/lldap:{{ core_lldap_version }}
     restart: unless-stopped
-    pull_policy: always
     secrets:
       - lldap_jwt_secret
       - lldap_user_pass
@@ -124,11 +112,8 @@ services:
       homepage.siteMonitor: https://lldap.{{ hostname }}
 
   lldap-postgres:
-    container_name: lldap-postgres
-    hostname: lldap-postgres
     image: postgres:{{ core_lldap_postgres_version }}
     restart: unless-stopped
-    pull_policy: always
     secrets:
       - lldap_postgres_password
     environment:
@@ -142,17 +127,14 @@ services:
       - lldap-postgres:/var/lib/postgresql/data
     healthcheck:
       test: pg_isready -d lldap -U lldap
-      interval: 30s
-      timeout: 60s
+      interval: 10s
+      timeout: 10s
       retries: 5
-      start_period: 80s
+      start_period: 1s
 
   authelia:
-    container_name: authelia
-    hostname: authelia
-    image: authelia/authelia:{{ core_authelia_version }}
+    image: ghcr.io/authelia/authelia:{{ core_authelia_version }}
     restart: unless-stopped
-    pull_policy: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     environment:
       TZ: "{{ timezone }}"
@@ -194,11 +176,8 @@ services:
       homepage.siteMonitor: https://auth.{{ hostname }}
 
   authelia-redis:
-    container_name: authelia-redis
-    hostname: authelia-redis
     image: redis:{{ core_authelia_redis_version }}
     restart: unless-stopped
-    pull_policy: always
     environment:
       TZ: "{{ timezone }}"
     networks:
@@ -213,11 +192,8 @@ services:
       start_period: 80s
 
   authelia-postgres:
-    container_name: authelia-postgres
-    hostname: authelia-postgres
     image: postgres:{{ core_authelia_postgres_version }}
     restart: unless-stopped
-    pull_policy: always
     secrets:
       - authelia_postgres_password
     environment:
@@ -231,17 +207,14 @@ services:
       - authelia-postgres:/var/lib/postgresql/data
     healthcheck:
       test: pg_isready -d authelia -U authelia
-      interval: 30s
-      timeout: 60s
+      interval: 10s
+      timeout: 10s
       retries: 5
-      start_period: 80s
+      start_period: 1s
 
   portainer:
-    container_name: portainer
-    hostname: portainer
     image: portainer/portainer-ce:{{ core_portainer_version }}
     restart: unless-stopped
-    pull_policy: always
     networks:
       - traefik
     volumes:
@@ -273,9 +246,7 @@ volumes:
 
 networks:
   authelia:
-    name: authelia
   lldap:
-    name: lldap
   traefik:
     external: true
 
