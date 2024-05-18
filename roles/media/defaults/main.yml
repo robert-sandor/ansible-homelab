@@ -11,12 +11,12 @@ media_transmission_settings: {}
 
 ### Sonarr - TV Series manager
 media_sonarr_version: 4.0.4
-media_radarr_version: 5.4.6
-media_lidarr_version: 2.2.5
-media_prowlarr_version: 1.16.2
+media_radarr_version: 5.6.0
+media_lidarr_version: 2.3.3
+media_prowlarr_version: 1.17.2
 media_bazarr_version: 1.4.2
 media_plex_version: 1.40.2
-media_jellyfin_version: 10.9.0
+media_jellyfin_version: 10.9.2
 media_overseerr_version: 1.33.2
 media_recyclarr_version: 6
 
