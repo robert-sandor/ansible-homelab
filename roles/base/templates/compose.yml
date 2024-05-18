@@ -54,7 +54,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   docker_socket_proxy:
-    image: linuxserver/socket-proxy:{{ base_dsp_version }}
+    image: ghcr.io/linuxserver/socket-proxy:{{ base_dsp_version }}
     restart: unless-stopped
     environment:
       CONTAINERS: 1
@@ -112,7 +112,7 @@ services:
       homepage.siteMonitor: https://promtail.{{ hostname }}
 
   glances:
-    image: nicolargo/glances:ubuntu-{{ base_glances_version }}-full
+    image: nicolargo/glances:{{ base_glances_version }}
     restart: unless-stopped
     pid: host
     network_mode: host

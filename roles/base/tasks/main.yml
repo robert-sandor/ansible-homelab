@@ -1,17 +1,17 @@
 ---
 - name: Base configuration
-  vars:
-    hostname: "{{ ansible_hostname }}.{{ domain }}"
-    core_hostname: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] }}.{{ domain }}"
-    base_deploy_path: "{{ deploy_path }}/base"
   block:
+    - name: Set deploy path fact
+      ansible.builtin.set_fact:
+        base_deploy_path: "{{ deploy_path }}/base"
+
     - name: Install docker
       ansible.builtin.import_tasks: ./docker.yml
 
     - name: Install graphics drivers
       ansible.builtin.import_tasks: ./graphics.yml
 
-    - name: Setup base containers
+    - name: Deploy containers
       ansible.builtin.import_tasks: ./containers.yml
 
     - name: Flush handlers

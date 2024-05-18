@@ -10,7 +10,7 @@ base_gpu_autodetect: true
 base_gpu_nvidia: false
 
 ### Traefik - reverse proxy
-base_traefik_version: v3.0
+base_traefik_version: 3.0 # https://hub.docker.com/_/traefik
 # Email to use for the letsencrypt certificate
 base_traefik_acme_email: admin@{{ domain }}
 # Toggle to use the staging letsencrypt server
@@ -24,24 +24,24 @@ base_traefik_env:
   CF_DNS_API_TOKEN: ""
 
 ### DIUN - docker image update notifier
-base_diun_version: 4
+base_diun_version: 4 # https://github.com/crazy-max/diun/pkgs/container/diun
 # Cron schedule on when diun runs and checks for updates
 base_diun_schedule: 0 0 * * sat
 # Discord webhook
 base_diun_discord_webhook: https://discord.com/api/webhooks/.../...
 
 ### Docker Socket Proxy - a proxy to control exposed docker api resources
-base_dsp_version: 1.24.0
+base_dsp_version: 1.24.0 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy
 
 ### Portainer agent - used by Portainer to connect to this host
-base_portainer_agent_version: 2.20.2
+base_portainer_agent_version: 2.20.2 # https://hub.docker.com/r/portainer/agent/tags
 
 ### Prometheus node exporter - expose host metrics for prometheus
-base_node_exporter_version: v1.8.0
+base_node_exporter_version: v1.8.0 # https://quay.io/repository/prometheus/node-exporter?tab=tags
 
 ### Grafana promtail - expose host logs for loki
-base_promtail_version: 2.9.8
+base_promtail_version: 3.0.0 # https://hub.docker.com/r/grafana/promtail/tags
 base_promtail_loki_host: "{{ (groups['monitoring'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
 
 ### Glances
-base_glances_version: latest
+base_glances_version: ubuntu-latest-full # https://hub.docker.com/r/nicolargo/glances/tags - NOTE: for gpu support use the ubuntu-*-full images

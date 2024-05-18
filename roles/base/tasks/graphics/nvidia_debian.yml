@@ -2,37 +2,16 @@
 - name: NVIDIA Driver Debian
   when: ansible_facts.distribution == 'Debian'
   block:
-    - name: Ensure /etc/apt/keyrings exists
+    - name: Setup Nvidia GPG key
       become: true
-      ansible.builtin.file:
-        path: /usr/share/keyrings
-        mode: "0755"
-        owner: root
-        group: root
-
-    - name: Check if nvidia GPG key exists
-      ansible.builtin.stat:
-        path: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
-      register: nvidia_gpg_key_stat
-
-    - name: Download nvidia GPG key if doesn't exists
-      when: not nvidia_gpg_key_stat.stat.exists
-      block:
-        - name: Get GPG keys from Docker
-          ansible.builtin.get_url:
-            url: https://nvidia.github.io/libnvidia-container/gpgkey
-            dest: /tmp/nvidia_gpg_key
-            mode: "0755"
-
-        - name: Dearmor nvidia key using gpg
-          become: true
-          ansible.builtin.command: "gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg /tmp/nvidia_gpg_key"
-          changed_when: true
-
-        - name: Remove downloaded temp file
-          ansible.builtin.file:
-            path: /tmp/nvidia_gpg_key
-            state: absent
+      ansible.builtin.shell:
+        executable: /usr/bin/bash
+        cmd: |
+          set -eo pipefail
+          install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /etc/apt/keyrings/nvidia-container-toolkit-keyring.gpg
+          chmod a+r /etc/apt/keyrings/nvidia-container-toolkit-keyring.gpg
+        creates: /etc/apt/keyrings/nvidia-container-toolkit-keyring.gpg
 
     - name: Add non-free and non-free-firmware apt repositories
       become: true
@@ -62,5 +41,5 @@
           - nvidia-driver
           - nvidia-container-toolkit
       notify:
-        - Enable nvidia container toolkit
-        - Reboot
+        - enable-nvidia-container-toolkit
+        - reboot
