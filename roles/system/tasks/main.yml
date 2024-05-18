@@ -31,7 +31,6 @@
           - yq
           - tmux
           - vim
-          - neovim
           - btop
 
     - name: Install VM dependencies
@@ -50,6 +49,9 @@
 
     - name: Install starship
       ansible.builtin.import_tasks: ./starship.yml
+
+    - name: Install neovim
+      ansible.builtin.import_tasks: ./neovim.yml
 
     - name: Configure bashrc to auto-open fish when interactive
       ansible.builtin.lineinfile:

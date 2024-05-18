@@ -1,3 +1,6 @@
 ---
 # Toggle on to update all system packages
 system_update: false
+
+# Neovim version
+system_neovim_version: v0.10.0
