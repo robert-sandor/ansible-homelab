@@ -1,10 +1,15 @@
 ---
-- name: Vikunja
-  vars:
-    vikunja_deploy_path: "{{ deploy_path }}/vikunja"
+- name: Deploy vikunja
   block:
-    - name: Containers
+    - name: Set deploy path fact
+      ansible.builtin.set_fact:
+        vikunja_deploy_path: "{{ deploy_path }}/vikunja"
+
+    - name: Deploy containers
       ansible.builtin.import_tasks: ./containers.yml
 
-    - name: Backup script
+    - name: Setup backup script
       ansible.builtin.import_tasks: ./backup_init.yml
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
