@@ -4,4 +4,4 @@
     src: recyclarr.yml
     dest: "{{ media_deploy_path }}/recyclarr/recyclarr.yml"
     mode: "0644"
-  notify: recyclarr-sync
+  notify: Recyclarr sync

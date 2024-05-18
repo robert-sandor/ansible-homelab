@@ -22,7 +22,7 @@
           DNS=127.0.0.1
           DNSStubListener=no
         mode: "0644"
-      notify: restart-systemd-resolved
+      notify: Restart systemd-resolved
 
     - name: Relink /etc/resolv.conf
       ansible.builtin.file:
@@ -31,4 +31,4 @@
         state: link
         force: true
         follow: false
-      notify: restart-systemd-resolved
+      notify: Restart systemd-resolved

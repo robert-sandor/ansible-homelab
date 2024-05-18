@@ -20,5 +20,5 @@
           chmod 0600 {{ core_deploy_path }}/secrets/{{ item.key }};
         creates: "{{ core_deploy_path }}/secrets/{{ item.key }}"
       register: authelia_hashed_oidc_secret_results
-      notify: docker-restart-authelia
+      notify: Restart authelia
       loop: "{{ to_hash | dict2items }}"

@@ -34,7 +34,7 @@
     src: "{{ item }}"
     dest: "{{ base_deploy_path }}/{{ item }}"
     mode: "0640"
-  notify: docker-restart-traefik
+  notify: Restart traefik
   loop:
     - traefik.yml
     - traefik/docker_metrics.yml
@@ -59,14 +59,14 @@
     src: diun.yml
     dest: "{{ base_deploy_path }}/diun.yml"
     mode: "0600"
-  notify: docker-restart-diun
+  notify: Restart diun
 
 - name: Template promtail config
   ansible.builtin.template:
     src: promtail.yml
     dest: "{{ base_deploy_path }}/promtail.yml"
     mode: "0640"
-  notify: docker-restart-promtail
+  notify: Restart promtail
 
 - name: Create traefik network
   community.docker.docker_network:

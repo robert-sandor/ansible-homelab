@@ -22,7 +22,7 @@
     src: config.yml.j2
     dest: "{{ gatus_deploy_path }}/config.yml"
     mode: "0644"
-  notify: docker-restart-gatus
+  notify: Restart gatus
 
 - name: Set secrets
   no_log: true

@@ -18,28 +18,28 @@
     src: loki.yml
     dest: "{{ monitoring_deploy_path }}/loki.yml"
     mode: "0644"
-  notify: docker-restart-loki
+  notify: Restart loki
 
 - name: Template prometheus.yml
   ansible.builtin.template:
     src: prometheus.yml
     dest: "{{ monitoring_deploy_path }}/prometheus.yml"
     mode: "0644"
-  notify: docker-restart-prometheus
+  notify: Restart prometheus
 
 - name: Template grafana.ini
   ansible.builtin.template:
     src: grafana.ini
     dest: "{{ monitoring_deploy_path }}/grafana.ini"
     mode: "0644"
-  notify: docker-restart-grafana
+  notify: Restart grafana
 
 - name: Template grafana datasources
   ansible.builtin.template:
     src: grafana/datasources.yml
     dest: "{{ monitoring_deploy_path }}/grafana/provisioning/datasources/datasources.yml"
     mode: "0644"
-  notify: docker-restart-grafana
+  notify: Restart grafana
 
 - name: Docker compose up
   community.docker.docker_compose_v2:

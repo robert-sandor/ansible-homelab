@@ -1,6 +1,5 @@
 ---
 - name: Recyclarr sync
-  listen: recyclarr-sync
   community.docker.docker_container_exec:
     container: recyclarr
     command: recyclarr sync

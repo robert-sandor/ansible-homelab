@@ -16,7 +16,7 @@
     src: config.yml
     dest: "{{ vikunja_deploy_path }}/config.yml"
     mode: "0600"
-  notify: docker-restart-vikunja
+  notify: Restart vikunja
 
 - name: Create secrets directory
   ansible.builtin.file:

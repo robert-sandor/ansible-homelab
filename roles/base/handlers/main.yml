@@ -1,38 +1,32 @@
 ---
 - name: Enable nvidia container toolkit
-  listen: enable-nvidia-container-toolkit
   ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
   changed_when: true
   become: true
 
-- name: Restart Docker
-  listen: restart-docker
+- name: Restart docker
   become: true
   ansible.builtin.service:
     name: docker
     state: restarted
 
 - name: Reboot
-  listen: reboot
   ansible.builtin.reboot:
   become: true
 
 - name: Restart traefik
-  listen: docker-restart-traefik
   community.docker.docker_compose_v2:
     project_src: "{{ base_deploy_path }}"
     services: traefik
     state: restarted
 
 - name: Restart diun
-  listen: docker-restart-diun
   community.docker.docker_compose_v2:
     project_src: "{{ base_deploy_path }}"
     services: diun
     state: restarted
 
 - name: Restart promtail
-  listen: docker-restart-promtail
   community.docker.docker_compose_v2:
     project_src: "{{ base_deploy_path }}"
     services: promtail

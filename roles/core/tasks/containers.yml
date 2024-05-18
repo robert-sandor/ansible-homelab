@@ -23,21 +23,21 @@
     src: mailrise.yml
     dest: "{{ core_deploy_path }}/mailrise.yml"
     mode: "0644"
-  notify: docker-restart-mailrise
+  notify: Restart mailrise
 
 - name: Template lldap configuration
   ansible.builtin.template:
     src: lldap_config.toml
     dest: "{{ core_deploy_path }}/lldap/lldap_config.toml"
     mode: "0600"
-  notify: docker-restart-lldap
+  notify: Restart lldap
 
 - name: Template authelia configuration
   ansible.builtin.template:
     src: authelia_configuration.yml
     dest: "{{ core_deploy_path }}/authelia/configuration.yml"
     mode: "0600"
-  notify: docker-restart-authelia
+  notify: Restart authelia
 
 - name: Set LLDAP secrets
   no_log: true
@@ -45,7 +45,7 @@
     content: "{{ item.content }}"
     dest: "{{ deploy_path }}/core/secrets/{{ item.dest }}"
     mode: "0600"
-  notify: docker-restart-lldap
+  notify: Restart lldap
   loop:
     - dest: lldap_user_pass
       content: "{{ core_lldap_admin_password }}"
@@ -62,7 +62,7 @@
     content: "{{ item.content }}"
     dest: "{{ deploy_path }}/core/secrets/{{ item.dest }}"
     mode: "0600"
-  notify: docker-restart-authelia
+  notify: Restart authelia
   loop:
     - dest: authelia_identity_validation_reset_password_jwt_secret
       content: "{{ core_authelia_identity_validation_reset_password_jwt_secret }}"
@@ -92,7 +92,7 @@
       content: "{{ core_homepage_services | to_nice_yaml if core_homepage_services | length > 0 else '' }}"
     - dest: bookmarks.yaml
       content: "{{ core_homepage_bookmarks | to_nice_yaml if core_homepage_bookmarks | length > 0 else '' }}"
-  notify: docker-restart-homepage
+  notify: Restart homepage
 
 - name: Generate authelia OIDC HMAC secret
   ansible.builtin.command:
@@ -104,7 +104,7 @@
       --file.private-key authelia_oidc_issuer_private_key
       --file.public-key authelia_oidc_issuer_public_key
     creates: "{{ deploy_path }}/core/secrets/authelia_oidc_issuer_private_key"
-  notify: docker-restart-authelia
+  notify: Restart authelia
 
 - name: Deploy containers
   community.docker.docker_compose_v2:

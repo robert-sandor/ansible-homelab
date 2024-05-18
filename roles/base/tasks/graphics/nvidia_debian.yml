@@ -41,5 +41,5 @@
           - nvidia-driver
           - nvidia-container-toolkit
       notify:
-        - enable-nvidia-container-toolkit
-        - reboot
+        - Enable nvidia container toolkit
+        - Reboot

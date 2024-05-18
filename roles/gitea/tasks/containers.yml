@@ -57,4 +57,4 @@
     content: "{{ runner_token.stdout }}"
     dest: "{{ gitea_deploy_path }}/secrets/runner_registration_token"
     mode: "0600"
-  notify: restart-act-runner
+  notify: Restart act-runner
