@@ -1,18 +1,21 @@
 ---
 - name: Restart loki
   listen: docker-restart-loki
-  community.docker.docker_container:
-    name: loki
-    restart: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ monitoring_deploy_path }}"
+    services: loki
+    state: restarted
 
 - name: Restart prometheus
   listen: docker-restart-prometheus
-  community.docker.docker_container:
-    name: prometheus
-    restart: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ monitoring_deploy_path }}"
+    services: prometheus
+    state: restarted
 
 - name: Restart grafana
   listen: docker-restart-grafana
-  community.docker.docker_container:
-    name: grafana
-    restart: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ monitoring_deploy_path }}"
+    services: grafana
+    state: restarted

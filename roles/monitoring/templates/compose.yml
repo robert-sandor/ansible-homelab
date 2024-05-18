@@ -1,11 +1,8 @@
 ---
 services:
   grafana:
-    container_name: grafana
-    hostname: grafana
     image: grafana/grafana-oss:{{ monitoring_grafana_version }}
     restart: unless-stopped
-    pull_policy: always
     depends_on:
       - loki
       - prometheus
@@ -29,11 +26,8 @@ services:
       homepage.siteMonitor: https://grafana.{{ hostname }}
 
   loki:
-    container_name: loki
-    hostname: loki
     image: grafana/loki:{{ monitoring_loki_version }}
     restart: unless-stopped
-    pull_policy: always
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - traefik
@@ -48,11 +42,8 @@ services:
       traefik.http.routers.loki.service: loki
 
   prometheus:
-    container_name: prometheus
-    hostname: prometheus
     image: prom/prometheus:{{ monitoring_prometheus_version }}
     restart: unless-stopped
-    pull_policy: always
     networks:
       - traefik
     volumes:
