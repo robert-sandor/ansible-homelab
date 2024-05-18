@@ -1,8 +1,10 @@
 ---
 - name: Deploy adguardhome
-  vars:
-    adguardhome_deploy_path: "{{ deploy_path }}/adguardhome"
   block:
+    - name: Set deploy path fact
+      ansible.builtin.set_fact:
+        adguardhome_deploy_path: "{{ deploy_path }}/adguardhome"
+
     - name: Disable systemd-resolved
       ansible.builtin.include_tasks:
         file: ./disable_systemdresolved.yml
@@ -12,11 +14,11 @@
     - name: Flush handlers
       ansible.builtin.meta: flush_handlers
 
-    - name: Deploy container
+    - name: Deploy containers
       ansible.builtin.import_tasks: ./containers.yml
 
     - name: Configure adguardhome
       ansible.builtin.import_tasks: ./configure.yml
 
-    - name: Configure backup
+    - name: Setup backup script
       ansible.builtin.import_tasks: ./backup_init.yml
