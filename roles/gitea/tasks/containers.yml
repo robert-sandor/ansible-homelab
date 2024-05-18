@@ -47,6 +47,9 @@
     command: gitea actions generate-runner-token
   changed_when: false
   register: runner_token
+  retries: 5
+  delay: 30
+  until: runner_token.rc == 0
 
 - name: Set secrets
   no_log: true
