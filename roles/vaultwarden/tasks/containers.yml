@@ -1,13 +1,9 @@
 ---
-- name: Create directories
+- name: Create data directory
   ansible.builtin.file:
     state: directory
-    path: "{{ vaultwarden_deploy_path }}/{{ item.path }}"
-    mode: "{{ item.mode | default('0755') }}"
-  loop:
-    - path: data
-    - path: secrets
-      mode: "0700"
+    path: "{{ vaultwarden_deploy_path }}/data"
+    mode: "0750"
 
 - name: Template compose
   ansible.builtin.template:
@@ -15,10 +11,10 @@
     dest: "{{ vaultwarden_deploy_path }}/compose.yml"
     mode: "0644"
 
-- name: Template backup script
-  ansible.builtin.template:
-    src: backup.sh
-    dest: "{{ vaultwarden_deploy_path }}/backup.sh"
+- name: Create secrets directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ vaultwarden_deploy_path }}/secrets"
     mode: "0700"
 
 - name: Set secrets
@@ -32,6 +28,12 @@
       content: "{{ vaultwarden_db_password }}"
     - dest: vaultwarden_db_url
       content: "postgresql://{{ vaultwarden_db_user }}:{{ vaultwarden_db_password }}@db:5432/{{ vaultwarden_db_name }}"
+
+- name: Template backup script
+  ansible.builtin.template:
+    src: backup.sh
+    dest: "{{ vaultwarden_deploy_path }}/backup.sh"
+    mode: "0700"
 
 - name: Deploy containers
   community.docker.docker_compose_v2:
