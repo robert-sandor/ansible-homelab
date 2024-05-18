@@ -1,30 +1,32 @@
 ---
 - name: Restart mailrise
   listen: docker-restart-mailrise
-  community.docker.docker_container:
-    name: mailrise
-    restart: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ core_deploy_path }}"
+    services: mailrise
+    state: restarted
 
 - name: Restart homepage
   listen: docker-restart-homepage
-  community.docker.docker_container:
-    name: homepage
-    restart: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ core_deploy_path }}"
+    services: homepage
+    state: restarted
 
 - name: Restart lldap
   listen: docker-restart-lldap
-  community.docker.docker_container:
-    name: "{{ item }}"
-    restart: true
-  loop:
-    - lldap
-    - lldap-postgres
+  community.docker.docker_compose_v2:
+    project_src: "{{ core_deploy_path }}"
+    services:
+      - lldap
+      - lldap-postgres
+    state: restarted
 
 - name: Restart authelia
   listen: docker-restart-authelia
-  community.docker.docker_container:
-    name: "{{ item }}"
-    restart: true
-  loop:
-    - authelia
-    - authelia-postgres
+  community.docker.docker_compose_v2:
+    project_src: "{{ core_deploy_path }}"
+    services:
+      - authelia
+      - authelia-postgres
+    state: restarted
