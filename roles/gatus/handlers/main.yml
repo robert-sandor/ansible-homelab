@@ -1,6 +1,7 @@
 ---
 - name: Restart gatus
   listen: docker-restart-gatus
-  community.docker.docker_container:
-    name: gatus
-    restart: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ gatus_deploy_path }}"
+    services: gatus
+    state: restarted
