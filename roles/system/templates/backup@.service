@@ -1,0 +1,6 @@
+[Unit]
+Description=Backup %i
+
+[Service]
+Type=oneshot
+ExecStart={{ deploy_path }}/%i/backup.sh

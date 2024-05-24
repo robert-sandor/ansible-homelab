@@ -11,10 +11,9 @@
     dest: "{{ vikunja_deploy_path }}/backup.sh"
     mode: "0750"
 
-- name: Create crontab entry for backup.sh
-  ansible.builtin.cron:
-    state: present
-    name: vikunja_backup
-    user: "{{ ansible_facts.user_id }}"
-    job: "{{ vikunja_deploy_path }}/backup.sh"
-    hour: 3
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@vikunja.timer
+    state: started
+    enabled: true

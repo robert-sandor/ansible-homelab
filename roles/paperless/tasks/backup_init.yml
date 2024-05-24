@@ -11,10 +11,9 @@
     dest: "{{ paperless_deploy_path }}/backup.sh"
     mode: "0750"
 
-- name: Create crontab entry for backup.sh
-  ansible.builtin.cron:
-    state: present
-    name: paperless_backup
-    user: "{{ ansible_facts.user_id }}"
-    job: "{{ paperless_deploy_path }}/backup.sh"
-    hour: 3
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@paperless.timer
+    state: started
+    enabled: true

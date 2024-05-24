@@ -1,4 +1,9 @@
 ---
+- name: Systemd reload daemon
+  ansible.builtin.systemd_service:
+    scope: user
+    daemon_reload: true
+
 - name: Reboot
   ansible.builtin.reboot:
   become: true

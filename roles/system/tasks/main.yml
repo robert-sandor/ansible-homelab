@@ -46,6 +46,9 @@
       when: ansible_facts.virtualization_role == 'guest'
       notify: Reboot
 
+    - name: Setup systemd
+      ansible.builtin.import_tasks: ./systemd.yml
+
     - name: Copy config.fish
       ansible.builtin.copy:
         src: config.fish

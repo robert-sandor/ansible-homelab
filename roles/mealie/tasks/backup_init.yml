@@ -10,3 +10,10 @@
     src: backup.sh
     dest: "{{ mealie_deploy_path }}/backup.sh"
     mode: "0750"
+
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@mealie.timer
+    state: started
+    enabled: true

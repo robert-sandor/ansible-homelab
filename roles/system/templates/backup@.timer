@@ -1,0 +1,10 @@
+[Unit]
+Description=Backup timer %i
+
+[Timer]
+Unit=backup@%i.service
+Persistent=false
+OnCalendar=*-*-* 03:00:00
+
+[Install]
+WantedBy=default.target
