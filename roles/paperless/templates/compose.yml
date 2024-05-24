@@ -1,6 +1,6 @@
 ---
 services:
-  webserver:
+  server:
     image: ghcr.io/paperless-ngx/paperless-ngx:{{ paperless_version }}
     restart: unless-stopped
     depends_on:
@@ -88,6 +88,9 @@ services:
       POSTGRES_DB: "{{ paperless_db_name }}"
       POSTGRES_USER: "{{ paperless_db_user }}"
       POSTGRES_PASSWORD_FILE: /run/secrets/paperless-db-pass
+      PGDATABASE: "{{ paperless_db_name }}"
+      PGUSER: "{{ paperless_db_user }}"
+      PGPASSFILE: /run/secrets/paperless-db-pass
     volumes:
       - db:/var/lib/postgresql/data
 

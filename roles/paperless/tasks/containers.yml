@@ -2,35 +2,37 @@
 - name: Create directories
   ansible.builtin.file:
     state: directory
-    path: "{{ paperless_deploy_path }}/{{ item.path }}"
-    mode: "{{ item.mode | default('0755') }}"
+    path: "{{ paperless_deploy_path }}/{{ item }}"
+    mode: "0750"
   loop:
-    - path: consume
-    - path: export
-    - path: secrets
-      mode: "0700"
+    - consume
+    - export
 
 - name: Template compose
   ansible.builtin.template:
     src: compose.yml
     dest: "{{ paperless_deploy_path }}/compose.yml"
-    mode: "0755"
+    mode: "0750"
+
+- name: Create secrets directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ paperless_deploy_path }}/secrets"
+    mode: "0700"
 
 - name: Set secrets
   no_log: true
+  vars:
+    secrets:
+      paperless-secret-key: "{{ paperless_secret_key }}"
+      paperless-admin-pass: "{{ paperless_admin_pass }}"
+      paperless-db-pass: "{{ paperless_db_pass }}"
+      paperless-socialaccount-providers: "{{ paperless_socialaccount_providers | to_json }}"
+  loop: "{{ secrets | dict2items }}"
   ansible.builtin.copy:
-    content: "{{ item.content }}"
-    dest: "{{ paperless_deploy_path }}/secrets/{{ item.dest }}"
+    content: "{{ item.value }}"
+    dest: "{{ paperless_deploy_path }}/secrets/{{ item.key }}"
     mode: "0600"
-  loop:
-    - dest: paperless-secret-key
-      content: "{{ paperless_secret_key }}"
-    - dest: paperless-admin-pass
-      content: "{{ paperless_admin_pass }}"
-    - dest: paperless-db-pass
-      content: "{{ paperless_db_pass }}"
-    - dest: paperless-socialaccount-providers
-      content: "{{ paperless_socialaccount_providers | to_json }}"
 
 - name: Deploy containers
   community.docker.docker_compose_v2:

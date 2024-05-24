@@ -1,20 +1,20 @@
 ---
-- name: Create directory structure
+- name: Create backup directory
   ansible.builtin.file:
     state: directory
-    path: "{{ backup_path }}/vikunja"
+    path: "{{ backup_path }}/paperless"
     mode: "0750"
 
 - name: Template backup.sh
   ansible.builtin.template:
     src: backup.sh
-    dest: "{{ vikunja_deploy_path }}/backup.sh"
+    dest: "{{ paperless_deploy_path }}/backup.sh"
     mode: "0750"
 
 - name: Create crontab entry for backup.sh
   ansible.builtin.cron:
     state: present
-    name: vikunja_backup
+    name: paperless_backup
     user: "{{ ansible_facts.user_id }}"
-    job: "{{ vikunja_deploy_path }}/backup.sh"
+    job: "{{ paperless_deploy_path }}/backup.sh"
     hour: 3

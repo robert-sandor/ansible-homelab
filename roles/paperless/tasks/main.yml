@@ -1,9 +1,12 @@
 ---
 - name: Deploy paperless
-  vars:
-    hostname: "{{ ansible_hostname }}.{{ domain }}"
-    core_hostname: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] }}.{{ domain }}"
-    paperless_deploy_path: "{{ deploy_path }}/paperless"
   block:
+    - name: Set deploy path fact
+      ansible.builtin.set_fact:
+        paperless_deploy_path: "{{ deploy_path }}/paperless"
+
     - name: Deploy containers
       ansible.builtin.import_tasks: ./containers.yml
+
+    - name: Initialize backup script
+      ansible.builtin.import_tasks: ./backup_init.yml

@@ -63,9 +63,9 @@ services:
       homepage.siteMonitor: https://prometheus.{{ hostname }}
 
 volumes:
-  grafana-data: {}
-  loki-data: {}
-  prometheus-data: {}
+  grafana-data:
+  loki-data:
+  prometheus-data:
 
 networks:
   traefik:
