@@ -1,4 +1,10 @@
 ---
+- name: Install available neovim release on non-x86_64
+  when: not ansible_architecture == 'x86_64'
+  ansible.builtin.package:
+    name: neovim
+    state: present
+
 - name: Install latest neovim release on x86_64
   when: ansible_architecture == 'x86_64'
   block:

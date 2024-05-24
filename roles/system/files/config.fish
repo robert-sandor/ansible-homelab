@@ -5,8 +5,8 @@ set -U fish_greeting
 fish_add_path "$HOME/.local/bin"
 
 if status is-interactive
-  set -Ux EDITOR vim
-  set -Ux VISUAL vim
+  set -Ux EDITOR nvim
+  set -Ux VISUAL nvim
   
   set -g fish_key_bindings fish_vi_key_bindings
   

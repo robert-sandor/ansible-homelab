@@ -8,6 +8,11 @@
       ansible.builtin.hostname:
         name: "{{ hostname }}"
 
+    - name: Set timezone
+      become: true
+      community.general.timezone:
+        name: "{{ timezone }}"
+
     - name: Update system
       become: true
       when: system_update
