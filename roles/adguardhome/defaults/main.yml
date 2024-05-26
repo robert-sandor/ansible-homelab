@@ -1,6 +1,6 @@
 ---
 # version of adguardhome to use
-adguardhome_version: v0.107.48 # https://hub.docker.com/r/adguard/adguardhome/tags
+adguardhome_version: v0.107.50 # https://hub.docker.com/r/adguard/adguardhome/tags
 
 # User and password for the adguardhome admin user
 # NOTE: this only applies on first deploy - changing the value after that will fail the playbook

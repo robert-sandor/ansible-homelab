@@ -1,5 +1,5 @@
 ---
-gatus_version: v5.10.0
+gatus_version: v5.11.0 # https://github.com/TwiN/gatus/releases
 
 gatus_postgres_version: 16
 

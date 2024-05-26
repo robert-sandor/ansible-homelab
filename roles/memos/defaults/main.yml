@@ -1,4 +1,4 @@
 ---
-memos_version: 0.21
+memos_version: 0.22 # https://github.com/usememos/memos/pkgs/container/memos
 
 memos_openid_secret: "{{ (('memos@' + deployment_secret) | hash('sha256'))[:64] }}"

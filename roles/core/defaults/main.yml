@@ -94,7 +94,7 @@ core_authelia_paperless_host: "{{ (groups['paperless'] | intersect(groups[deploy
 core_authelia_paperless_secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
 
 ### Portainer
-core_portainer_version: 2.20.2
+core_portainer_version: 2.20.3 # https://github.com/portainer/portainer/releases
 
 # admin user and password
 core_portainer_admin_user: admin
@@ -104,10 +104,10 @@ core_portainer_admin_password: changeme
 core_portainer_agents: "{{ groups['base'] | intersect(groups[deployment_env]) | product(['.' + domain]) | map('join') | list }}"
 
 ### ntfy - notification service
-core_ntfy_version: v2.10.0
+core_ntfy_version: v2.11.0 # https://github.com/binwiederhier/ntfy/releases
 
 ### homepage - dashboard
-core_homepage_version: latest
+core_homepage_version: latest # https://github.com/gethomepage/homepage/releases
 
 core_homepage_docker: >-
   [
