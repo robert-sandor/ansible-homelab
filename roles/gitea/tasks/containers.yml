@@ -1,20 +1,24 @@
 ---
-- name: Create directories
+- name: Create data directories
   ansible.builtin.file:
     state: directory
-    path: "{{ gitea_deploy_path }}/{{ item.path }}"
-    mode: "{{ item.mode | default('0755') }}"
+    path: "{{ gitea_deploy_path }}/{{ item }}"
+    mode: "0750"
   loop:
-    - path: gitea
-    - path: act_runner
-    - path: secrets
-      mode: "0700"
+    - gitea
+    - act_runner
 
 - name: Template compose
   ansible.builtin.template:
     src: compose.yml
     dest: "{{ gitea_deploy_path }}/compose.yml"
     mode: "0755"
+
+- name: Create secrets directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ gitea_deploy_path }}/secrets"
+    mode: "0700"
 
 - name: Set secrets
   no_log: true
@@ -31,30 +35,30 @@
       content: "{{ (('gitea-secret@' + deployment_secret) | hash('sha256'))[:64] }}"
 
 - name: Initialize runner token
-  ansible.builtin.file:
-    path: "{{ gitea_deploy_path }}/secrets/runner_registration_token"
-    state: file
-    mode: "0600"
+  ansible.builtin.command:
+    cmd: touch {{ gitea_deploy_path }}/secrets/runner_registration_token
+    creates: "{{ gitea_deploy_path }}/secrets/runner_registration_token"
 
 - name: Deploy containers
   community.docker.docker_compose_v2:
     project_src: "{{ gitea_deploy_path }}"
+    pull: always
     remove_orphans: true
 
-- name: Get act runner registration token
-  community.docker.docker_container_exec:
-    container: gitea
-    command: gitea actions generate-runner-token
-  changed_when: false
-  register: runner_token
+- name: Wait for gitea to be up
+  ansible.builtin.uri:
+    method: GET
+    url: https://gitea.{{ hostname }}/api/healthz
+  register: gitea_health
+  until: gitea_health.status == 200
+  delay: 10
   retries: 5
-  delay: 30
-  until: runner_token.rc == 0
 
-- name: Set secrets
-  no_log: true
-  ansible.builtin.copy:
-    content: "{{ runner_token.stdout }}"
-    dest: "{{ gitea_deploy_path }}/secrets/runner_registration_token"
-    mode: "0600"
+- name: Get act runner registration token
+  ansible.builtin.shell:
+    chdir: "{{ gitea_deploy_path }}"
+    cmd: |
+      docker compose exec -it server gitea actions generate-runner-token > ./secrets/runner_registration_token
+      chmod 0600 ./secrets/runner_registration_token
+    creates: "{{ gitea_deploy_path }}/secrets/runner_registration_token"
   notify: Restart act-runner

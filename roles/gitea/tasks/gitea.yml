@@ -1,18 +1,20 @@
 ---
 - name: Gitea list auth sources
-  community.docker.docker_container_exec:
-    container: gitea
-    command: gitea admin auth list
   changed_when: false
+  ansible.builtin.command:
+    chdir: "{{ gitea_deploy_path }}"
+    cmd: docker compose exec -it server gitea admin auth list
   register: gitea_auth_list
 
 - name: Gitea configure LLDAP
   when: not 'lldap' in gitea_auth_list.stdout
+  changed_when: true
   vars:
     ldap_basedn: "{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
-  community.docker.docker_container_exec:
-    container: gitea
-    command: >-
+  ansible.builtin.command:
+    chdir: "{{ gitea_deploy_path }}"
+    cmd: >-
+      docker compose exec -it server
       gitea admin auth add-ldap --name lldap
       --security-protocol unencrypted
       --host {{ core_hostname }}
@@ -31,9 +33,11 @@
 
 - name: Gitea configure Authelia
   when: not 'authelia' in gitea_auth_list.stdout
-  community.docker.docker_container_exec:
-    container: gitea
-    command: >-
+  changed_when: true
+  ansible.builtin.command:
+    chdir: "{{ gitea_deploy_path }}"
+    cmd: >-
+      docker compose exec -it server
       gitea admin auth add-oauth --name authelia
       --provider openidConnect
       --key gitea

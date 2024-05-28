@@ -1,10 +1,12 @@
 ---
 - name: Restart gitea
-  community.docker.docker_container:
-    name: gitea
-    restart: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ gitea_deploy_path }}"
+    services: server
+    state: restarted
 
 - name: Restart act-runner
-  community.docker.docker_container:
-    name: gitea-act-runner
-    restart: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ gitea_deploy_path }}"
+    services: runner
+    state: restarted
