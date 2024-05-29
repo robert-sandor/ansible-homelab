@@ -3,10 +3,15 @@ services:
   grafana:
     image: grafana/grafana-oss:{{ monitoring_grafana_version }}
     restart: unless-stopped
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     depends_on:
+      - grafana-db
       - loki
       - prometheus
+    secrets:
+      - grafana_db_password
     networks:
+      - default
       - traefik
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini
@@ -24,6 +29,28 @@ services:
       homepage.href: https://grafana.{{ hostname }}
       homepage.icon: grafana
       homepage.siteMonitor: https://grafana.{{ hostname }}
+
+  grafana-db:
+    image: postgres:{{ monitoring_grafana_postgres_version }}
+    restart: unless-stopped
+    secrets:
+      - grafana_db_password
+    environment:
+      TZ: "{{ timezone }}"
+      POSTGRES_USER: grafana
+      POSTGRES_DB: grafana
+      POSTGRES_PASSWORD_FILE: /run/secrets/grafana_db_password
+      PGUSER: grafana
+      PGDATABASE: grafana
+      PGPASSFILE: /run/secrets/grafana_db_password
+    volumes:
+      - grafana-db:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 5s
 
   loki:
     image: grafana/loki:{{ monitoring_loki_version }}
@@ -62,8 +89,13 @@ services:
       homepage.icon: prometheus
       homepage.siteMonitor: https://prometheus.{{ hostname }}
 
+secrets:
+  grafana_db_password:
+    file: ./secrets/grafana_db_password
+
 volumes:
   grafana-data:
+  grafana-db:
   loki-data:
   prometheus-data:
 
