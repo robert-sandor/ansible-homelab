@@ -27,7 +27,7 @@ services:
       GITEA__server__LFS_START_SERVER: true
       GITEA__server__LFS_JWT_SECRET__FILE: /run/secrets/gitea_jwt_secret
       # General UI settings
-      GITEA__ui__DEFAULT_THEME: auto
+      GITEA__ui__DEFAULT_THEME: gitea-auto
       # Security settings
       GITEA__security__INSTALL_LOCK: true
       GITEA__security__SECRET_KEY__FILE: /run/secrets/gitea_secret_key

@@ -1,4 +1,6 @@
 #! /usr/bin/env bash
+set -euxo pipefail
+
 BACKUP_PATH="{{ backup_path }}/gitea"
 DEPLOY_PATH="{{ gitea_deploy_path }}"
 export COMPOSE_FILE="$DEPLOY_PATH/compose.yml"
@@ -44,7 +46,7 @@ function restore {
   rm -rf "$DEPLOY_PATH/tmp"
 }
 
-if [[ $1 == restore ]]; then
+if [ $# -ge 1 ] && [[ "$1" == "restore" ]]; then
   restore
 else
   backup

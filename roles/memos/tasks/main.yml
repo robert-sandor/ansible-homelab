@@ -1,8 +1,10 @@
 ---
 - name: Memos
-  vars:
-    memos_deploy_path: "{{ deploy_path }}/memos"
   block:
+    - name: Set facts
+      ansible.builtin.set_fact:
+        memos_deploy_path: "{{ deploy_path }}/memos"
+
     - name: Containers
       ansible.builtin.import_tasks: ./containers.yml
 
