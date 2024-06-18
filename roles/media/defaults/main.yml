@@ -10,15 +10,15 @@ media_transmission_required_settings:
 media_transmission_settings: {}
 
 ### Sonarr - TV Series manager
-media_sonarr_version: 4.0.4
+media_sonarr_version: 4.0.5
 media_radarr_version: 5.6.0
 media_lidarr_version: 2.3.3
-media_prowlarr_version: 1.17.2
-media_bazarr_version: 1.4.2
-media_plex_version: 1.40.2
-media_jellyfin_version: 10.9.2
+media_prowlarr_version: 1.18.0
+media_bazarr_version: 1.4.3
+media_plex_version: 1.40.3
+media_jellyfin_version: 10.9.6
 media_overseerr_version: 1.33.2
-media_recyclarr_version: 6
+media_recyclarr_version: 6 # https://github.com/recyclarr/recyclarr/pkgs/container/recyclarr/139493555?tag=latest
 
 media_mount_host: localhost
 media_mount_path: /media
