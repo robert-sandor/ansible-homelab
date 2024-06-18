@@ -51,3 +51,16 @@ scrape_configs:
           - __address__
         target_label: instance
         regex: 'node\.([^.]+).*'
+
+  - job_name: cadvisor
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+          # {% for host in monitoring_prometheus_scrape_hosts | sort +%}
+          - cadvisor.{{ host }}.{{ domain }}
+          # {% endfor +%}
+    relabel_configs:
+      - source_labels:
+          - __address__
+        target_label: instance
+        regex: 'cadvisor\.([^.]+).*'
