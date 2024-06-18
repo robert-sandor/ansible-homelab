@@ -9,6 +9,6 @@ providers:
 notif:
   ntfy:
     endpoint: https://ntfy.{{ core_hostname }}
-    topic: docker-image-updates
+    topic: diun
   discord:
     webhookURL: "{{ base_diun_discord_webhook }}"

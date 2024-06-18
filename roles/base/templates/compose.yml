@@ -44,8 +44,9 @@ services:
     restart: unless-stopped
     command: serve
     environment:
-      LOG_LEVEL: info
-      LOG_JSON: "true"
+      TZ: "{{ timezone }}"
+      LOG_LEVEL: warn
+      LOG_JSON: "false"
     networks:
       - diun
     volumes:
@@ -142,6 +143,33 @@ services:
       homepage.href: https://glances.{{ hostname }}
       homepage.icon: glances
       homepage.siteMonitor: https://glances.{{ hostname }}
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:{{ base_cadvisor_version }}
+    restart: unless-stopped
+    privileged: true
+    networks:
+      - traefik
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    labels:
+      traefik.enable: true
+      traefik.http.services.cadvisor.loadbalancer.server.port: 8080
+      traefik.http.routers.cadvisor.rule: Host(`cadvisor.{{ hostname }}`)
+      traefik.http.routers.cadvisor.entrypoints: https
+      traefik.http.routers.cadvisor.service: cadvisor
+      homepage.name: cadvisor
+      homepage.group: monitoring
+      homepage.description: system monitoring @ {{ ansible_hostname }}
+      homepage.href: https://cadvisor.{{ hostname }}
+      homepage.icon: cadvisor
+      homepage.siteMonitor: https://cadvisor.{{ hostname }}
 
 networks:
   traefik:
