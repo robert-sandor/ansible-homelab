@@ -1,6 +1,6 @@
 ---
-vikunja_version: 0.23 # https://hub.docker.com/r/vikunja/vikunja/tags
-vikunja_postgres_version: 16
+vikunja_version: "0.24" # https://hub.docker.com/r/vikunja/vikunja/tags
+vikunja_postgres_version: "16"
 
 vikunja_jwt_secret: "{{ (('vikunja-jwt@' + deployment_secret) | hash('sha256'))[:64] }}"
 vikunja_openid_secret: "{{ (('vikunja@' + deployment_secret) | hash('sha256'))[:64] }}"

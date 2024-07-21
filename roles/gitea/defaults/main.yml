@@ -1,4 +1,4 @@
 ---
-gitea_gitea_version: 1.22 # https://github.com/go-gitea/gitea/releases
-gitea_gitea_postgres_version: 16
+gitea_gitea_version: "1.22" # https://github.com/go-gitea/gitea/releases
+gitea_gitea_postgres_version: "16"
 gitea_act_runner_version: latest # https://gitea.com/gitea/act_runner/releases

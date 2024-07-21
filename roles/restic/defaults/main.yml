@@ -1,4 +1,4 @@
 ---
-restic_version: 0.16.4 # https://github.com/restic/restic/releases
+restic_version: 0.16.5 # https://github.com/restic/restic/releases
 restic_repo: /change/me
 restic_password: changeme
