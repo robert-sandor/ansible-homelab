@@ -1,6 +1,7 @@
 ---
 name: Run Ansible Lint
 on:
+  schedule: "0 12 * * 6"
   pull_request:
   push:
     branches:
