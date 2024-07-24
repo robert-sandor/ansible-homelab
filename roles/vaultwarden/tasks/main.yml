@@ -7,3 +7,6 @@
 
     - name: Deploy containers
       ansible.builtin.import_tasks: ./containers.yml
+
+    - name: Setup backup script
+      ansible.builtin.import_tasks: ./backup_init.yml
