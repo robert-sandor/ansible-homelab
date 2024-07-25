@@ -6,14 +6,10 @@ services:
     command: serve
     environment:
       TZ: "{{ timezone }}"
-      NTFY_BASE_URL: https://ntfy.{{ hostname }}
-      NTFY_CACHE_FILE: /var/lib/ntfy/cache.db
-      NTFY_CACHE_DURATION: 72h
-      NTFY_ATTACHMENT_CACHE_DIR: /var/lib/ntfy/attachments
-      NTFY_BEHIND_PROXY: true
     networks:
       - traefik
     volumes:
+      - ./ntfy.yml:/etc/ntfy/server.yml:ro
       - ntfy-cache:/var/lib/ntfy
     healthcheck:
       test:
@@ -94,10 +90,8 @@ services:
     volumes:
       - ./lldap:/data
     depends_on:
-      lldap-postgres:
-        condition: service_healthy
-      mailrise:
-        condition: service_started
+      - lldap-db
+      - mailrise
     labels:
       traefik.enable: true
       traefik.http.services.lldap.loadbalancer.server.port: 17170
@@ -111,7 +105,7 @@ services:
       homepage.icon: mdi-security
       homepage.siteMonitor: https://lldap.{{ hostname }}
 
-  lldap-postgres:
+  lldap-db:
     image: postgres:{{ core_lldap_postgres_version }}
     restart: unless-stopped
     secrets:
@@ -121,6 +115,9 @@ services:
       POSTGRES_USER: lldap
       POSTGRES_DB: lldap
       POSTGRES_PASSWORD_FILE: /run/secrets/lldap_postgres_password
+      PGUSER: lldap
+      PGDATABASE: lldap
+      PGPASSFILE: /run/secrets/lldap_postgres_password
     networks:
       - lldap
     volumes:
@@ -154,14 +151,10 @@ services:
       - ./authelia:/config
       - ./secrets:/run/secrets:ro
     depends_on:
-      authelia-postgres:
-        condition: service_healthy
-      authelia-redis:
-        condition: service_healthy
-      lldap:
-        condition: service_healthy
-      mailrise:
-        condition: service_started
+      - authelia-db
+      - authelia-cache
+      - lldap
+      - mailrise
     labels:
       traefik.enable: true
       traefik.http.services.authelia.loadbalancer.server.port: 9091
@@ -175,7 +168,7 @@ services:
       homepage.icon: authelia
       homepage.siteMonitor: https://auth.{{ hostname }}
 
-  authelia-redis:
+  authelia-cache:
     image: redis:{{ core_authelia_redis_version }}
     restart: unless-stopped
     environment:
@@ -191,7 +184,7 @@ services:
       retries: 5
       start_period: 80s
 
-  authelia-postgres:
+  authelia-db:
     image: postgres:{{ core_authelia_postgres_version }}
     restart: unless-stopped
     secrets:
@@ -201,6 +194,9 @@ services:
       POSTGRES_USER: authelia
       POSTGRES_DB: authelia
       POSTGRES_PASSWORD_FILE: /run/secrets/authelia_postgres_password
+      PGUSER: authelia
+      PGDATABASE: authelia
+      PGPASSFILE: /run/secrets/authelia_postgres_password
     networks:
       - authelia
     volumes:

@@ -1,7 +1,7 @@
 ---
 ### LLDAP - simple LDAP server
 core_lldap_version: v0.5 # https://github.com/lldap/lldap/pkgs/container/lldap/128064535?tag=stable
-core_lldap_postgres_version: 16
+core_lldap_postgres_version: "16"
 
 # Password for the admin user
 core_lldap_admin_password: changeme
@@ -56,9 +56,9 @@ core_lldap_users: {}
 core_mailrise_version: latest # https://github.com/YoRyan/mailrise/pkgs/container/mailrise
 
 ### authelia
-core_authelia_version: 4.38 # https://github.com/authelia/authelia/releases
-core_authelia_postgres_version: 16
-core_authelia_redis_version: 7
+core_authelia_version: "4.38" # https://github.com/authelia/authelia/releases
+core_authelia_postgres_version: "16"
+core_authelia_redis_version: "7"
 
 core_authelia_postgres_password: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
 core_authelia_identity_validation_reset_password_jwt_secret: "{{ ('jwt-authelia@' + deployment_secret) | hash('sha256') }}"

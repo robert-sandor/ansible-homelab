@@ -1,0 +1,19 @@
+---
+- name: Create directory structure
+  ansible.builtin.file:
+    state: directory
+    path: "{{ backup_path }}/core"
+    mode: "0750"
+
+- name: Template backup.sh
+  ansible.builtin.template:
+    src: backup.sh
+    dest: "{{ core_deploy_path }}/backup.sh"
+    mode: "0750"
+
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@core.timer
+    state: started
+    enabled: true

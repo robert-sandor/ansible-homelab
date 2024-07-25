@@ -6,7 +6,7 @@ ldap_base_dn = "{{ ['dc='] | product(domain | split('.')) | map('join') | join('
 ldap_user_dn = "admin"
 ldap_user_email = "admin@{{ domain }}"
 
-database_url = "postgres://lldap:{{ core_lldap_db_password }}@lldap-postgres/lldap"
+database_url = "postgres://lldap:{{ core_lldap_db_password }}@lldap-db/lldap"
 
 key_seed = "{{ hostname | b64encode }}"
 

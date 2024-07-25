@@ -51,12 +51,12 @@ session:
     - domain: "{{ domain }}"
       authelia_url: https://auth.{{ ansible_hostname }}.{{ domain }}
   redis:
-    host: authelia-redis
+    host: authelia-cache
     port: 6379
 
 storage:
   postgres:
-    address: authelia-postgres:5432
+    address: authelia-db:5432
     database: authelia
     username: authelia
 

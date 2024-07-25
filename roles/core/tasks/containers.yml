@@ -25,6 +25,13 @@
     mode: "0644"
   notify: Restart mailrise
 
+- name: Template ntfy configuration
+  ansible.builtin.template:
+    src: ntfy.yml
+    dest: "{{ core_deploy_path }}/ntfy.yml"
+    mode: "0644"
+  notify: Restart ntfy
+
 - name: Template lldap configuration
   ansible.builtin.template:
     src: lldap_config.toml

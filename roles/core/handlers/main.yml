@@ -5,6 +5,12 @@
     services: mailrise
     state: restarted
 
+- name: Restart ntfy
+  community.docker.docker_compose_v2:
+    project_src: "{{ core_deploy_path }}"
+    services: ntfy
+    state: restarted
+
 - name: Restart homepage
   community.docker.docker_compose_v2:
     project_src: "{{ core_deploy_path }}"
@@ -16,7 +22,7 @@
     project_src: "{{ core_deploy_path }}"
     services:
       - lldap
-      - lldap-postgres
+      - lldap-db
     state: restarted
 
 - name: Restart authelia
@@ -24,5 +30,5 @@
     project_src: "{{ core_deploy_path }}"
     services:
       - authelia
-      - authelia-postgres
+      - authelia-db
     state: restarted
