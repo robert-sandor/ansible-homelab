@@ -1,6 +1,5 @@
 ---
-# Mealie version - link: https://github.com/mealie-recipes/mealie/pkgs/container/mealie
-mealie_version: v1.10.2
+mealie_version: v1.10.2 # https://github.com/mealie-recipes/mealie/pkgs/container/mealie
 
 # Admin user configuration
 # Passsword for the admin user - this will be set on first run

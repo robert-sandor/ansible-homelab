@@ -11,7 +11,7 @@ media_transmission_settings: {}
 
 ### Sonarr - TV Series manager
 media_sonarr_version: 4.0.8
-media_radarr_version: 5.7.0
+media_radarr_version: 5.8.3
 media_lidarr_version: 2.4.3
 media_prowlarr_version: 1.20.1
 media_bazarr_version: 1.4.3
