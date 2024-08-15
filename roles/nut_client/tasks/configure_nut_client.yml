@@ -1,0 +1,17 @@
+---
+- name: Update config files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/nut/{{ item }}"
+    mode: "0640"
+  loop:
+    - nut.conf
+    - upsmon.conf
+    - upssched.conf
+  notify: Reboot
+
+- name: Setup upssched script
+  ansible.builtin.template:
+    src: "upssched-cmd.sh"
+    dest: "/etc/nut/upssched-cmd.sh"
+    mode: "0740"

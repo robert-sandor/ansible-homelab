@@ -8,6 +8,9 @@
 - name: Tailscale
   ansible.builtin.import_playbook: ./tailscale.yml
 
+- name: NUT Server
+  ansible.builtin.import_playbook: ./nut-server.yml
+
 - name: Core
   ansible.builtin.import_playbook: ./core.yml
 

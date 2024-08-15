@@ -1,0 +1,5 @@
+---
+- name: Deploy NUT Server
+  hosts: nut_server
+  roles:
+    - nut_server

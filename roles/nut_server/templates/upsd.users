@@ -1,0 +1,8 @@
+[admin]
+  password = "{{ nut_server_admin_password }}"
+  actions = set
+  instcmds = all
+
+[upsmon]
+  password = "{{ nut_server_upsmon_password }}"
+  upsmon master

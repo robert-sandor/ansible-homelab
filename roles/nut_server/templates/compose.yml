@@ -1,0 +1,29 @@
+services:
+  server:
+    image: edgd1er/webnut
+    restart: unless-stopped
+    environment:
+      UPS_HOST: host.docker.internal
+      UPS_PORT: "3493"
+      UPS_USER: upsmon
+      UPS_PASSWORD: "{{ nut_server_upsmon_password }}"
+    networks:
+      - traefik
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    labels:
+      traefik.enable: true
+      traefik.http.services.nut.loadbalancer.server.port: 6543
+      traefik.http.routers.nut.rule: Host(`nut.{{ hostname }}`)
+      traefik.http.routers.nut.entrypoints: https
+      traefik.http.routers.nut.service: nut
+      homepage.name: nut
+      homepage.group: admin
+      homepage.description: UPS data @ {{ ansible_hostname }}
+      homepage.href: https://nut.{{ hostname }}/ups
+      homepage.icon: nut
+      homepage.siteMonitor: https://nut.{{ hostname }}
+
+networks:
+  traefik:
+    external: true

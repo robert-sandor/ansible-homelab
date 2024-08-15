@@ -1,0 +1,16 @@
+---
+- name: Install NUT server
+  become: true
+  vars:
+    ups_found: "{{ connected_ups.stdout | trim | length > 0 }}"
+  block:
+    - name: Install NUT client
+      ansible.builtin.apt:
+        name: nut-client
+
+    - name: Configure NUT client
+      when: ups_found
+      ansible.builtin.import_tasks: ./configure_nut_client.yml
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
