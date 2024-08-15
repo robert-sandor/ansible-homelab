@@ -1,6 +1,7 @@
 ---
 # Allow for systemd timers to run when user is not logged in
 - name: Enable lingering for user {{ ansible_facts.user_id }}
+  become: true
   ansible.builtin.command:
     cmd: loginctl enable-linger {{ ansible_facts.user_id }}
     creates: /var/lib/systemd/linger/{{ ansible_facts.user_id }}

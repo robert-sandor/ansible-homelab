@@ -40,11 +40,11 @@ base_portainer_agent_version: 2.20.3 # https://hub.docker.com/r/portainer/agent/
 base_node_exporter_version: v1.8.2 # https://quay.io/repository/prometheus/node-exporter?tab=tags
 
 ### Grafana promtail - expose host logs for loki
-base_promtail_version: 3.1.0 # https://hub.docker.com/r/grafana/promtail/tags
+base_promtail_version: 3.1.1 # https://hub.docker.com/r/grafana/promtail/tags
 base_promtail_loki_host: "{{ (groups['monitoring'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
 
 ### Glances
 base_glances_version: ubuntu-latest-full # https://hub.docker.com/r/nicolargo/glances/tags - NOTE: for gpu support use the ubuntu-*-full images
 
 ### cAdvisor
-base_cadvisor_version: v0.49.1 # https://github.com/google/cadvisor/releases
+base_cadvisor_version: v0.50.0 # https://github.com/google/cadvisor/releases

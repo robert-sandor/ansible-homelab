@@ -1,5 +1,5 @@
 ---
-paperless_version: "2.11" # https://github.com/paperless-ngx/paperless-ngx/pkgs/container/paperless-ngx/247074075?tag=latest
+paperless_version: "2.11" # https://github.com/paperless-ngx/paperless-ngx/pkgs/container/paperless-ngx
 paperless_gotenberg_version: "8" # https://hub.docker.com/r/gotenberg/gotenberg/tags
 paperless_tika_version: latest
 paperless_redis_version: "7"
