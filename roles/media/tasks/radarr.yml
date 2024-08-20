@@ -1,7 +1,7 @@
 ---
 - name: Configure Radarr
   vars:
-    radarr_api: "https://radarr.{{ hostname }}/api/v3"
+    radarr_api: https://radarr.{{ hostname }}/api/v3
     radarr_root_folder: /media/movies
     radarr_root_folder_query: "[?path == '{{ radarr_root_folder }}']"
     radarr_root_folder_set: "{{ radarr_get_root_folder_response.json | json_query(radarr_root_folder_query) | length > 0 }}"
@@ -106,7 +106,7 @@
             - name: useSsl
               value: false
             - name: urlBase
-              value: "/transmission/"
+              value: /transmission/
             - name: movieCategory
               value: movies
             - name: recentMoviePriority

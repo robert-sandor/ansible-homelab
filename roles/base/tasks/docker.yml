@@ -85,11 +85,11 @@
     docker_config_updates:
       insecure-registries: "{{ (docker_config['insecure-registries'] | default([]) + base_docker_insecure_registries) | unique }}"
       registry-mirrors: "{{ (docker_config['registry-mirrors'] | default([]) + base_docker_registry_mirrors) | unique }}"
-      metrics-addr: "0.0.0.0:9323" # TODO: can this be restricted to docker networks only?
+      metrics-addr: 0.0.0.0:9323 # TODO: can this be restricted to docker networks only?
       log-driver: json-file
       log-opts:
         max-size: 20m
-        max-file: '5'
+        max-file: "5"
   become: true
   ansible.builtin.copy:
     content: "{{ docker_config | combine(docker_config_updates, recursive=True) | to_nice_json(indent=2) }}"

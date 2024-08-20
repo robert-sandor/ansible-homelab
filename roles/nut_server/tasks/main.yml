@@ -20,7 +20,7 @@
     - name: No UPS connected message
       when: not ups_found
       ansible.builtin.debug:
-        message: "No UPS detected for host!!!"
+        message: No UPS detected for host!!!
 
     - name: Configure UPS server
       when: ups_found

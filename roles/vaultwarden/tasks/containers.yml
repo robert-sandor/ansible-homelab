@@ -27,7 +27,7 @@
     - dest: vaultwarden_db_password
       content: "{{ vaultwarden_db_password }}"
     - dest: vaultwarden_db_url
-      content: "postgresql://{{ vaultwarden_db_user }}:{{ vaultwarden_db_password }}@db:5432/{{ vaultwarden_db_name }}"
+      content: postgresql://{{ vaultwarden_db_user }}:{{ vaultwarden_db_password }}@db:5432/{{ vaultwarden_db_name }}
 
 - name: Deploy containers
   community.docker.docker_compose_v2:

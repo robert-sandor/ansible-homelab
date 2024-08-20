@@ -1,7 +1,7 @@
 ---
 - name: Lidarr - Configure
   vars:
-    lidarr_api: "https://lidarr.{{ hostname }}/api/v1"
+    lidarr_api: https://lidarr.{{ hostname }}/api/v1
     lidarr_root_folder: /media/music
     lidarr_root_folder_query: "[?path == '{{ lidarr_root_folder }}']"
     lidarr_root_folder_set: "{{ lidarr_get_root_folder_response.json | json_query(lidarr_root_folder_query) | length > 0 }}"
@@ -110,7 +110,7 @@
             - name: useSsl
               value: false
             - name: urlBase
-              value: "/transmission/"
+              value: /transmission/
             - name: musicCategory
               value: music
             - name: recentMusicPriority

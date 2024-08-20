@@ -1,9 +1,9 @@
 ---
 - name: LLDAP - Configure
   vars:
-    lldap_host: "https://lldap.{{ hostname }}"
+    lldap_host: https://lldap.{{ hostname }}
     lldap_api: "{{ lldap_host }}/api/graphql"
-    lldap_auth_header: "Bearer {{ lldap_auth.json.token }}"
+    lldap_auth_header: Bearer {{ lldap_auth.json.token }}
     # groups
     lldap_default_groups:
       admins:

@@ -1,7 +1,7 @@
 ---
 - name: Configure Prowlarr
   vars:
-    prowlarr_api: "https://prowlarr.{{ hostname }}/api/v1"
+    prowlarr_api: https://prowlarr.{{ hostname }}/api/v1
     prowlarr_current_download_client: "{{ prowlarr_current_download_clients.json | json_query('[?implementation == `Transmission`]') }}"
     prowlarr_wanted_config:
       authenticationMethod: external
@@ -72,7 +72,7 @@
             - name: useSsl
               value: false
             - name: urlBase
-              value: "/transmission/"
+              value: /transmission/
             - name: category
               value: prowlarr
             - name: addPaused

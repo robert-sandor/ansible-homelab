@@ -1,7 +1,7 @@
 ---
 - name: Configure Sonarr
   vars:
-    sonarr_api: "https://sonarr.{{ hostname }}/api/v3"
+    sonarr_api: https://sonarr.{{ hostname }}/api/v3
     sonarr_root_folder: /media/series
     sonarr_root_folder_query: "[?path == '{{ sonarr_root_folder }}']"
     sonarr_root_folder_set: "{{ sonarr_get_root_folder_response.json | json_query(sonarr_root_folder_query) | length > 0 }}"
@@ -106,7 +106,7 @@
             - name: useSsl
               value: false
             - name: urlBase
-              value: "/transmission/"
+              value: /transmission/
             - name: tvCategory
               value: series
             - name: recentTvPriority

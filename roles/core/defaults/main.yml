@@ -27,7 +27,6 @@ core_lldap_jwt_secret: "{{ ('lldap-jwt@' + deployment_secret) | hash('sha256') }
 #   group_will_be_removed: absent
 #
 core_lldap_groups: {}
-
 # Users to create
 #
 # Dictionary of users, each having the key as the username, and the value as follows
@@ -51,7 +50,6 @@ core_lldap_groups: {}
 #       users:
 #
 core_lldap_users: {}
-
 ### mailrise - smtp to notifications
 core_mailrise_version: latest # https://github.com/YoRyan/mailrise/pkgs/container/mailrise
 
@@ -67,7 +65,6 @@ core_authelia_storage_secret: "{{ ('storage-authelia@' + deployment_secret) | ha
 core_authelia_oidc_hmac_secret: "{{ ('oidc-hmac-authelia@' + deployment_secret) | hash('sha256') }}"
 
 core_authelia_users_allowed_hosts: []
-
 core_authelia_portainer_secret: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
 
 core_authelia_grafana_client: "{{ groups['monitoring'] | intersect(groups[deployment_env]) | length == 1 }}"

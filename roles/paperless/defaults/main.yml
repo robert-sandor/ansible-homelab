@@ -19,7 +19,7 @@ paperless_secret_key: tktk
 
 paperless_socialaccount_providers:
   openid_connect:
-    SCOPE: ["openid", "profile", "email"]
+    SCOPE: [openid, profile, email]
     OAUTH_PKCE_ENABLED: true,
     APPS:
       - provider_id: authelia

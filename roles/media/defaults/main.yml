@@ -8,7 +8,6 @@ media_transmission_required_settings:
   incomplete-dir: "{{ media_transmission_download_path }}/incomplete"
 # Additional setttings
 media_transmission_settings: {}
-
 ### Sonarr - TV Series manager
 media_sonarr_version: 4.0.8
 media_radarr_version: 5.8.3

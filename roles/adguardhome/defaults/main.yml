@@ -14,8 +14,8 @@ adguardhome_upstream_dns:
 
 # list of DNS servers for adguardhome to use to resolve upstreams
 adguardhome_bootstrap_dns:
-  - "1.1.1.1"
-  - "9.9.9.9"
+  - 1.1.1.1
+  - 9.9.9.9
 
 # per-client rate limit (requests / second) - setting this to 0 disables the rate limit
 adguardhome_ratelimit: 240
@@ -27,13 +27,11 @@ adguardhome_cache_size: 256
 # i.e. for a host named 'raspberrypi' added to this list,
 # all dns requests for subdomains of 'raspberrypi.{{ domain }}' will be redirected to 'raspberrypi.{{ domain }}'
 adguardhome_wildcard_hosts: []
-
 # additional dns rewrites
 # list of objects containing
 #   domain: this is the domain to rewrite
 #   answer: this is the answer adguardhome will give
 adguardhome_rewrites: []
-
 # list of adblocking lists for adguardhome to use - defaults to the lists adguardhome defaults to
 adguardhome_filter_lists:
   - name: AdGuard DNS filter

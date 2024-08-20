@@ -19,7 +19,7 @@
 
 - name: Authenticate tailscale if needs login
   vars:
-    query: "Health[?contains(@, 'NeedsLogin')] | [0]"
+    query: Health[?contains(@, 'NeedsLogin')] | [0]
     health: "{{ status_response.stdout | from_json | json_query(query) }}"
   when: health | length > 0
   block:
@@ -61,7 +61,7 @@
 
 - name: Update device
   vars:
-    query: "devices[?contains(hostname, '{{ ansible_facts.hostname }}')] | [0].id"
+    query: devices[?contains(hostname, '{{ ansible_facts.hostname }}')] | [0].id
     device_id: "{{ devices_response.json | json_query(query) }}"
   block:
     - name: Get advertised and enabled routes for device {{ device_id }}
@@ -79,9 +79,7 @@
       become: true
       vars:
         advertised_routes: "{{ get_routes_response.json.advertisedRoutes | default([]) }}"
-      ansible.builtin.command:
-        "tailscale up --advertise-routes={{ tailscale_routes | join(',') }} \
-        {{ tailscale_exit_node | ternary('--advertise-exit-node', '') }}"
+      ansible.builtin.command: tailscale up --advertise-routes={{ tailscale_routes | join(',') }} {{ tailscale_exit_node | ternary('--advertise-exit-node', '') }}
       when: tailscale_routes | difference(advertised_routes) | length > 0
       changed_when: true
 

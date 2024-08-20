@@ -3,7 +3,6 @@
 base_docker_insecure_registries: []
 # Setup docker registry mirrors
 base_docker_registry_mirrors: []
-
 # Attempt to auto detect GPU vendor and install drivers - currently, only nvidia is supported
 base_gpu_autodetect: true
 # Force installation of nvidia driver
@@ -24,7 +23,7 @@ base_traefik_env:
   CF_DNS_API_TOKEN: ""
 
 ### Watchtower - auto update containers if newwer image exists
-base_watchtower_version: "1.7.1" # https://github.com/containrrr/watchtower/pkgs/container/watchtower
+base_watchtower_version: 1.7.1 # https://github.com/containrrr/watchtower/pkgs/container/watchtower
 
 # Cron schedule on when watchtower runs and checks for updates
 base_watchtower_schedule: 0 0 0 * * *

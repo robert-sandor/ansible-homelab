@@ -1,7 +1,7 @@
 ---
 - name: Configure adguardhome
   vars:
-    adguardhome_api: "http://127.0.0.1:3000/control"
+    adguardhome_api: http://127.0.0.1:3000/control
     adguardhome_cookie: agh_session={{ adguardhome_auth_response.cookies.agh_session }}
     adguardhome_rewrite_list: >-
       [
@@ -23,10 +23,10 @@
           username: "{{ adguardhome_user }}"
           password: "{{ adguardhome_password }}"
           web:
-            ip: "0.0.0.0"
+            ip: 0.0.0.0
             port: 3000
           dns:
-            ip: "0.0.0.0"
+            ip: 0.0.0.0
             port: 53
         status_code: 200, 403
       register: adguardhome_init_response

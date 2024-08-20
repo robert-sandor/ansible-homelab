@@ -1,3 +1,4 @@
+---
 - name: Configure transmission
   vars:
     transmission_api: https://transmission.{{ hostname }}/transmission/rpc
@@ -39,7 +40,7 @@
 
     - name: Download latest flood-for-transmission
       ansible.builtin.get_url:
-        url: "https://github.com/johman10/flood-for-transmission/releases/download/latest/flood-for-transmission.zip"
+        url: https://github.com/johman10/flood-for-transmission/releases/download/latest/flood-for-transmission.zip
         dest: "{{ media_deploy_path }}/transmission/flood/"
         mode: "0644"
 

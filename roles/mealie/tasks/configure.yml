@@ -2,7 +2,7 @@
 - name: Initialize admin user
   vars:
     mealie_api: https://mealie.{{ hostname }}/api
-    mealie_token: "Bearer {{ mealie_auth_response.json.access_token }}"
+    mealie_token: Bearer {{ mealie_auth_response.json.access_token }}
   block:
     - name: Login with default credentials
       ansible.builtin.uri:

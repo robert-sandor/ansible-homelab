@@ -1,8 +1,9 @@
+---
 - name: Configure portainer
   vars:
-    portainer_api: "https://portainer.{{ hostname }}/api"
+    portainer_api: https://portainer.{{ hostname }}/api
     validate_certs: "{{ not base_traefik_acme_staging }}"
-    auth_header: "Bearer {{ core_portainer_auth.json.jwt }}"
+    auth_header: Bearer {{ core_portainer_auth.json.jwt }}
   block:
     - name: Check admin user
       ansible.builtin.uri:
@@ -99,7 +100,7 @@
             body:
               Name: "{{ agent }}"
               EndpointCreationType: "2"
-              URL: "tcp://{{ agent }}:9001"
+              URL: tcp://{{ agent }}:9001
               TLS: "true"
               TLSSkipVerify: "true"
               TLSSkipClientVerify: "true"

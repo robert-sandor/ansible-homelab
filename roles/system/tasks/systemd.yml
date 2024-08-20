@@ -9,14 +9,14 @@
 - name: Ensure systemd config dir exists
   ansible.builtin.file:
     state: directory
-    path: "/home/{{ ansible_facts.user_id }}/.config/systemd/user"
+    path: /home/{{ ansible_facts.user_id }}/.config/systemd/user
     mode: "0750"
 
 # Create templates for backup service and timer
 - name: Template generic backup service and timer
   ansible.builtin.template:
     src: "{{ item }}"
-    dest: "/home/{{ ansible_facts.user_id }}/.config/systemd/user/{{ item }}"
+    dest: /home/{{ ansible_facts.user_id }}/.config/systemd/user/{{ item }}
     mode: "0640"
   loop:
     - backup@.service

@@ -20,5 +20,5 @@ base_traefik_acme_staging: true
 base_traefik_dns_provider: cloudflare
 # Environment variables to add to traefik for the above DNS provider
 base_traefik_env:
-  CF_API_EMAIL: "admin@{{ domain }}"
+  CF_API_EMAIL: admin@{{ domain }}
   CF_DNS_API_TOKEN: changeme
