@@ -32,6 +32,7 @@ services:
       homepage.description: torrent client
       homepage.icon: transmission
       homepage.siteMonitor: https://transmission.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   sonarr:
     container_name: sonarr
@@ -68,6 +69,7 @@ services:
       homepage.description: manage tv series
       homepage.icon: sonarr
       homepage.siteMonitor: https://sonarr.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   radarr:
     container_name: radarr
@@ -104,6 +106,7 @@ services:
       homepage.description: manage movies
       homepage.icon: radarr
       homepage.siteMonitor: https://radarr.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   recyclarr:
     container_name: recyclarr
@@ -123,6 +126,8 @@ services:
     depends_on:
       - sonarr
       - radarr
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   lidarr:
     container_name: lidarr
@@ -158,6 +163,7 @@ services:
       homepage.description: manage music library
       homepage.icon: lidarr
       homepage.siteMonitor: https://lidarr.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   bazarr:
     container_name: bazarr
@@ -194,6 +200,7 @@ services:
       homepage.description: manage subtitles
       homepage.icon: bazarr
       homepage.siteMonitor: https://bazarr.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   prowlarr:
     container_name: prowlarr
@@ -231,6 +238,7 @@ services:
       homepage.description: manage indexers
       homepage.icon: prowlarr
       homepage.siteMonitor: https://prowlarr.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   overseerr:
     container_name: overseerr
@@ -262,6 +270,7 @@ services:
       homepage.description: request media
       homepage.icon: overseerr
       homepage.siteMonitor: https://overseerr.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   plex:
     container_name: plex
@@ -314,6 +323,7 @@ services:
       homepage.description: media server
       homepage.icon: plex
       homepage.siteMonitor: https://plex.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   jellyfin:
     container_name: jellyfin
@@ -360,6 +370,7 @@ services:
       homepage.description: media server
       homepage.icon: jellyfin
       homepage.siteMonitor: https://jellyfin.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
 volumes:
   media:

@@ -40,6 +40,7 @@ services:
       homepage.href: https://mealie.{{ hostname }}
       homepage.icon: mealie
       homepage.siteMonitor: https://mealie.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
 networks:
   traefik:

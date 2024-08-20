@@ -26,6 +26,7 @@ services:
       homepage.href: https://gatus.{{ hostname }}
       homepage.icon: gatus
       homepage.siteMonitor: https://gatus.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   gatus-db:
     container_name: gatus-db
@@ -50,6 +51,8 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
 secrets:
   gatus_db_password:

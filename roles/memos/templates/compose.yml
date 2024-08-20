@@ -19,6 +19,7 @@ services:
       homepage.href: https://memos.{{ hostname }}
       homepage.icon: memos
       homepage.siteMonitor: https://memos.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
 networks:
   traefik:

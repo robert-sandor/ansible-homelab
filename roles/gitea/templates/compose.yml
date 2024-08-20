@@ -61,6 +61,7 @@ services:
       homepage.href: https://gitea.{{ hostname }}
       homepage.icon: gitea
       homepage.siteMonitor: https://gitea.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   db:
     image: postgres:{{ gitea_gitea_postgres_version }}
@@ -83,6 +84,8 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   runner:
     image: gitea/act_runner:{{ gitea_act_runner_version }}
@@ -97,6 +100,8 @@ services:
     environment:
       GITEA_INSTANCE_URL: https://gitea.{{ hostname }}
       GITEA_RUNNER_REGISTRATION_TOKEN_FILE: /run/secrets/runner_registration_token
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
 secrets:
   gitea_postgres_password:

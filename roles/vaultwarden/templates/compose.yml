@@ -30,6 +30,7 @@ services:
       homepage.href: https://vaultwarden.{{ hostname }}
       homepage.icon: vaultwarden
       homepage.siteMonitor: https://vaultwarden.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   db:
     image: postgres:{{ vaultwarden_postgres_version }}
@@ -45,6 +46,8 @@ services:
       PGPASSFILE: /run/secrets/vaultwarden_db_password
     volumes:
       - db:/var/lib/postgresql/data
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
 volumes:
   db:

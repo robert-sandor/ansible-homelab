@@ -29,12 +29,6 @@
     - dest: vaultwarden_db_url
       content: "postgresql://{{ vaultwarden_db_user }}:{{ vaultwarden_db_password }}@db:5432/{{ vaultwarden_db_name }}"
 
-- name: Template backup script
-  ansible.builtin.template:
-    src: backup.sh
-    dest: "{{ vaultwarden_deploy_path }}/backup.sh"
-    mode: "0700"
-
 - name: Deploy containers
   community.docker.docker_compose_v2:
     project_src: "{{ vaultwarden_deploy_path }}"

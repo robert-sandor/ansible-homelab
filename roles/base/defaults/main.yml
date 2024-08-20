@@ -23,12 +23,14 @@ base_traefik_env:
   CF_API_EMAIL: admin@{{ domain }}
   CF_DNS_API_TOKEN: ""
 
-### DIUN - docker image update notifier
-base_diun_version: "4" # https://github.com/crazy-max/diun/pkgs/container/diun
-# Cron schedule on when diun runs and checks for updates
-base_diun_schedule: 0 0 * * sat
-# Discord webhook
-base_diun_discord_webhook: https://discord.com/api/webhooks/.../...
+### Watchtower - auto update containers if newwer image exists
+base_watchtower_version: "1.7.1" # https://github.com/containrrr/watchtower/pkgs/container/watchtower
+
+# Cron schedule on when watchtower runs and checks for updates
+base_watchtower_schedule: 0 0 0 * * *
+
+# Notification URL - check https://containrrr.dev/shoutrrr for supported services
+base_watchtower_notification_url: ntfy://ntfy.{{ (groups['ntfy'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}.{{ domain }}/watchtower
 
 ### Docker Socket Proxy - a proxy to control exposed docker api resources
 base_dsp_version: 1.26.1 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy

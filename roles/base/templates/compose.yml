@@ -37,22 +37,25 @@ services:
       homepage.href: https://traefik.{{ hostname }}
       homepage.icon: traefik
       homepage.siteMonitor: https://traefik.{{ hostname }}
+      # watchtower
+      com.centurylinklabs.watchtower.enable: true
 
-  diun:
-    hostname: diun.{{ hostname }}
-    image: ghcr.io/crazy-max/diun:{{ base_diun_version }}
+  watchtower:
+    hostname: watchtower
+    image: ghcr.io/containrrr/watchtower:{{ base_watchtower_version }}
     restart: unless-stopped
-    command: serve
+    command: --cleanup --label-enable --no-startup-message
     environment:
       TZ: "{{ timezone }}"
-      LOG_LEVEL: warn
-      LOG_JSON: "false"
+      WATCHTOWER_SCHEDULE: "{{ base_watchtower_schedule }}"
+      WATCHTOWER_NOTIFICATION_URL: "{{ base_watchtower_notification_url }}"
+      WATCHTOWER_NOTIFICATIONS_HOSTNAME: watchtower.{{ hostname }}
     networks:
-      - diun
+      - traefik
     volumes:
-      - ./diun.yml:/etc/diun/diun.yml
-      - diun:/data
       - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   docker_socket_proxy:
     image: ghcr.io/linuxserver/socket-proxy:{{ base_dsp_version }}
@@ -66,6 +69,8 @@ services:
       - "2375:2375"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   portainer_agent:
     image: portainer/agent:{{ base_portainer_agent_version }}
@@ -76,6 +81,8 @@ services:
       - "9001:9001"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   node_exporter:
     image: quay.io/prometheus/node-exporter:{{ base_node_exporter_version }}
@@ -85,6 +92,8 @@ services:
     pid: host
     volumes:
       - "/:/host:ro,rslave"
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   promtail:
     image: grafana/promtail:{{ base_promtail_version }}
@@ -111,6 +120,7 @@ services:
       homepage.href: https://promtail.{{ hostname }}
       homepage.icon: loki
       homepage.siteMonitor: https://promtail.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   glances:
     image: nicolargo/glances:{{ base_glances_version }}
@@ -143,6 +153,7 @@ services:
       homepage.href: https://glances.{{ hostname }}
       homepage.icon: glances
       homepage.siteMonitor: https://glances.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:{{ base_cadvisor_version }}
@@ -170,15 +181,14 @@ services:
       homepage.href: https://cadvisor.{{ hostname }}
       homepage.icon: cadvisor
       homepage.siteMonitor: https://cadvisor.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
 networks:
   traefik:
     # name: traefik
     external: true
-  diun:
   docker:
   portainer:
 
 volumes:
   traefik:
-  diun:

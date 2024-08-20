@@ -26,6 +26,7 @@ services:
       homepage.href: https://adguardhome.{{ hostname }}
       homepage.icon: adguard-home
       homepage.siteMonitor: https://adguardhome.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
 networks:
   traefik:

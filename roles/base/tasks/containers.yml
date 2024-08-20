@@ -54,13 +54,6 @@
     mode: "0600"
   loop: "{{ base_traefik_env | dict2items }}"
 
-- name: Template diun config
-  ansible.builtin.template:
-    src: diun.yml
-    dest: "{{ base_deploy_path }}/diun.yml"
-    mode: "0600"
-  notify: Restart diun
-
 - name: Template promtail config
   ansible.builtin.template:
     src: promtail.yml

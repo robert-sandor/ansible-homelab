@@ -29,6 +29,7 @@ services:
       homepage.href: https://grafana.{{ hostname }}
       homepage.icon: grafana
       homepage.siteMonitor: https://grafana.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   grafana-db:
     image: postgres:{{ monitoring_grafana_postgres_version }}
@@ -51,6 +52,8 @@ services:
       timeout: 2s
       retries: 5
       start_period: 5s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   loki:
     image: grafana/loki:{{ monitoring_loki_version }}
@@ -67,6 +70,7 @@ services:
       traefik.http.routers.loki.rule: Host(`loki.{{ hostname }}`)
       traefik.http.routers.loki.entrypoints: https
       traefik.http.routers.loki.service: loki
+      com.centurylinklabs.watchtower.enable: true
 
   prometheus:
     image: prom/prometheus:{{ monitoring_prometheus_version }}
@@ -88,6 +92,7 @@ services:
       homepage.href: https://prometheus.{{ hostname }}
       homepage.icon: prometheus
       homepage.siteMonitor: https://prometheus.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
 secrets:
   grafana_db_password:

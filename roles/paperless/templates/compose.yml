@@ -63,21 +63,28 @@ services:
       homepage.href: https://paperless.{{ hostname }}
       homepage.icon: paperless
       homepage.siteMonitor: https://paperless.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   gotenberg:
     image: gotenberg/gotenberg:{{ paperless_gotenberg_version }}
     restart: unless-stopped
     command: gotenberg --chromium-disable-javascript=true --chromium-allow-list=file:///tmp/.*
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   tika:
     image: ghcr.io/paperless-ngx/tika:{{ paperless_tika_version }}
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   redis:
     image: redis:{{ paperless_redis_version }}
     restart: unless-stopped
     volumes:
       - redis:/data
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   db:
     image: postgres:{{ paperless_postgres_version }}

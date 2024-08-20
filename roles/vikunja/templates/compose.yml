@@ -24,6 +24,7 @@ services:
       homepage.href: https://vikunja.{{ hostname }}
       homepage.icon: vikunja
       homepage.siteMonitor: https://vikunja.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   db:
     image: postgres:{{ vikunja_postgres_version }}
@@ -46,6 +47,8 @@ services:
       timeout: 2s
       retries: 5
       start_period: 5s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
 volumes:
   files:

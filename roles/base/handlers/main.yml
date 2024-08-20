@@ -20,12 +20,6 @@
     services: traefik
     state: restarted
 
-- name: Restart diun
-  community.docker.docker_compose_v2:
-    project_src: "{{ base_deploy_path }}"
-    services: diun
-    state: restarted
-
 - name: Restart promtail
   community.docker.docker_compose_v2:
     project_src: "{{ base_deploy_path }}"
