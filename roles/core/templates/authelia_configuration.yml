@@ -18,12 +18,19 @@ authentication_backend:
     additional_groups_dn: ou=groups
     groups_filter: "(member={dn})"
     user: uid=admin,ou=people,{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}
+    password: >-
+      {{ '{{ secret "/run/secrets/lldap_user_pass" }}' }}
     attributes:
       distinguished_name: "distinguishedName"
       username: "uid"
       mail: "mail"
       member_of: "memberOf"
       group_name: "cn"
+
+identity_validation:
+  reset_password:
+    jwt_secret: >-
+      {{ '{{ secret "/run/secrets/authelia_identity_validation_reset_password_jwt_secret" }}' }}
 
 access_control:
   default_policy: deny
@@ -47,6 +54,8 @@ access_control:
 
 session:
   name: authelia_{{ ansible_hostname }}_session
+  secret: >-
+    {{ '{{ secret "/run/secrets/authelia_session_secret" }}' }}
   cookies:
     - domain: "{{ domain }}"
       authelia_url: https://auth.{{ ansible_hostname }}.{{ domain }}
@@ -55,10 +64,14 @@ session:
     port: 6379
 
 storage:
+  encryption_key: >-
+    {{ '{{ secret "/run/secrets/authelia_storage_secret" }}' }}
   postgres:
     address: authelia-db:5432
     database: authelia
     username: authelia
+    password: >-
+      {{ '{{ secret "/run/secrets/authelia_postgres_password" }}' }}
 
 notifier:
   smtp:
@@ -71,6 +84,8 @@ notifier:
 
 identity_providers:
   oidc:
+    hmac_secret: >-
+      {{ '{{ secret "/run/secrets/authelia_oidc_hmac_secret" }}' }}
     jwks:
       - key: |
           {{ '{{ secret "/run/secrets/authelia_oidc_issuer_private_key" | mindent 10 "|" | msquote }}' }}

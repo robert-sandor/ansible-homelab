@@ -86,12 +86,6 @@ services:
     environment:
       TZ: "{{ timezone }}"
       X_AUTHELIA_CONFIG_FILTERS: template
-      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /run/secrets/authelia_identity_validation_reset_password_jwt_secret
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE: /run/secrets/lldap_user_pass
-      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
-      AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE: /run/secrets/authelia_postgres_password
-      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_secret
-      AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET_FILE: /run/secrets/authelia_oidc_hmac_secret
     networks:
       - authelia
       - traefik
