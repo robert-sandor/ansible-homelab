@@ -1,0 +1,44 @@
+---
+- name: Deploy homepage
+  block:
+    - name: Set facts
+      ansible.builtin.set_fact:
+        homepage_deploy_path: "{{ deploy_path }}/homepage"
+        homepage_config_path: "{{ deploy_path }}/homepage/config"
+
+    - name: Create directory structure
+      ansible.builtin.file:
+        state: directory
+        path: "{{ homepage_config_path }}"
+        mode: "0700"
+
+    - name: Template files
+      ansible.builtin.template:
+        src: compose.yml
+        dest: "{{ homepage_deploy_path }}/compose.yml"
+        mode: "0600"
+
+    - name: Copy homepage config
+      ansible.builtin.copy:
+        content: "{{ item.content }}"
+        dest: "{{ homepage_config_path }}/{{ item.dest }}"
+        mode: "0600"
+      loop:
+        - dest: settings.yaml
+          content: "{{ homepage_settings | to_nice_yaml }}"
+        - dest: docker.yaml
+          content: "{{ homepage_docker | to_nice_yaml }}"
+        - dest: services.yaml
+          content: "{{ homepage_services | to_nice_yaml if homepage_services | length > 0 else '' }}"
+        - dest: bookmarks.yaml
+          content: "{{ homepage_bookmarks | to_nice_yaml if homepage_bookmarks | length > 0 else '' }}"
+      notify: Restart homepage
+
+    - name: Deploy containers
+      community.docker.docker_compose_v2:
+        project_src: "{{ homepage_deploy_path }}"
+        pull: always
+        remove_orphans: true
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers

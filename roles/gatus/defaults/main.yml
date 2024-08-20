@@ -19,6 +19,7 @@ gatus_roles:
   - media
   - memos
   - monitoring
+  - ntfy
   - vaultwarden
   - vikunja
 

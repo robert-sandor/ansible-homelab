@@ -8,4 +8,4 @@ nut_server_upsmon_password: secret # password for upsmon user - use this to moni
 nut_server_shutdown_on: lowbatt # onbatt - shutdown on battery event / lowbatt - shutdown on low battery event
 nut_server_shutdown_delay_seconds: 5
 
-nut_server_ntfy: https://ntfy.{{ core_hostname }}/ups
+nut_server_ntfy: https://ntfy.{{ (groups['ntfy'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}.{{ domain }}/ups

@@ -22,9 +22,3 @@ base_traefik_dns_provider: cloudflare
 base_traefik_env:
   CF_API_EMAIL: "admin@{{ domain }}"
   CF_DNS_API_TOKEN: changeme
-
-### DIUN - docker image update notifier
-# Cron schedule on when diun runs and checks for updates
-base_diun_schedule: 0 0 * * *
-# Webhook URL to a discord channel to push notifications to
-base_diun_discord_webhook: https://discord.com/api/webhooks/1234/xxxx

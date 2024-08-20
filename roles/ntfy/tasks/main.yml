@@ -1,0 +1,9 @@
+---
+- name: Deploy core services
+  block:
+    - name: Set facts
+      ansible.builtin.set_fact:
+        ntfy_deploy_path: "{{ deploy_path }}/ntfy"
+
+    - name: Deploy containers
+      ansible.builtin.import_tasks: ./containers.yml

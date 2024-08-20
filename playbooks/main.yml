@@ -14,6 +14,9 @@
 - name: Core
   ansible.builtin.import_playbook: ./core.yml
 
+- name: Ntfy
+  ansible.builtin.import_playbook: ./ntfy.yml
+
 - name: Restic
   ansible.builtin.import_playbook: ./restic.yml
 

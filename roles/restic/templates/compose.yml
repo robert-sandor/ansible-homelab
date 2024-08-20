@@ -11,6 +11,8 @@ services:
       RESTIC_PASSWORD_FILE: /run/secrets/restic-password
     volumes:
       - "{{ backup_path }}:/backup"
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
 secrets:
   restic-repo:

@@ -1,0 +1,5 @@
+---
+- name: Deploy dozzle
+  hosts: dozzle
+  roles:
+    - dozzle

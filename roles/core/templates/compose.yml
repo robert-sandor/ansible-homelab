@@ -1,57 +1,5 @@
 ---
 services:
-  ntfy:
-    image: binwiederhier/ntfy:{{ core_ntfy_version }}
-    restart: unless-stopped
-    command: serve
-    environment:
-      TZ: "{{ timezone }}"
-    networks:
-      - traefik
-    volumes:
-      - ./ntfy.yml:/etc/ntfy/server.yml:ro
-      - ntfy-cache:/var/lib/ntfy
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    labels:
-      traefik.enable: true
-      traefik.http.services.ntfy.loadbalancer.server.port: 80
-      traefik.http.routers.ntfy.rule: Host(`ntfy.{{ hostname }}`)
-      traefik.http.routers.ntfy.entrypoints: https
-      traefik.http.routers.ntfy.service: ntfy
-      homepage.name: ntfy
-      homepage.group: admin
-      homepage.description: notifications
-      homepage.href: https://ntfy.{{ hostname }}
-      homepage.icon: ntfy
-      homepage.siteMonitor: https://ntfy.{{ hostname }}
-
-  homepage:
-    image: ghcr.io/gethomepage/homepage:{{ core_homepage_version }}
-    restart: unless-stopped
-    environment:
-      TZ: "{{ timezone }}"
-      PUID: "{{ ansible_facts.user_uid }}"
-      PGID: "{{ ansible_facts.user_gid }}"
-    networks:
-      - traefik
-    volumes:
-      - ./homepage:/app/config
-    labels:
-      traefik.enable: true
-      traefik.http.services.homepage.loadbalancer.server.port: 3000
-      traefik.http.routers.homepage.rule: Host(`{{ hostname }}`) || Host(`home.{{ hostname }}`) || Host(`home.{{ domain }}`)
-      traefik.http.routers.homepage.entrypoints: https
-      traefik.http.routers.homepage.service: homepage
-
   mailrise:
     image: ghcr.io/yoryan/mailrise:{{ core_mailrise_version }}
     restart: unless-stopped
@@ -59,8 +7,6 @@ services:
       - traefik
     volumes:
       - ./mailrise.yml:/etc/mailrise.conf:ro
-    depends_on:
-      - ntfy
     labels:
       traefik.enable: true
       traefik.tcp.routers.mailrise.rule: HostSNI(`*`)
@@ -69,6 +15,7 @@ services:
       traefik.tcp.routers.mailrise.tls.certresolver: letsencrypt
       traefik.tcp.routers.mailrise.tls.domains[0].main: "mailrise.{{ hostname }}"
       traefik.tcp.routers.mailrise.tls.domains[0].sans: ""
+      com.centurylinklabs.watchtower.enable: true
 
   lldap:
     image: lldap/lldap:{{ core_lldap_version }}
@@ -104,6 +51,7 @@ services:
       homepage.href: https://lldap.{{ hostname }}
       homepage.icon: mdi-security
       homepage.siteMonitor: https://lldap.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   lldap-db:
     image: postgres:{{ core_lldap_postgres_version }}
@@ -128,6 +76,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 1s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   authelia:
     image: ghcr.io/authelia/authelia:{{ core_authelia_version }}
@@ -167,6 +117,7 @@ services:
       homepage.href: https://auth.{{ hostname }}
       homepage.icon: authelia
       homepage.siteMonitor: https://auth.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
   authelia-cache:
     image: redis:{{ core_authelia_redis_version }}
@@ -183,6 +134,8 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   authelia-db:
     image: postgres:{{ core_authelia_postgres_version }}
@@ -207,6 +160,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 1s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
 
   portainer:
     image: portainer/portainer-ce:{{ core_portainer_version }}
@@ -227,6 +182,7 @@ services:
       homepage.href: https://portainer.{{ hostname }}
       homepage.icon: portainer
       homepage.siteMonitor: https://portainer.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
 
 volumes:
   lldap-postgres:
@@ -237,8 +193,6 @@ volumes:
     name: authelia-cache
   portainer-data:
     name: portainer-data
-  ntfy-cache:
-    name: ntfy-cache
 
 networks:
   authelia:

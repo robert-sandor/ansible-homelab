@@ -11,12 +11,6 @@
     services: ntfy
     state: restarted
 
-- name: Restart homepage
-  community.docker.docker_compose_v2:
-    project_src: "{{ core_deploy_path }}"
-    services: homepage
-    state: restarted
-
 - name: Restart lldap
   community.docker.docker_compose_v2:
     project_src: "{{ core_deploy_path }}"

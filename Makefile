@@ -1,7 +1,8 @@
 #!make
 
-playbook := main
-default:
-		ansible-playbook ./playbooks/${playbook}.yml -i ./inventory --diff
+default: 
+		ansible-playbook ./playbooks/main.yml -i ./inventory --diff
 
+%:
+		ansible-playbook ./playbooks/$@.yml -i ./inventory --diff
 

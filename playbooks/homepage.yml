@@ -1,0 +1,5 @@
+---
+- name: Deploy homepage
+  hosts: homepage
+  roles:
+    - homepage

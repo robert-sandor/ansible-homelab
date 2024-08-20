@@ -2,15 +2,13 @@
 - name: Create directory structure
   ansible.builtin.file:
     state: directory
-    path: "{{ deploy_path }}/{{ item.path }}"
+    path: "{{ deploy_path }}"
     mode: "{{ item.mode | default('0755') }}"
   loop:
-    - path: core
-    - path: core/secrets
+    - path: secrets
       mode: "0700"
-    - path: core/lldap
-    - path: core/authelia
-    - path: core/homepage
+    - path: lldap
+    - path: authelia
 
 - name: Template files
   ansible.builtin.template:
@@ -24,13 +22,6 @@
     dest: "{{ core_deploy_path }}/mailrise.yml"
     mode: "0644"
   notify: Restart mailrise
-
-- name: Template ntfy configuration
-  ansible.builtin.template:
-    src: ntfy.yml
-    dest: "{{ core_deploy_path }}/ntfy.yml"
-    mode: "0644"
-  notify: Restart ntfy
 
 - name: Template lldap configuration
   ansible.builtin.template:
@@ -84,22 +75,6 @@
 
 - name: Authelia hash secrets
   ansible.builtin.import_tasks: ./authelia_config.yml
-
-- name: Copy homepage config
-  ansible.builtin.copy:
-    content: "{{ item.content }}"
-    dest: "{{ deploy_path }}/core/homepage/{{ item.dest }}"
-    mode: "0644"
-  loop:
-    - dest: settings.yaml
-      content: "{{ core_homepage_settings | to_nice_yaml }}"
-    - dest: docker.yaml
-      content: "{{ core_homepage_docker | to_nice_yaml }}"
-    - dest: services.yaml
-      content: "{{ core_homepage_services | to_nice_yaml if core_homepage_services | length > 0 else '' }}"
-    - dest: bookmarks.yaml
-      content: "{{ core_homepage_bookmarks | to_nice_yaml if core_homepage_bookmarks | length > 0 else '' }}"
-  notify: Restart homepage
 
 - name: Generate authelia OIDC HMAC secret
   ansible.builtin.command:

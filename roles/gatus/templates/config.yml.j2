@@ -29,7 +29,7 @@ ui:
 alerting:
   ntfy:
     topic: alerts
-    url: https://ntfy.{{ core_hostname }}
+    url: https://ntfy.{{ (groups['ntfy'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}.{{ domain }}
     priority: 1
     default-alert:
       failure-threshold: 3
@@ -115,11 +115,6 @@ endpoints:
 {% if 'core' in gatus_roles %}
 # Core apps
 {% for host in groups['core'] | intersect(groups[deployment_env]) | sort %} 
-  - name: ntfy @ {{ host }}
-    group: core
-    url: https://ntfy.{{ host }}.{{ domain }}
-    <<: *defaults
-
   - name: homepage @ {{ host }}
     group: core
     url: https://home.{{ host }}.{{ domain }}
@@ -138,6 +133,17 @@ endpoints:
   - name: portainer @ {{ host }}
     group: core
     url: https://portainer.{{ host }}.{{ domain }}
+    <<: *defaults
+{% endfor %}
+{% endif %}
+
+{% if 'core' in gatus_roles %}
+
+# Ntfy
+{% for host in groups['ntfy'] | intersect(groups[deployment_env]) | sort %} 
+  - name: ntfy @ {{ host }}
+    group: core
+    url: https://ntfy.{{ host }}.{{ domain }}
     <<: *defaults
 {% endfor %}
 {% endif %}
