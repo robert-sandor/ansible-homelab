@@ -79,7 +79,8 @@
       become: true
       vars:
         advertised_routes: "{{ get_routes_response.json.advertisedRoutes | default([]) }}"
-      ansible.builtin.command: tailscale up --advertise-routes={{ tailscale_routes | join(',') }} {{ tailscale_exit_node | ternary('--advertise-exit-node', '') }}
+      ansible.builtin.command: >
+        tailscale up --advertise-routes={{ tailscale_routes | join(',') }} {{ tailscale_exit_node | ternary('--advertise-exit-node', '') }}
       when: tailscale_routes | difference(advertised_routes) | length > 0
       changed_when: true
 

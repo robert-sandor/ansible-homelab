@@ -1,2 +1,2 @@
 # This file contains ignores rule violations for ansible-lint
-playbooks/main.yml name[play]
+playbooks/all.yml name[play]
