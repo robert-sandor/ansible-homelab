@@ -1,0 +1,28 @@
+---
+- name: Deploy dozzle server
+  block:
+    - name: Set facts
+      ansible.builtin.set_fact:
+        dozzle_deploy_path: "{{ deploy_path }}/dozzle"
+
+    - name: Create directory structure
+      ansible.builtin.file:
+        state: directory
+        path: "{{ dozzle_deploy_path }}"
+        mode: "0700"
+
+    - name: Template compose file
+      vars:
+        dozzle_agents: "{{ dozzle_agent_hosts | product([dozzle_agent_suffix]) | map('join') | join(',') }}"
+        dozzle_agent_suffix: ".{{ domain }}:7007"
+        dozzle_agent_hosts: "{{ groups['dozzle_agent'] | intersect(groups[deployment_env]) | sort }}"
+      ansible.builtin.template:
+        src: compose.yml
+        dest: "{{ dozzle_deploy_path }}/compose.yml"
+        mode: "0600"
+
+    - name: Deploy containers
+      community.docker.docker_compose_v2:
+        project_src: "{{ dozzle_deploy_path }}"
+        pull: always
+        remove_orphans: true

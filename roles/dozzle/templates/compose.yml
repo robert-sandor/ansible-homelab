@@ -1,0 +1,33 @@
+---
+services:
+  server:
+    image: amir20/dozzle:{{ dozzle_version }}
+    restart: unless-stopped
+    environment:
+      DOZZLE_AUTH_PROVIDER: forward-proxy
+      DOZZLE_ENABLE_ACTIONS: true
+      DOZZLE_NO_ANALYTICS: true
+      DOZZLE_HOSTNAME: "{{ ansible_hostname }}"
+      DOZZLE_REMOTE_AGENT: "{{ dozzle_agents }}"
+    networks:
+      - traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      traefik.enable: true
+      traefik.http.services.dozzle.loadbalancer.server.port: 8080
+      traefik.http.routers.dozzle.rule: Host(`dozzle.{{ hostname }}`)
+      traefik.http.routers.dozzle.entrypoints: https
+      traefik.http.routers.dozzle.service: dozzle
+      traefik.http.routers.dozzle.middlewares: authelia@docker
+      homepage.name: dozzle
+      homepage.group: admin
+      homepage.description: docker logs
+      homepage.href: https://dozzle.{{ hostname }}
+      homepage.icon: dozzle
+      homepage.siteMonitor: https://dozzle.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
+
+networks:
+  traefik:
+    external: true
