@@ -1,5 +1,5 @@
 ---
-monitoring_grafana_version: 11.1.3 # https://github.com/grafana/grafana/releases
+monitoring_grafana_version: 11.1.4 # https://github.com/grafana/grafana/releases
 monitoring_grafana_postgres_version: "16"
 monitoring_grafana_db_password: "{{ ('grafana@' + deployment_secret) | hash('sha256') }}"
 
