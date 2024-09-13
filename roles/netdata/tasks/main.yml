@@ -1,0 +1,12 @@
+---
+- name: Deploy netdata
+  block:
+    - name: Set deploy path fact
+      ansible.builtin.set_fact:
+        netdata_deploy_path: "{{ deploy_path }}/netdata"
+
+    - name: Deploy containers
+      ansible.builtin.import_tasks: ./containers.yml
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers

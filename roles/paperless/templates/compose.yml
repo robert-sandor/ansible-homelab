@@ -38,6 +38,7 @@ services:
       PAPERLESS_TIMEZONE: "{{ timezone }}"
       PAPERLESS_OCR_LANGUAGE: "{{ paperless_ocr_language }}"
       PAPERLESS_OCR_LANGUAGES: "{{ paperless_additional_ocr_languages }}"
+      PAPERLESS_OCR_USER_ARGS: "{'invalidate_digital_signatures': true}"
       PAPERLESS_USE_X_FORWARD_HOST: true
       PAPERLESS_USE_X_FORWARD_PORT: true
       # Authelia

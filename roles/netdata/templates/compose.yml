@@ -1,0 +1,43 @@
+---
+services:
+  agent:
+    image: netdata/netdata:{{ netdata_version }}
+    restart: unless-stopped
+    pid: host
+    network_mode: host
+    environment:
+      DISABLE_TELEMETRY: 1
+      NETDATA_EXTRA_DEB_PACKAGES: "lm-sensors"
+      NETDATA_CLAIM_TOKEN: "{{ netdata_claim_token }}"
+      NETDATA_CLAIM_URL: "{{ netdata_claim_url }}"
+      NETDATA_CLAIM_ROOMS: "{{ netdata_claim_rooms }}"
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - ./config:/etc/netdata
+      - lib:/var/lib/netdata
+      - cache:/var/cache/netdata
+      - /:/host/root:ro,rslave
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/log:/host/var/log:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      homepage.name: netdata
+      homepage.group: monitoring
+      homepage.description: "{{ ansible_hostname }} metrics and logs"
+      homepage.href: https://netdata.{{ hostname }}
+      homepage.icon: netdata
+      homepage.siteMonitor: https://netdata.{{ hostname }}
+      com.centurylinklabs.watchtower.enable: true
+
+volumes:
+  lib:
+  cache:

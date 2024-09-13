@@ -37,8 +37,14 @@
   notify: Restart traefik
   loop:
     - traefik.yml
-    - traefik/docker_metrics.yml
-    - traefik/node_exporter.yml
+
+- name: Template traefik config files
+  when: "'netdata' in groups"
+  ansible.builtin.template:
+    src: "traefik/netdata.yml"
+    dest: "{{ base_deploy_path }}/traefik/netdata.yml"
+    mode: "0640"
+  notify: Restart traefik
 
 - name: Template traefik env
   ansible.builtin.template:
@@ -53,13 +59,6 @@
     dest: "{{ base_deploy_path }}/traefik_secrets/{{ item.key | lower }}"
     mode: "0600"
   loop: "{{ base_traefik_env | dict2items }}"
-
-- name: Template promtail config
-  ansible.builtin.template:
-    src: promtail.yml
-    dest: "{{ base_deploy_path }}/promtail.yml"
-    mode: "0640"
-  notify: Restart promtail
 
 - name: Create traefik network
   community.docker.docker_network:

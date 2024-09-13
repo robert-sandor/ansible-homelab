@@ -91,7 +91,7 @@ core_authelia_paperless_host: "{{ (groups['paperless'] | intersect(groups[deploy
 core_authelia_paperless_secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
 
 ### Portainer
-core_portainer_version: 2.21.0-rc2 # https://github.com/portainer/portainer/releases
+core_portainer_version: 2.21.0 # https://github.com/portainer/portainer/releases
 
 # admin user and password
 core_portainer_admin_user: admin

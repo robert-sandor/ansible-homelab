@@ -119,4 +119,3 @@ networks:
 
 volumes:
   db:
-    name: gitea-db

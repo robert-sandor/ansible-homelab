@@ -2,7 +2,7 @@
 - name: Create directory structure
   ansible.builtin.file:
     state: directory
-    path: "{{ deploy_path }}"
+    path: "{{ core_deploy_path }}/{{ item.path }}"
     mode: "{{ item.mode | default('0755') }}"
   loop:
     - path: secrets

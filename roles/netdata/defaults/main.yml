@@ -1,0 +1,11 @@
+---
+netdata_version: v1.47 # https://hub.docker.com/r/netdata/netdata/tags
+
+netdata_claim_token: ""
+netdata_claim_rooms: ""
+netdata_claim_url: https://app.netdata.cloud
+
+# alert type to enable - only ntfy is supported so far
+netdata_notifications: "{{ ['ntfy'] if groups['ntfy'] | length > 0 else [] }}" # TODO: if ntfy is enabled
+netdata_ntfy_url: "https://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}" #TODO: get url where ntfy is deployed
+netdata_ntfy_topic: alerts

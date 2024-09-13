@@ -7,6 +7,8 @@ base_docker_registry_mirrors: []
 base_gpu_autodetect: true
 # Force installation of nvidia driver
 base_gpu_nvidia: false
+# Force installation of intel driver
+base_gpu_intel: false
 
 ### Traefik - reverse proxy
 base_traefik_version: v3.1 # https://hub.docker.com/_/traefik
@@ -35,7 +37,7 @@ base_watchtower_notification_url: ntfy://ntfy.{{ (groups['ntfy'] | intersect(gro
 base_dsp_version: 1.26.2 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy
 
 ### Portainer agent - used by Portainer to connect to this host
-base_portainer_agent_version: 2.21.0-rc2 # https://hub.docker.com/r/portainer/agent/tags
+base_portainer_agent_version: 2.21.1 # https://hub.docker.com/r/portainer/agent/tags
 
 ### Prometheus node exporter - expose host metrics for prometheus
 base_node_exporter_version: v1.8.2 # https://quay.io/repository/prometheus/node-exporter?tab=tags

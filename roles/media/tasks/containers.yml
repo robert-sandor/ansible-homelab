@@ -21,9 +21,10 @@
 - name: Get list of packages
   ansible.builtin.package_facts: {}
 
-- name: Check whether nvidia-container-toolkit is installed
+- name: Check whether hardware transcoding is available
   ansible.builtin.set_fact:
     is_nvidia_container_runtime: "{{ ansible_facts.packages['nvidia-container-toolkit'] | default([]) | length > 0 }}"
+    is_intel_cpu: "{{ 'GenuineIntel' in ansible_facts.processor }}"
 
 - name: Template compose
   ansible.builtin.template:

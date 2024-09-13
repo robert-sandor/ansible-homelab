@@ -88,21 +88,6 @@ endpoints:
     url: https://traefik.{{ host }}.{{ domain }}
     <<: *defaults
 
-  - name: promtail @ {{ host }}
-    group: base
-    url: https://promtail.{{ host }}.{{ domain }}
-    <<: *defaults
-
-  - name: docker-metrics @ {{ host }}
-    group: base
-    url: https://docker.{{ host }}.{{ domain }}/metrics
-    <<: *defaults
-
-  - name: node-metrics @ {{ host }}
-    group: base
-    url: https://node.{{ host }}.{{ domain }}/metrics
-    <<: *defaults
-
   - name: docker-api @ {{ host }}
     group: base
     url: tcp://{{ host }}.{{ domain }}:2375
@@ -199,6 +184,16 @@ endpoints:
   - name: vikunja @ {{ host }}
     group: apps
     url: https://vikunja.{{ host }}.{{ domain }}
+    <<: *defaults
+{% endfor %}
+{% endif %}
+
+{% if 'netdata' in gatus_roles %}
+# netdata
+{% for host in groups['netdata'] | intersect(groups[deployment_env]) | sort %} 
+  - name: netdata @ {{ host }}
+    group: apps
+    url: https://netdata.{{ host }}.{{ domain }}
     <<: *defaults
 {% endfor %}
 {% endif %}

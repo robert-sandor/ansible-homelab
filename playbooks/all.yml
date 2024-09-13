@@ -20,3 +20,4 @@
 - ansible.builtin.import_playbook: ./paperless.yml
 - ansible.builtin.import_playbook: ./dozzle_agent.yml
 - ansible.builtin.import_playbook: ./dozzle.yml
+- ansible.builtin.import_playbook: ./netdata.yml

@@ -282,11 +282,10 @@ services:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
-      # {% if is_nvidia_container_runtime %}
-
+      PLEX_CLAIM: "{{ media_plex_claim }}"
+      # {% if is_nvidia_container_runtime +%}
       NVIDIA_VISIBLE_DEVICES: all
-      # {% endif %}
-
+      # {% endif +%}
     networks:
       - traefik
     ports:
@@ -310,6 +309,9 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+    # {% elif is_intel_cpu +%}
+    devices:
+      - /dev/dri:/dev/dri
     # {% endif +%}
     labels:
       traefik.enable: true
@@ -357,6 +359,9 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+    # {% elif is_intel_cpu +%}
+    devices:
+      - /dev/dri:/dev/dri
     # {% endif +%}
     labels:
       traefik.enable: true

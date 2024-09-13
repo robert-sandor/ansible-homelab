@@ -19,24 +19,27 @@
       ansible.builtin.apt:
         update_cache: true
         upgrade: full
+        autoclean: true
+        autoremove: true
 
     - name: Install packages
       become: true
       ansible.builtin.apt:
         pkg:
-          - unzip
-          - python3-virtualenv
+          - bat
+          - btop
+          - dnsutils
+          - exa
+          - fish
           - git
           - lshw
-          - fish
-          - bat
           - ncdu
-          - exa
-          - dnsutils
-          - yq
+          - python3-virtualenv
+          - rsync
           - tmux
+          - unzip
           - vim
-          - btop
+          - yq
 
     - name: Install VM dependencies
       become: true

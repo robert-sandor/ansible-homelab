@@ -19,9 +19,8 @@
 
 - name: Authenticate tailscale if needs login
   vars:
-    query: Health[?contains(@, 'NeedsLogin')] | [0]
-    health: "{{ status_response.stdout | from_json | json_query(query) }}"
-  when: health | length > 0
+    status: "{{ status_response.stdout | from_json }}"
+  when: status.BackendState == 'NeedsLogin'
   block:
     - name: Generate one-time auth key
       # no_log: true
@@ -72,7 +71,7 @@
         password: ""
         force_basic_auth: true
         status_code: 200
-      no_log: true
+      # no_log: true
       register: get_routes_response
 
     - name: Update advertised routes

@@ -1,9 +1,9 @@
 ---
-monitoring_grafana_version: 11.1.4 # https://github.com/grafana/grafana/releases
+monitoring_grafana_version: 11.1.5 # https://github.com/grafana/grafana/releases
 monitoring_grafana_postgres_version: "16"
 monitoring_grafana_db_password: "{{ ('grafana@' + deployment_secret) | hash('sha256') }}"
 
-monitoring_prometheus_version: v2.54.0 # https://github.com/prometheus/prometheus/releases
+monitoring_prometheus_version: v2.54.1 # https://github.com/prometheus/prometheus/releases
 
 monitoring_prometheus_scrape_hosts: "{{ groups['base'] | intersect(groups[deployment_env]) }}"
 

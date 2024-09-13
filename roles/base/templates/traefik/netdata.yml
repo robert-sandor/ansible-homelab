@@ -1,0 +1,13 @@
+---
+http:
+  routers:
+    netdata:
+      entryPoints:
+        - https
+      service: netdata
+      rule: Host(`netdata.{{ hostname }}`)
+  services:
+    netdata:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:19999

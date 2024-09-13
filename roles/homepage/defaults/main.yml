@@ -1,6 +1,6 @@
 ---
 ### homepage - dashboard
-homepage_version: v0.9.6 # https://github.com/gethomepage/homepage/releases
+homepage_version: v0.9.9 # https://github.com/gethomepage/homepage/releases
 
 homepage_docker: >-
   [
@@ -12,33 +12,26 @@ homepage_docker: >-
 homepage_settings:
   title: "{{ hostname }}"
 
-  target: _self
-
   cardBlur: md
   theme: dark
-  color: zinc
+  color: stone
 
   headerStyle: clean
 
   layout:
     - apps:
-        icon: mdi-application
         style: row
         columns: 4
     - media:
-        icon: mdi-movie
         style: row
         columns: 4
     - admin:
-        icon: mdi-security
         style: row
         columns: 4
     - monitoring:
-        icon: mdi-chart-line
         style: row
         columns: 4
     - traefik:
-        icon: mdi-router-network
         style: row
         columns: 4
 
