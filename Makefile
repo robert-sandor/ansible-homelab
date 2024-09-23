@@ -1,5 +1,6 @@
 #!make
 .DEFAULT_GOAL := all
+limit = ""
 
 lint:
 	ansible-lint --fix
@@ -7,9 +8,9 @@ lint:
 deps:
 	ansible-galaxy install --force-with-deps -r requirements.yml
 
-all:
-	ansible-playbook ./playbooks/all.yml -i ./inventory --diff
+nutscan:
+	ansible-playbook ./playbooks/utils/nutscan.yml -i ./inventory -l ${limit}
 
 %:
-	ansible-playbook ./playbooks/$@.yml -i ./inventory --diff
+	ansible-playbook ./playbooks/$@.yml -i ./inventory -l ${limit}
 
