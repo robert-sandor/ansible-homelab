@@ -1,0 +1,17 @@
+---
+- name: NUT scanner
+  hosts: nut_server
+  become: true
+  tasks:
+    - name: Ensure nut-server is installed
+      ansible.builtin.apt:
+        name: nut-server
+
+    - name: Run nut-scanner
+      changed_when: false
+      ansible.builtin.command: nut-scanner -Uq
+      register: nut_scanner_output
+
+    - name: Show nut-scanner output
+      ansible.builtin.debug:
+        var: nut_scanner_output.stdout
