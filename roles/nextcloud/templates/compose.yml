@@ -10,9 +10,7 @@ services:
     environment:
       APACHE_IP_BINDING: 0.0.0.0
       APACHE_PORT: 11000
-      NEXTCLOUD_DATADIR: nextcloud_aio_nextcloud_datadir
-    ports:
-      - 8088:8080
+      NEXTCLOUD_DATADIR: "{{ nextcloud_data_dir }}"
     networks:
       - traefik
       - nextcloud
@@ -20,6 +18,13 @@ services:
       - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
+      traefik.enable: true
+      traefik.http.services.nc-admin.loadbalancer.server.port: 8080
+      traefik.http.services.nc-admin.loadbalancer.server.scheme: https
+      traefik.http.services.nc-admin.loadbalancer.serverstransport: nc-admin@file
+      traefik.http.routers.nc-admin.rule: Host(`nc-admin.{{ hostname }}`)
+      traefik.http.routers.nc-admin.entrypoints: https
+      traefik.http.routers.nc-admin.service: nc-admin
       homepage.name: nextcloud
       homepage.group: apps
       homepage.description: selfhosted cloud

@@ -3,35 +3,19 @@
   ansible.builtin.file:
     state: directory
     path: "{{ nextcloud_deploy_path }}"
-    mode: "0755"
-
-- name: Create data docker volume
-  community.docker.docker_volume:
-    name: nextcloud_aio_nextcloud_datadir
-    driver_options:
-      type: cifs
-      device: //{{ nextcloud_mount_host }}{{ nextcloud_mount_path }}
-      o: user={{ nextcloud_mount_user }},pass={{ nextcloud_mount_password }},{{ nextcloud_mount_opts }}
-
-- name: Create backup docker volume
-  community.docker.docker_volume:
-    name: nextcloud_aio_backupdir
-    driver_options:
-      type: cifs
-      device: //{{ nextcloud_backup_host }}{{ nextcloud_backup_path }}
-      o: user={{ nextcloud_backup_user }},pass={{ nextcloud_backup_password }},{{ nextcloud_backup_opts }}
+    mode: "0750"
 
 - name: Template compose
   ansible.builtin.template:
     src: compose.yml
     dest: "{{ nextcloud_deploy_path }}/compose.yml"
-    mode: "0644"
+    mode: "0640"
 
 - name: Template traefik config
   ansible.builtin.template:
     src: nextcloud_traefik.yml
     dest: "{{ base_deploy_path }}/traefik/nextcloud_traefik.yml"
-    mode: "0644"
+    mode: "0640"
 
 - name: Deploy containers
   community.docker.docker_compose_v2:

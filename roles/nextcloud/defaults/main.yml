@@ -1,14 +1,4 @@
 ---
 nextcloud_version: latest
 
-nextcloud_mount_host: localhost
-nextcloud_mount_path: /nextcloud
-nextcloud_mount_user: nextcloud
-nextcloud_mount_password: changeme
-nextcloud_mount_opts: uid=33,gid=0,file_mode=0750,dir_mode=0750
-
-nextcloud_backup_host: localhost
-nextcloud_backup_path: /nextcloud
-nextcloud_backup_user: nextcloud
-nextcloud_backup_password: changeme
-nextcloud_backup_opts: uid=33,gid=0,file_mode=0750,dir_mode=0750
+nextcloud_data_dir: /mnt/nextcloud-data

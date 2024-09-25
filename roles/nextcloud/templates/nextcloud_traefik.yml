@@ -1,6 +1,9 @@
 # yaml-language-server: $schema=https://json.schemastore.org/traefik-v2-file-provider.json
 ---
 http:
+  serversTransports:
+    nc-admin:
+      insecureSkipVerify: true
   routers:
     nextcloud:
       service: nextcloud
@@ -32,5 +35,5 @@ http:
     nextcloud-chain:
       chain:
         middlewares:
-          - nextcloud-redirect-wellknown
           - nextcloud-secure-headers
+          - nextcloud-redirect-wellknown

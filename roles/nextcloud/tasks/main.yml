@@ -2,7 +2,7 @@
 - name: Nextcloud
   vars:
     hostname: "{{ ansible_hostname }}.{{ domain }}"
-    core_hostname: "{{ (groups['core'] | intersect(groups[deployment_env]))[0] }}.{{ domain }}"
+    core_hostname: "{{ groups['core'][0] }}.{{ domain }}"
     base_deploy_path: "{{ deploy_path }}/base"
     nextcloud_deploy_path: "{{ deploy_path }}/nextcloud"
   block:
