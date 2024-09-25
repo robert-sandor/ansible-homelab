@@ -67,26 +67,26 @@ core_authelia_oidc_hmac_secret: "{{ ('oidc-hmac-authelia@' + deployment_secret) 
 core_authelia_users_allowed_hosts: []
 core_authelia_portainer_secret: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
 
-core_authelia_grafana_client: "{{ groups['monitoring'][0] }}"
+core_authelia_grafana_client: "{{ groups['monitoring'] | length > 0 }}"
 core_authelia_grafana_host: "{{ groups['monitoring'][0] }}"
 core_authelia_grafana_secret: "{{ ('grafana@' + deployment_secret) | hash('sha256') }}"
 
-core_authelia_vikunja_client: "{{ groups['vikunja'][0] }}"
+core_authelia_vikunja_client: "{{ groups['vikunja'] | length > 0 }}"
 core_authelia_vikunja_host: "{{ groups['vikunja'][0] }}"
 core_authelia_vikunja_secret: "{{ ('vikunja@' + deployment_secret) | hash('sha256') }}"
 
-core_authelia_mealie_client: "{{ groups['mealie'][0] }}"
+core_authelia_mealie_client: "{{ groups['mealie'] | length > 0 }}"
 core_authelia_mealie_host: "{{ groups['mealie'][0] }}"
 
-core_authelia_memos_client: "{{ groups['memos'][0] }}"
+core_authelia_memos_client: "{{ groups['memos'] | length > 0 }}"
 core_authelia_memos_host: "{{ groups['memos'][0] }}"
 core_authelia_memos_secret: "{{ ('memos@' + deployment_secret) | hash('sha256') }}"
 
-core_authelia_gitea_client: "{{ groups['gitea'][0] }}"
+core_authelia_gitea_client: "{{ groups['gitea'] | length > 0 }}"
 core_authelia_gitea_host: "{{ groups['gitea'][0] }}"
 core_authelia_gitea_secret: "{{ ('gitea@' + deployment_secret) | hash('sha256') }}"
 
-core_authelia_paperless_client: "{{ groups['paperless'][0] }}"
+core_authelia_paperless_client: "{{ groups['paperless'] | length > 0 }}"
 core_authelia_paperless_host: "{{ groups['paperless'][0] }}"
 core_authelia_paperless_secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
 
