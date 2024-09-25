@@ -5,7 +5,8 @@
     path: "{{ gitea_deploy_path }}/{{ item }}"
     mode: "0750"
   loop:
-    - gitea
+    - data
+    - config
     - act_runner
 
 - name: Template compose

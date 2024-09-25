@@ -46,7 +46,8 @@ services:
     ports:
       - "2222:2222" # Required for SSH
     volumes:
-      - ./gitea:/var/lib/gitea
+      - ./data:/var/lib/gitea
+      - ./config:/etc/gitea
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
