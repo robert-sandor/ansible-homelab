@@ -52,6 +52,9 @@
     - name: Setup systemd
       ansible.builtin.import_tasks: ./systemd.yml
 
+    - name: Setup mounts
+      ansible.builtin.import_tasks: ./mounts.yml
+
     - name: Copy config.fish
       ansible.builtin.copy:
         src: config.fish

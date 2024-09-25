@@ -1,0 +1,33 @@
+---
+- name: Install needed packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - cifs-utils
+      - nfs-common
+
+- name: Ensure mount point exists
+  become: true
+  when: not mount.path is directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ mount.path }}"
+    owner: "{{ ansible_facts.user_id }}"
+    group: "{{ ansible_facts.user_id }}"
+    mode: "0750"
+  loop: "{{ system_mounts }}"
+  loop_control:
+    loop_var: mount
+
+- name: Mount filesystem
+  become: true
+  ansible.posix.mount:
+    boot: true
+    fstype: "{{ mount.fstype }}"
+    opts: "{{ mount.opts }}"
+    path: "{{ mount.path }}"
+    src: "{{ mount.src }}"
+    state: mounted
+  loop: "{{ system_mounts }}"
+  loop_control:
+    loop_var: mount
