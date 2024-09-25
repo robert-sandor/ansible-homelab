@@ -9,11 +9,11 @@
     radarr_wanted_config:
       authenticationMethod: external
   block:
-    - name: Ensure series directory exists
-      community.docker.docker_container_exec:
-        container: radarr
-        command: mkdir -p {{ radarr_root_folder }}
+    - name: Ensure movies directory exists
       changed_when: false
+      ansible.builtin.command:
+        chdir: "{{ media_deploy_path }}"
+        cmd: docker compose exec radarr mkdir -p {{ radarr_root_folder }}
 
     - name: Get config
       ansible.builtin.shell:

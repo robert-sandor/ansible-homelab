@@ -8,10 +8,10 @@
       | combine(media_transmission_required_settings, recursive=True) }}
   block:
     - name: Ensure download directory exists
-      community.docker.docker_container_exec:
-        container: transmission
-        command: mkdir -p {{ media_transmission_download_path }}
       changed_when: false
+      ansible.builtin.command:
+        chdir: "{{ media_deploy_path }}"
+        cmd: docker compose exec transmission mkdir -p {{ media_transmission_download_path }}
 
     - name: Read transmission settings
       ansible.builtin.command: cat {{ media_deploy_path }}/transmission/settings.json
@@ -22,8 +22,9 @@
       when: not transmission_pre_settings.stdout | from_json == transmission_post_settings
       block:
         - name: Stop transmission container
-          community.docker.docker_container:
-            name: transmission
+          community.docker.docker_compose_v2:
+            project_src: "{{ media_deploy_path }}"
+            services: transmission
             state: stopped
 
         - name: Update settings.json
@@ -33,10 +34,11 @@
             mode: "0600"
 
       always:
-        - name: Start transmission container
-          community.docker.docker_container:
-            name: transmission
-            state: started
+        - name: Stop transmission container
+          community.docker.docker_compose_v2:
+            project_src: "{{ media_deploy_path }}"
+            services: transmission
+            state: present
 
     - name: Download latest flood-for-transmission
       ansible.builtin.get_url:

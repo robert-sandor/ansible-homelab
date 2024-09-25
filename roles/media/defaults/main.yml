@@ -10,11 +10,11 @@ media_transmission_required_settings:
 media_transmission_settings: {}
 ### Sonarr - TV Series manager
 media_sonarr_version: 4.0.9
-media_radarr_version: 5.9.1
+media_radarr_version: 5.10.4
 media_lidarr_version: 2.5.3
 media_prowlarr_version: 1.23.1
-media_bazarr_version: 1.4.3
-media_jellyfin_version: 10.9.10
+media_bazarr_version: 1.4.4
+media_jellyfin_version: 10.9.11
 media_overseerr_version: 1.33.2
 media_recyclarr_version: 7 # https://github.com/recyclarr/recyclarr/pkgs/container/recyclarr
 
@@ -24,8 +24,10 @@ media_mount_user: media
 media_mount_password: changeme
 media_mount_opts: uid={{ ansible_facts.user_uid }},gid={{ ansible_facts.user_gid }},file_mode=0755,dir_mode=0755
 
+media_path: /mnt/media
+
 ### Plex
-media_plex_version: 1.40.5
+media_plex_version: 1.41.0
 
 # Token to claim server to your Plex account - Get one from plex.tv/claim
 # NOTE: this claim is only valid for a few minutes

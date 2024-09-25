@@ -1,8 +1,6 @@
 ---
 services:
   transmission:
-    container_name: transmission
-    hostname: transmission
     image: ghcr.io/linuxserver/transmission:{{ media_transmission_version }}
     restart: unless-stopped
     pull_policy: always
@@ -18,7 +16,7 @@ services:
       - "51413:51413/udp"
     volumes:
       - ./transmission:/config
-      - media:/media
+      - "{{ media_path }}:/media"
     labels:
       traefik.enable: true
       traefik.http.services.transmission.loadbalancer.server.port: 9091
@@ -35,8 +33,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   sonarr:
-    container_name: sonarr
-    hostname: sonarr
     image: ghcr.io/linuxserver/sonarr:{{ media_sonarr_version }}
     restart: unless-stopped
     pull_policy: always
@@ -49,7 +45,7 @@ services:
       - recyclarr
     volumes:
       - ./sonarr:/config
-      - media:/media
+      - "{{ media_path }}:/media"
     depends_on:
       - transmission
     labels:
@@ -72,8 +68,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   radarr:
-    container_name: radarr
-    hostname: radarr
     image: ghcr.io/linuxserver/radarr:{{ media_radarr_version }}
     restart: unless-stopped
     pull_policy: always
@@ -86,7 +80,7 @@ services:
       - recyclarr
     volumes:
       - ./radarr:/config
-      - media:/media
+      - "{{ media_path }}:/media"
     depends_on:
       - transmission
     labels:
@@ -109,8 +103,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   recyclarr:
-    container_name: recyclarr
-    hostname: recyclarr
     image: ghcr.io/recyclarr/recyclarr:{{ media_recyclarr_version }}
     restart: unless-stopped
     pull_policy: always
@@ -130,8 +122,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   lidarr:
-    container_name: lidarr
-    hostname: lidarr
     image: ghcr.io/linuxserver/lidarr:{{ media_lidarr_version }}
     restart: unless-stopped
     pull_policy: always
@@ -143,7 +133,7 @@ services:
       - traefik
     volumes:
       - ./lidarr:/config
-      - media:/media
+      - "{{ media_path }}:/media"
     depends_on:
       - transmission
     labels:
@@ -166,8 +156,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   bazarr:
-    container_name: bazarr
-    hostname: bazarr
     image: ghcr.io/linuxserver/bazarr:{{ media_bazarr_version }}
     restart: unless-stopped
     pull_policy: always
@@ -179,7 +167,7 @@ services:
       - traefik
     volumes:
       - ./bazarr:/config
-      - media:/media
+      - "{{ media_path }}:/media"
     depends_on:
       - sonarr
       - radarr
@@ -203,8 +191,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   prowlarr:
-    container_name: prowlarr
-    hostname: prowlarr
     image: ghcr.io/linuxserver/prowlarr:{{ media_prowlarr_version }}
     restart: unless-stopped
     pull_policy: always
@@ -241,8 +227,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   overseerr:
-    container_name: overseerr
-    hostname: overseerr
     image: ghcr.io/linuxserver/overseerr:{{ media_overseerr_version }}
     restart: unless-stopped
     pull_policy: always
@@ -273,8 +257,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   plex:
-    container_name: plex
-    hostname: plex
     image: ghcr.io/linuxserver/plex:{{ media_plex_version }}
     restart: unless-stopped
     pull_policy: always
@@ -300,7 +282,7 @@ services:
       - "32469:32469"
     volumes:
       - ./plex:/config
-      - media:/media
+      - "{{ media_path }}:/media"
     # {% if is_nvidia_container_runtime +%}
     deploy:
       resources:
@@ -328,8 +310,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   jellyfin:
-    container_name: jellyfin
-    hostname: jellyfin
     image: ghcr.io/linuxserver/jellyfin:{{ media_jellyfin_version }}
     restart: unless-stopped
     pull_policy: always
@@ -349,7 +329,7 @@ services:
       - "7359:7359/udp"
     volumes:
       - ./jellyfin:/config
-      - media:/media
+      - "{{ media_path }}:/media"
     # {% if is_nvidia_container_runtime +%}
     runtime: nvidia
     deploy:
@@ -376,14 +356,6 @@ services:
       homepage.icon: jellyfin
       homepage.siteMonitor: https://jellyfin.{{ hostname }}
       com.centurylinklabs.watchtower.enable: true
-
-volumes:
-  media:
-    name: media
-    driver_opts:
-      type: cifs
-      device: "//{{ media_mount_host }}{{ media_mount_path }}"
-      o: user={{ media_mount_user }},pass={{ media_mount_password }},{{ media_mount_opts }}
 
 networks:
   traefik:

@@ -10,10 +10,10 @@
       authenticationMethod: external
   block:
     - name: Lidarr - Ensure music dir exists
-      community.docker.docker_container_exec:
-        container: lidarr
-        command: mkdir -p {{ lidarr_root_folder }}
       changed_when: false
+      ansible.builtin.command:
+        chdir: "{{ media_deploy_path }}"
+        cmd: docker compose exec lidarr mkdir -p {{ lidarr_root_folder }}
 
     - name: Lidarr - Get config
       ansible.builtin.shell:
