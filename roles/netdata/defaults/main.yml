@@ -6,6 +6,6 @@ netdata_claim_rooms: ""
 netdata_claim_url: https://app.netdata.cloud
 
 # alert type to enable - only ntfy is supported so far
-netdata_notifications: "{{ ['ntfy'] if groups['ntfy'] | length > 0 else [] }}" # TODO: if ntfy is enabled
-netdata_ntfy_url: "https://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}" #TODO: get url where ntfy is deployed
+netdata_notifications: "{{ ['ntfy'] if groups['ntfy'] | length > 0 else [] }}"
+netdata_ntfy_url: https://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}
 netdata_ntfy_topic: alerts

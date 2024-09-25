@@ -2,4 +2,4 @@ configs:
   "*@*":
     urls:
       - discord://{{ core_mailrise_discord_webhook_id }}/{{ core_mailrise_discord_webhook_token }}
-      - ntfy://ntfy.{{ (groups['ntfy'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}.{{ domain }}/mailrise
+      - ntfy://ntfy.{{ groups['ntfy'][0] }}/mailrise

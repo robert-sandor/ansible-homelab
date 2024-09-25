@@ -4,7 +4,7 @@ homepage_version: v0.9.9 # https://github.com/gethomepage/homepage/releases
 
 homepage_docker: >-
   [
-  {% for host in groups['base'] | intersect(groups[deployment_env]) | sort %}
+  {% for host in groups['base'] | sort %}
   { 'host': '{{ host }}.{{ domain }}', 'port': 2375 },
   {% endfor %}
   ]

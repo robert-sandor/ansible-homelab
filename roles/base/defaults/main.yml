@@ -31,23 +31,10 @@ base_watchtower_version: 1.7.1 # https://github.com/containrrr/watchtower/pkgs/c
 base_watchtower_schedule: 0 0 0 * * *
 
 # Notification URL - check https://containrrr.dev/shoutrrr for supported services
-base_watchtower_notification_url: ntfy://ntfy.{{ (groups['ntfy'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}.{{ domain }}/watchtower
+base_watchtower_notification_url: ntfy://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}/watchtower
 
 ### Docker Socket Proxy - a proxy to control exposed docker api resources
 base_dsp_version: 1.26.2 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy
 
 ### Portainer agent - used by Portainer to connect to this host
 base_portainer_agent_version: 2.21.1 # https://hub.docker.com/r/portainer/agent/tags
-
-### Prometheus node exporter - expose host metrics for prometheus
-base_node_exporter_version: v1.8.2 # https://quay.io/repository/prometheus/node-exporter?tab=tags
-
-### Grafana promtail - expose host logs for loki
-base_promtail_version: 3.1.1 # https://hub.docker.com/r/grafana/promtail/tags
-base_promtail_loki_host: "{{ (groups['monitoring'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}"
-
-### Glances
-base_glances_version: ubuntu-latest-full # https://hub.docker.com/r/nicolargo/glances/tags - NOTE: for gpu support use the ubuntu-*-full images
-
-### cAdvisor
-base_cadvisor_version: v0.50.0 # https://github.com/google/cadvisor/releases

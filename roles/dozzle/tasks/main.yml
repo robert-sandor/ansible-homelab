@@ -15,7 +15,7 @@
       vars:
         dozzle_agents: "{{ dozzle_agent_hosts | product([dozzle_agent_suffix]) | map('join') | join(',') }}"
         dozzle_agent_suffix: .{{ domain }}:7007
-        dozzle_agent_hosts: "{{ groups['dozzle_agent'] | intersect(groups[deployment_env]) | sort }}"
+        dozzle_agent_hosts: "{{ groups['dozzle_agent'] | sort }}"
       ansible.builtin.template:
         src: compose.yml
         dest: "{{ dozzle_deploy_path }}/compose.yml"

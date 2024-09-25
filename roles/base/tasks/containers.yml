@@ -41,7 +41,7 @@
 - name: Template traefik config files
   when: "'netdata' in groups"
   ansible.builtin.template:
-    src: "traefik/netdata.yml"
+    src: traefik/netdata.yml
     dest: "{{ base_deploy_path }}/traefik/netdata.yml"
     mode: "0640"
   notify: Restart traefik

@@ -29,7 +29,7 @@ ui:
 alerting:
   ntfy:
     topic: alerts
-    url: https://ntfy.{{ (groups['ntfy'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}.{{ domain }}
+    url: https://ntfy.{{ (groups['ntfy'][0] }}
     priority: 1
     default-alert:
       failure-threshold: 3
@@ -46,7 +46,7 @@ alerting:
 endpoints:
 {% if 'gatus' in gatus_roles %}
 # Gatus
-{% for host in groups['gatus'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['gatus'] | sort %} 
   - name: gatus @ {{ host }}
     group: gatus
     url: https://gatus.{{ host }}.{{ domain }}
@@ -56,7 +56,7 @@ endpoints:
 
 {% if 'adguardhome' in gatus_roles %}
 # Adguardhome Web
-{% for host in groups['adguardhome'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['adguardhome'] | sort %} 
   - name: adguardhome @ {{ host }}
     group: adguardhome
     url: https://adguardhome.{{ host }}.{{ domain }}
@@ -64,7 +64,7 @@ endpoints:
 {% endfor %}
 
 # Adguardhome DNS
-{% for host in groups['adguardhome'] | intersect(groups[deployment_env]) | difference([ansible_host]) | sort %} 
+{% for host in groups['adguardhome'] | difference([ansible_host]) | sort %} 
   - name: dns @ {{ host }}
     group: dns
     url: "{{ host }}.{{ domain }}"
@@ -82,7 +82,7 @@ endpoints:
 
 {% if 'base' in gatus_roles %}
 # Base
-{% for host in groups['base'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['base'] | sort %} 
   - name: traefik @ {{ host }}
     group: base
     url: https://traefik.{{ host }}.{{ domain }}
@@ -99,7 +99,7 @@ endpoints:
 
 {% if 'core' in gatus_roles %}
 # Core apps
-{% for host in groups['core'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['core'] | sort %} 
   - name: homepage @ {{ host }}
     group: core
     url: https://home.{{ host }}.{{ domain }}
@@ -125,7 +125,7 @@ endpoints:
 {% if 'core' in gatus_roles %}
 
 # Ntfy
-{% for host in groups['ntfy'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['ntfy'] | sort %} 
   - name: ntfy @ {{ host }}
     group: core
     url: https://ntfy.{{ host }}.{{ domain }}
@@ -135,7 +135,7 @@ endpoints:
 
 {% if 'monitoring' in gatus_roles %}
 # Monitoring
-{% for host in groups['monitoring'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['monitoring'] | sort %} 
   - name: grafana @ {{ host }}
     group: monitoring
     url: https://grafana.{{ host }}.{{ domain }}
@@ -150,7 +150,7 @@ endpoints:
 
 {% if 'mealie' in gatus_roles %}
 # Mealie
-{% for host in groups['mealie'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['mealie'] | sort %} 
   - name: mealie @ {{ host }}
     group: apps
     url: https://mealie.{{ host }}.{{ domain }}
@@ -160,7 +160,7 @@ endpoints:
 
 {% if 'memos' in gatus_roles %}
 # Memos
-{% for host in groups['memos'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['memos'] | sort %} 
   - name: memos @ {{ host }}
     group: apps
     url: https://memos.{{ host }}.{{ domain }}
@@ -170,7 +170,7 @@ endpoints:
 
 {% if 'vaultwarden' in gatus_roles %}
 # Vaultwarden
-{% for host in groups['vaultwarden'] | intersect(groups[deployment_env]) | sort %}
+{% for host in groups['vaultwarden'] | sort %}
   - name: vaultwarden @ {{ host }}
     group: apps
     url: https://vaultwarden.{{ host }}.{{ domain }}
@@ -180,7 +180,7 @@ endpoints:
 
 {% if 'vikunja' in gatus_roles %}
 # Vikunja
-{% for host in groups['vikunja'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['vikunja'] | sort %} 
   - name: vikunja @ {{ host }}
     group: apps
     url: https://vikunja.{{ host }}.{{ domain }}
@@ -190,7 +190,7 @@ endpoints:
 
 {% if 'netdata' in gatus_roles %}
 # netdata
-{% for host in groups['netdata'] | intersect(groups[deployment_env]) | sort %} 
+{% for host in groups['netdata'] | sort %} 
   - name: netdata @ {{ host }}
     group: apps
     url: https://netdata.{{ host }}.{{ domain }}

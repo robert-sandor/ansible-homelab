@@ -5,6 +5,6 @@ monitoring_grafana_db_password: "{{ ('grafana@' + deployment_secret) | hash('sha
 
 monitoring_prometheus_version: v2.54.1 # https://github.com/prometheus/prometheus/releases
 
-monitoring_prometheus_scrape_hosts: "{{ groups['base'] | intersect(groups[deployment_env]) }}"
+monitoring_prometheus_scrape_hosts: "{{ groups['base'] }}"
 
 monitoring_loki_version: 3.1.1 # https://github.com/grafana/loki/releases
