@@ -1,4 +1,6 @@
 ---
-- name: Reboot
+- name: Restart NUT client
   become: true
-  ansible.builtin.reboot:
+  ansible.builtin.systemd_service:
+    name: nut-client
+    state: restarted

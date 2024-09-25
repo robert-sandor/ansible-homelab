@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 notify() {
-  MESSAGE="ups@{{ ansible_hostname }} - $1"
+  MESSAGE="{{ nut_server_ups_name }}@{{ ansible_hostname }} - $1"
   curl -d "$MESSAGE" "{{ nut_server_ntfy }}"
 }
 

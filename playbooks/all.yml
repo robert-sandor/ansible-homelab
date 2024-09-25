@@ -2,7 +2,8 @@
 - ansible.builtin.import_playbook: ./system.yml
 - ansible.builtin.import_playbook: ./base.yml
 - ansible.builtin.import_playbook: ./tailscale.yml
-- ansible.builtin.import_playbook: ./nut-server.yml
+- ansible.builtin.import_playbook: ./nut_server.yml
+- ansible.builtin.import_playbook: ./nut_client.yml
 - ansible.builtin.import_playbook: ./core.yml
 - ansible.builtin.import_playbook: ./ntfy.yml
 - ansible.builtin.import_playbook: ./homepage.yml

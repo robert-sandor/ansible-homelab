@@ -11,7 +11,7 @@
     - upsd.users
     - upsmon.conf
     - upssched.conf
-  notify: Reboot
+  notify: Restart NUT services
 
 - name: Update /etc/nut/ups.conf
   ansible.builtin.template:

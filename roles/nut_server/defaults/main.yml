@@ -1,6 +1,10 @@
 ---
 nut_server_run_as_user: root
+
 nut_server_ups_name: ups
+nut_server_ups_props:
+  driver: usbhid-ups
+  port: auto
 
 nut_server_admin_password: secret # password for admin user - admin user can run commands on the ups
 nut_server_upsmon_password: secret # password for upsmon user - use this to monitor the UPS status remotely
@@ -8,4 +12,4 @@ nut_server_upsmon_password: secret # password for upsmon user - use this to moni
 nut_server_shutdown_on: lowbatt # onbatt - shutdown on battery event / lowbatt - shutdown on low battery event
 nut_server_shutdown_delay_seconds: 5
 
-nut_server_ntfy: https://ntfy.{{ (groups['ntfy'] | intersect(groups[deployment_env]))[0] | default(ansible_host) }}.{{ domain }}/ups
+nut_server_ntfy: https://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}/ups

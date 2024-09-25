@@ -8,7 +8,7 @@
     - nut.conf
     - upsmon.conf
     - upssched.conf
-  notify: Reboot
+  notify: Restart NUT client
 
 - name: Setup upssched script
   ansible.builtin.template:

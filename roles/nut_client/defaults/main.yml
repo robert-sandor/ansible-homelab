@@ -1,7 +1,10 @@
 ---
-nut_client_rus_as_user: root
+nut_client_run_as_user: root
+
 nut_client_ups_name: ups
 nut_client_ups_server: localhost
+
+nut_client_upsmon_password: secret
 
 nut_client_shutdown_on: lowbatt # onbatt - shutdown on battery event / lowbatt - shutdown on low battery event
 nut_client_shutdown_delay_seconds: 60

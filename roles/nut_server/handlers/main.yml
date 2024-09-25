@@ -1,4 +1,10 @@
 ---
-- name: Reboot
+- name: Restart NUT services
   become: true
-  ansible.builtin.reboot:
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - nut-server
+    - nut-client
+    - nut-monitor
