@@ -1,0 +1,15 @@
+---
+- name: Deploy immich
+  block:
+    - name: Set deploy path fact
+      ansible.builtin.set_fact:
+        immich_deploy_path: "{{ deploy_path }}/immich"
+
+    - name: Deploy containers
+      ansible.builtin.import_tasks: ./containers.yml
+
+    # - name: Setup backup script
+    #   ansible.builtin.import_tasks: ./backup_init.yml
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers

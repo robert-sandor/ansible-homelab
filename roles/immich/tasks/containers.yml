@@ -1,0 +1,35 @@
+---
+- name: Create deploy directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ immich_deploy_path }}"
+    mode: "0750"
+
+- name: Template compose files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ immich_deploy_path }}/{{ item }}"
+    mode: "0640"
+  loop:
+    - compose.yml
+    - hwaccel.transcoding.yml
+    - hwaccel.ml.yml
+
+# - name: Create secrets directory
+#   ansible.builtin.file:
+#     state: directory
+#     path: "{{ immich_deploy_path }}/secrets"
+#     mode: "0700"
+
+# - name: Set db password secret
+#   no_log: true
+#   ansible.builtin.copy:
+#     content: "{{ immich_db_password }}"
+#     dest: "{{ immich_deploy_path }}/secrets/immich_db_password"
+#     mode: "0600"
+
+- name: Deploy containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ immich_deploy_path }}"
+    pull: always
+    remove_orphans: true
