@@ -29,7 +29,7 @@ ui:
 alerting:
   ntfy:
     topic: alerts
-    url: https://ntfy.{{ (groups['ntfy'][0] }}
+    url: https://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}
     priority: 1
     default-alert:
       failure-threshold: 3
