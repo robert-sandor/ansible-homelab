@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     depends_on:
       - db
-      - redis
+      - cache
       - gotenberg
       - tika
     secrets:
@@ -17,7 +17,7 @@ services:
       USERMAP_UID: "{{ ansible_facts.user_uid }}"
       USERMAP_GID: "{{ ansible_facts.user_gid }}"
       # Redis
-      PAPERLESS_REDIS: redis://redis:6379
+      PAPERLESS_REDIS: redis://cache:6379
       # Database
       PAPERLESS_DBENGINE: postgresql
       PAPERLESS_DBHOST: db
@@ -79,11 +79,11 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
 
-  redis:
-    image: redis:{{ paperless_redis_version }}
+  cache:
+    image: valkey/valkey:{{ paperless_valkey_version }}
     restart: unless-stopped
     volumes:
-      - redis:/data
+      - cache:/data
     labels:
       com.centurylinklabs.watchtower.enable: true
 
@@ -105,7 +105,7 @@ services:
 volumes:
   data:
   media:
-  redis:
+  cache:
   db:
 
 networks:

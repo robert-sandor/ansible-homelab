@@ -3,6 +3,7 @@ paperless_version: "2.12" # https://github.com/paperless-ngx/paperless-ngx/pkgs/
 paperless_gotenberg_version: "8" # https://hub.docker.com/r/gotenberg/gotenberg/tags
 paperless_tika_version: latest
 paperless_redis_version: "7"
+paperless_valkey_version: "8"
 paperless_postgres_version: "16"
 
 paperless_admin_user: admin
