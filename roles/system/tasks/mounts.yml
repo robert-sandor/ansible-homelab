@@ -8,7 +8,7 @@
 
 - name: Ensure mount point exists
   become: true
-  when: not mount.path is directory
+  when: (mount.state is not defined or mount.state != 'absent') and not mount.path is directory
   ansible.builtin.file:
     state: directory
     path: "{{ mount.path }}"
@@ -27,7 +27,7 @@
     opts: "{{ mount.opts }}"
     path: "{{ mount.path }}"
     src: "{{ mount.src }}"
-    state: mounted
+    state: "{{ mount.state | default('mounted') }}"
   loop: "{{ system_mounts }}"
   loop_control:
     loop_var: mount

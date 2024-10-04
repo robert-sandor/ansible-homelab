@@ -4,8 +4,7 @@ services:
     image: vikunja/vikunja:{{ vikunja_version }}
     restart: unless-stopped
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - default
       - traefik
