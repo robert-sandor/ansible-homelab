@@ -16,7 +16,7 @@ services:
       - "51413:51413/udp"
     volumes:
       - ./transmission:/config
-      - "{{ media_path }}:/media"
+      - media:/media
     labels:
       traefik.enable: true
       traefik.http.services.transmission.loadbalancer.server.port: 9091
@@ -45,7 +45,7 @@ services:
       - recyclarr
     volumes:
       - ./sonarr:/config
-      - "{{ media_path }}:/media"
+      - media:/media
     depends_on:
       - transmission
     labels:
@@ -80,7 +80,7 @@ services:
       - recyclarr
     volumes:
       - ./radarr:/config
-      - "{{ media_path }}:/media"
+      - media:/media
     depends_on:
       - transmission
     labels:
@@ -133,7 +133,7 @@ services:
       - traefik
     volumes:
       - ./lidarr:/config
-      - "{{ media_path }}:/media"
+      - media:/media
     depends_on:
       - transmission
     labels:
@@ -167,7 +167,7 @@ services:
       - traefik
     volumes:
       - ./bazarr:/config
-      - "{{ media_path }}:/media"
+      - media:/media
     depends_on:
       - sonarr
       - radarr
@@ -282,7 +282,7 @@ services:
       - "32469:32469"
     volumes:
       - ./plex:/config
-      - "{{ media_path }}:/media"
+      - media:/media
     # {% if is_nvidia_container_runtime +%}
     deploy:
       resources:
@@ -329,7 +329,7 @@ services:
       - "7359:7359/udp"
     volumes:
       - ./jellyfin:/config
-      - "{{ media_path }}:/media"
+      - media:/media
     # {% if is_nvidia_container_runtime +%}
     runtime: nvidia
     deploy:
@@ -356,6 +356,14 @@ services:
       homepage.icon: jellyfin
       homepage.siteMonitor: https://jellyfin.{{ hostname }}
       com.centurylinklabs.watchtower.enable: true
+
+volumes:
+  media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: "//{{ media_mount_host }}/{{ media_mount_path }}"
+      o: user={{ media_mount_user }},pass={{ media_mount_password }},{{ media_mount_opts }}
 
 networks:
   traefik:

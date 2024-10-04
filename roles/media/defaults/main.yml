@@ -19,7 +19,7 @@ media_overseerr_version: 1.33.2
 media_recyclarr_version: 7 # https://github.com/recyclarr/recyclarr/pkgs/container/recyclarr
 
 media_mount_host: localhost
-media_mount_path: /media
+media_mount_path: media
 media_mount_user: media
 media_mount_password: changeme
 media_mount_opts: uid={{ ansible_facts.user_uid }},gid={{ ansible_facts.user_gid }},file_mode=0755,dir_mode=0755

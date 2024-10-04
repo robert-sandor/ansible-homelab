@@ -1,5 +1,6 @@
 ---
 - name: Recyclarr sync
-  community.docker.docker_compose_v2:
-    project_src: "{{ media_deploy_path }}"
+  changed_when: true
+  ansible.builtin.command:
+    chdir: "{{ media_deploy_path }}"
     cmd: docker compose exec recyclarr recyclarr sync
