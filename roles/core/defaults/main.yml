@@ -56,7 +56,7 @@ core_mailrise_version: latest # https://github.com/YoRyan/mailrise/pkgs/containe
 ### authelia
 core_authelia_version: "4.38" # https://github.com/authelia/authelia/releases
 core_authelia_postgres_version: "16"
-core_authelia_redis_version: "7"
+core_authelia_valkey_version: "8"
 
 core_authelia_postgres_password: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
 core_authelia_identity_validation_reset_password_jwt_secret: "{{ ('jwt-authelia@' + deployment_secret) | hash('sha256') }}"
@@ -91,7 +91,7 @@ core_authelia_paperless_host: "{{ groups['paperless'][0] }}"
 core_authelia_paperless_secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
 
 ### Portainer
-core_portainer_version: 2.21.1 # https://github.com/portainer/portainer/releases
+core_portainer_version: 2.21.2 # https://github.com/portainer/portainer/releases
 
 # admin user and password
 core_portainer_admin_user: admin

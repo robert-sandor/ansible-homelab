@@ -114,16 +114,14 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   authelia-cache:
-    image: redis:{{ core_authelia_redis_version }}
+    image: valkey/valkey:{{ core_authelia_valkey_version }}
     restart: unless-stopped
-    environment:
-      TZ: "{{ timezone }}"
     networks:
       - authelia
     volumes:
-      - authelia-redis:/data
+      - authelia_cache:/data
     healthcheck:
-      test: redis-cli --raw incr ping
+      test: valkey-cli --raw incr ping
       interval: 30s
       timeout: 60s
       retries: 5
@@ -183,8 +181,8 @@ volumes:
     name: lldap-db
   authelia-postgres:
     name: authelia-db
-  authelia-redis:
-    name: authelia-cache
+  authelia_cache:
+    name: authelia_cache
   portainer-data:
     name: portainer-data
 
