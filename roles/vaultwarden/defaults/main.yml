@@ -1,5 +1,5 @@
 ---
-vaultwarden_version: 1.32.0 # https://github.com/dani-garcia/vaultwarden/releases
+vaultwarden_version: 1.32.1 # https://github.com/dani-garcia/vaultwarden/releases
 vaultwarden_postgres_version: "16"
 
 # Whether to allow new signups - for better security, disable once accounts are created

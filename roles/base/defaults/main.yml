@@ -37,4 +37,4 @@ base_watchtower_notification_url: ntfy://ntfy.{{ groups['ntfy'][0] }}.{{ domain 
 base_dsp_version: 1.26.2 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy
 
 ### Portainer agent - used by Portainer to connect to this host
-base_portainer_agent_version: 2.21.2 # https://hub.docker.com/r/portainer/agent/tags
+base_portainer_agent_version: 2.22.0 # https://hub.docker.com/r/portainer/agent/tags
