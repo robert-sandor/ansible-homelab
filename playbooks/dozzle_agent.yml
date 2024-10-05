@@ -1,5 +1,0 @@
----
-- name: Deploy dozzle_agent
-  hosts: dozzle_agent
-  roles:
-    - dozzle_agent

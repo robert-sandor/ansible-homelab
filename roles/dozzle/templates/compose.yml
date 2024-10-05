@@ -1,18 +1,43 @@
 ---
 services:
+  agent:
+    image: amir20/dozzle:{{ dozzle_version }}
+    restart: unless-stopped
+    command: agent
+    environment:
+      DOZZLE_HOSTNAME: "{{ ansible_hostname }}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 7007:7007
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      timeout: 30s
+      interval: 5s
+      retries: 5
+      start_period: 5s
+      start_interval: 5s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
   server:
+    profiles: [server]
     image: amir20/dozzle:{{ dozzle_version }}
     restart: unless-stopped
     environment:
       DOZZLE_AUTH_PROVIDER: forward-proxy
       DOZZLE_ENABLE_ACTIONS: true
       DOZZLE_NO_ANALYTICS: true
-      DOZZLE_HOSTNAME: "{{ ansible_hostname }}"
       DOZZLE_REMOTE_AGENT: "{{ dozzle_agents }}"
     networks:
       - traefik
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      timeout: 30s
+      interval: 5s
+      retries: 5
+      start_period: 5s
+      start_interval: 5s
     labels:
       traefik.enable: true
       traefik.http.services.dozzle.loadbalancer.server.port: 8080
