@@ -1,5 +1,5 @@
 ---
-- name: Deploy dozzle server
+- name: Deploy dozzle
   block:
     - name: Set facts
       ansible.builtin.set_fact:
