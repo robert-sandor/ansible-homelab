@@ -1,1 +1,7 @@
 COMPOSE_PROFILES="{{ 'server' if dozzle_server else '' }}"
+
+HOSTNAME="{{ hostname }}"
+
+DOZZLE_VERSION="{{ dozzle_version }}"
+DOZZLE_HOSTNAME="{{ ansible_hostname }}"
+DOZZLE_AGENTS="{{ dozzle_agents }}"

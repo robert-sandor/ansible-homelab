@@ -1,11 +1,11 @@
 ---
 services:
   agent:
-    image: amir20/dozzle:{{ dozzle_version }}
+    image: amir20/dozzle:$DOZZLE_VERSION
     restart: unless-stopped
     command: agent
     environment:
-      DOZZLE_HOSTNAME: "{{ ansible_hostname }}"
+      DOZZLE_HOSTNAME: $DOZZLE_HOSTNAME
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
@@ -22,13 +22,13 @@ services:
 
   server:
     profiles: [server]
-    image: amir20/dozzle:{{ dozzle_version }}
+    image: amir20/dozzle:$DOZZLE_VERSION
     restart: unless-stopped
     environment:
       DOZZLE_AUTH_PROVIDER: forward-proxy
       DOZZLE_ENABLE_ACTIONS: true
       DOZZLE_NO_ANALYTICS: true
-      DOZZLE_REMOTE_AGENT: "{{ dozzle_agents }}"
+      DOZZLE_REMOTE_AGENT: $DOZZLE_AGENTS
     networks:
       - traefik
     healthcheck:
@@ -41,16 +41,16 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.dozzle.loadbalancer.server.port: 8080
-      traefik.http.routers.dozzle.rule: Host(`dozzle.{{ hostname }}`)
+      traefik.http.routers.dozzle.rule: Host(`dozzle.$HOSTNAME`)
       traefik.http.routers.dozzle.entrypoints: https
       traefik.http.routers.dozzle.service: dozzle
       traefik.http.routers.dozzle.middlewares: authelia@docker
       homepage.name: dozzle
       homepage.group: admin
       homepage.description: docker logs
-      homepage.href: https://dozzle.{{ hostname }}
+      homepage.href: https://dozzle.$HOSTNAME
       homepage.icon: dozzle
-      homepage.siteMonitor: https://dozzle.{{ hostname }}
+      homepage.siteMonitor: https://dozzle.$HOSTNAME
       com.centurylinklabs.watchtower.enable: true
 
 networks:
