@@ -11,7 +11,7 @@ services:
     ports:
       - 7007:7007
     healthcheck:
-      test: ["CMD", "/dozzle", "healthcheck"]
+      test: [CMD, /dozzle, healthcheck]
       timeout: 30s
       interval: 5s
       retries: 5
@@ -32,7 +32,7 @@ services:
     networks:
       - traefik
     healthcheck:
-      test: ["CMD", "/dozzle", "healthcheck"]
+      test: [CMD, /dozzle, healthcheck]
       timeout: 30s
       interval: 5s
       retries: 5

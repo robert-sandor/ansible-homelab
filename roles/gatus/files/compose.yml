@@ -48,7 +48,6 @@ secrets:
 
 volumes:
   db:
-
 networks:
   traefik:
     external: true
