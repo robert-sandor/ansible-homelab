@@ -1,0 +1,20 @@
+---
+### Portainer - manage docker and kubernetes environments
+#
+# Contains both the agent and the server (if enabled).
+# Will auto configure Portainer server with an admin user, as well as all other agents deployed as part of the role.
+#
+###
+portainer_version: 2.22.0 # https://github.com/portainer/portainer/releases
+portainer_authelia_secret: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
+
+# Whether to enable the server - this is recommended to enable on one host, unless you have a separate server
+portainer_server: false
+
+# admin user and password
+portainer_admin_user: admin
+portainer_admin_password: changeme
+
+# List of additional hosts with Portainer agent to add
+# NOTE: it is expected that these agents listen on port 9001
+portainer_extra_agents: []

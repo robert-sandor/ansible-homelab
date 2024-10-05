@@ -155,27 +155,6 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
 
-  portainer:
-    image: portainer/portainer-ce:{{ core_portainer_version }}
-    restart: unless-stopped
-    networks:
-      - traefik
-    volumes:
-      - portainer-data:/data
-    labels:
-      traefik.enable: true
-      traefik.http.services.portainer.loadbalancer.server.port: 9000
-      traefik.http.routers.portainer.rule: Host(`portainer.{{ hostname }}`)
-      traefik.http.routers.portainer.entrypoints: https
-      traefik.http.routers.portainer.service: portainer
-      homepage.name: portainer
-      homepage.group: admin
-      homepage.description: manage docker environments
-      homepage.href: https://portainer.{{ hostname }}
-      homepage.icon: portainer
-      homepage.siteMonitor: https://portainer.{{ hostname }}
-      com.centurylinklabs.watchtower.enable: true
-
 volumes:
   lldap-postgres:
     name: lldap-db

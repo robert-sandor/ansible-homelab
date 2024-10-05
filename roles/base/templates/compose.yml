@@ -72,18 +72,6 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
 
-  portainer_agent:
-    image: portainer/agent:{{ base_portainer_agent_version }}
-    restart: unless-stopped
-    networks:
-      - portainer
-    ports:
-      - "9001:9001"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      com.centurylinklabs.watchtower.enable: true
-
 networks:
   traefik:
     # name: traefik

@@ -1,0 +1,5 @@
+---
+- name: Deploy portainer
+  hosts: portainer
+  roles:
+    - portainer

@@ -65,6 +65,10 @@ core_authelia_storage_secret: "{{ ('storage-authelia@' + deployment_secret) | ha
 core_authelia_oidc_hmac_secret: "{{ ('oidc-hmac-authelia@' + deployment_secret) | hash('sha256') }}"
 
 core_authelia_users_allowed_hosts: []
+core_authelia_dummy_secret: "{{ ('dummy@' + deployment_secret) | hash('sha256') }}"
+
+core_authelia_portainer_client: "{{ groups['portainer'] | length > 0 }}"
+core_authelia_portainer_host: "{{ groups['portainer'][0] }}"
 core_authelia_portainer_secret: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
 
 core_authelia_grafana_client: "{{ groups['monitoring'] | length > 0 }}"
@@ -89,13 +93,3 @@ core_authelia_gitea_secret: "{{ ('gitea@' + deployment_secret) | hash('sha256') 
 core_authelia_paperless_client: "{{ groups['paperless'] | length > 0 }}"
 core_authelia_paperless_host: "{{ groups['paperless'][0] }}"
 core_authelia_paperless_secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
-
-### Portainer
-core_portainer_version: 2.22.0 # https://github.com/portainer/portainer/releases
-
-# admin user and password
-core_portainer_admin_user: admin
-core_portainer_admin_password: changeme
-
-# list of portainer agents to add to portainer
-core_portainer_agents: "{{ groups['base'] | product(['.' + domain]) | map('join') | list }}"

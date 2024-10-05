@@ -5,6 +5,7 @@
 - ansible.builtin.import_playbook: ./nut_server.yml
 - ansible.builtin.import_playbook: ./nut_client.yml
 - ansible.builtin.import_playbook: ./core.yml
+- ansible.builtin.import_playbook: ./portainer.yml
 - ansible.builtin.import_playbook: ./ntfy.yml
 - ansible.builtin.import_playbook: ./homepage.yml
 - ansible.builtin.import_playbook: ./vaultwarden.yml
@@ -19,6 +20,5 @@
 - ansible.builtin.import_playbook: ./nextcloud.yml
 - ansible.builtin.import_playbook: ./gitea.yml
 - ansible.builtin.import_playbook: ./paperless.yml
-- ansible.builtin.import_playbook: ./dozzle_agent.yml
 - ansible.builtin.import_playbook: ./dozzle.yml
 - ansible.builtin.import_playbook: ./netdata.yml

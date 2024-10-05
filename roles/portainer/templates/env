@@ -1,0 +1,3 @@
+COMPOSE_PROFILES="{{ 'server' if portainer_server else 'agent' }}"
+HOSTNAME="{{ hostname }}"
+PORTAINER_VERSION="{{ portainer_version }}"

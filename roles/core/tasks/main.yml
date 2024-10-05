@@ -11,8 +11,5 @@
     - name: Configure LLDAP
       ansible.builtin.import_tasks: ./lldap_config.yml
 
-    - name: Configure Portainer
-      ansible.builtin.import_tasks: ./configure_portainer.yml
-
     - name: Setup backup script
       ansible.builtin.import_tasks: ./backup_init.yml

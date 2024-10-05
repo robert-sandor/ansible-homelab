@@ -3,27 +3,27 @@
   vars:
     portainer_api: https://portainer.{{ hostname }}/api
     validate_certs: "{{ not base_traefik_acme_staging }}"
-    auth_header: Bearer {{ core_portainer_auth.json.jwt }}
+    auth_header: Bearer {{ portainer_auth.json.jwt }}
   block:
     - name: Check admin user
       ansible.builtin.uri:
         url: "{{ portainer_api }}/users/admin/check"
         status_code: [204, 404]
         validate_certs: "{{ validate_certs }}"
-      register: core_portainer_admin_check
+      register: portainer_admin_check
       retries: 3
       delay: 10
-      until: core_portainer_admin_check.failed == false
+      until: portainer_admin_check.failed == false
 
     - name: Create admin user
-      when: core_portainer_admin_check.status != 204
+      when: portainer_admin_check.status != 204
       ansible.builtin.uri:
         method: POST
         url: "{{ portainer_api }}/users/admin/init"
         body_format: json
         body:
-          username: "{{ core_portainer_admin_user }}"
-          password: "{{ core_portainer_admin_password }}"
+          username: "{{ portainer_admin_user }}"
+          password: "{{ portainer_admin_password }}"
         validate_certs: "{{ validate_certs }}"
       no_log: true
 
@@ -33,11 +33,11 @@
         url: "{{ portainer_api }}/auth"
         body_format: json
         body:
-          username: "{{ core_portainer_admin_user }}"
-          password: "{{ core_portainer_admin_password }}"
+          username: "{{ portainer_admin_user }}"
+          password: "{{ portainer_admin_password }}"
         validate_certs: "{{ validate_certs }}"
       no_log: true
-      register: core_portainer_auth
+      register: portainer_auth
 
     - name: Enable OpenID through Authelia
       ansible.builtin.uri:
@@ -50,11 +50,11 @@
           authenticationMethod: 3
           oauthSettings:
             clientId: portainer
-            clientSecret: "{{ core_authelia_portainer_secret }}"
-            accessTokenUri: https://auth.{{ hostname }}/api/oidc/token
-            authorizationUri: https://auth.{{ hostname }}/api/oidc/authorization
-            resourceUri: https://auth.{{ hostname }}/api/oidc/userinfo
-            redirectUri: https://portainer.{{ hostname }}
+            clientSecret: "{{ portainer_authelia_secret }}"
+            accessTokenUri: https://auth.{{ core_hostname }}/api/oidc/token
+            authorizationUri: https://auth.{{ core_hostname }}/api/oidc/authorization
+            resourceUri: https://auth.{{ core_hostname }}/api/oidc/userinfo
+            redirectUri: https://portainer.{{ core_hostname }}
             userIdentifier: preferred_username
             scopes: openid profile groups email
             sso: true
@@ -68,13 +68,30 @@
         headers:
           authorization: "{{ auth_header }}"
         validate_certs: "{{ validate_certs }}"
-      register: core_portainer_endpoints
+      register: portainer_endpoints
+
+    - name: Add local environment
+      when: portainer_endpoints.json | json_query(query) | length == 0
+      vars:
+        query: "[?contains(URL, 'unix:///var/run/docker.sock')]"
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ portainer_api }}/endpoints"
+        body_format: form-urlencoded
+        body:
+          Name: "{{ hostname }}"
+          EndpointCreationType: "1"
+          URL: unix:///var/run/docker.sock
+        headers:
+          authorization: "{{ auth_header }}"
+        validate_certs: "{{ validate_certs }}"
 
     - name: Update agents
       vars:
+        portainer_agents: "{{ groups['portainer'] | difference([ansible_hostname]) | product(['.' + domain]) | map('join') | list + portainer_extra_agents }}"
         query: "[?Type == to_number('2')].{Id: Id, Name: Name, Type: Type, URL: URL}"
-        agents: "{{ core_portainer_endpoints.json | json_query(query) }}"
-        agent_urls: "{{ ['tcp://'] | product(core_portainer_agents) | map('join') | list | product([':9001']) | map('join') | list }}"
+        agents: "{{ portainer_endpoints.json | json_query(query) }}"
+        agent_urls: "{{ ['tcp://'] | product(portainer_agents) | map('join') | list | product([':9001']) | map('join') | list }}"
       block:
         - name: Remove agent
           when: agent.URL not in agent_urls
@@ -90,7 +107,7 @@
             loop_var: agent
 
         - name: Add agent
-          when: core_portainer_endpoints.json | json_query(query) | length == 0
+          when: portainer_endpoints.json | json_query(query) | length == 0
           vars:
             query: "[?contains(URL, '{{ agent }}')]"
           ansible.builtin.uri:
@@ -107,6 +124,6 @@
             headers:
               authorization: "{{ auth_header }}"
             validate_certs: "{{ validate_certs }}"
-          loop: "{{ core_portainer_agents }}"
+          loop: "{{ portainer_agents }}"
           loop_control:
             loop_var: agent

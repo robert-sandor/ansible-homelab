@@ -2,6 +2,7 @@
 - name: Authelia hash secrets
   vars:
     to_hash:
+      authelia_dummy_client_secret: "{{ core_authelia_dummy_secret }}"
       authelia_portainer_client_secret: "{{ core_authelia_portainer_secret }}"
       authelia_grafana_client_secret: "{{ core_authelia_grafana_secret }}"
       authelia_vikunja_client_secret: "{{ core_authelia_vikunja_secret }}"
