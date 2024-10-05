@@ -1,0 +1,54 @@
+---
+services:
+  server:
+    image: ghcr.io/twin/gatus:$GATUS_VERSION
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - default
+      - traefik
+    volumes:
+      - ./config.yml:/config/config.yaml:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.gatus.loadbalancer.server.port: 8080
+      traefik.http.routers.gatus.rule: Host(`gatus.$HOSTNAME`)
+      traefik.http.routers.gatus.entrypoints: https
+      traefik.http.routers.gatus.service: gatus
+      homepage.name: gatus
+      homepage.group: monitoring
+      homepage.description: uptime monitor
+      homepage.href: https://gatus.$HOSTNAME
+      homepage.icon: gatus
+      homepage.siteMonitor: https://gatus.$HOSTNAME
+      com.centurylinklabs.watchtower.enable: true
+
+  db:
+    image: postgres:$POSTGRES_VERSION
+    restart: always
+    secrets:
+      - pg_pass
+    environment:
+      TZ: $TZ
+      POSTGRES_DB: $PG_DATABASE
+      POSTGRES_USER: $PG_USER
+      POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
+      PGDATABASE: $PG_DATABASE
+      PGUSER: $PG_USER
+      PGPASSFILE: /run/secrets/pg_pass
+    volumes:
+      - db:/var/lib/postgresql/data
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+secrets:
+  pg_pass:
+    file: ./secrets/pg_pass
+
+volumes:
+  db:
+
+networks:
+  traefik:
+    external: true

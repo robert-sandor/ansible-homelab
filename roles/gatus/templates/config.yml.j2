@@ -19,7 +19,7 @@ connectivity:
 
 storage:
   type: postgres
-  path: postgres://{{ gatus_db_user }}:{{ gatus_db_password }}@gatus-db:5432/{{ gatus_db_name }}?sslmode=disable
+  path: postgres://{{ gatus_db_user }}:{{ gatus_db_password }}@db:5432/{{ gatus_db_name }}?sslmode=disable
   caching: true
 
 ui:
@@ -44,7 +44,7 @@ alerting:
 {% endif %}
 
 endpoints:
-{% if 'gatus' in gatus_roles %}
+{% if 'gatus' in groups %}
 # Gatus
 {% for host in groups['gatus'] | sort %} 
   - name: gatus @ {{ host }}
@@ -54,7 +54,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'adguardhome' in gatus_roles %}
+{% if 'adguardhome' in groups %}
 # Adguardhome Web
 {% for host in groups['adguardhome'] | sort %} 
   - name: adguardhome @ {{ host }}
@@ -80,7 +80,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'base' in gatus_roles %}
+{% if 'base' in groups %}
 # Base
 {% for host in groups['base'] | sort %} 
   - name: traefik @ {{ host }}
@@ -97,7 +97,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'core' in gatus_roles %}
+{% if 'core' in groups %}
 # Core apps
 {% for host in groups['core'] | sort %} 
   - name: homepage @ {{ host }}
@@ -115,6 +115,12 @@ endpoints:
     url: https://auth.{{ host }}.{{ domain }}
     <<: *defaults
 
+{% endfor %}
+{% endif %}
+
+{% if 'portainer' in groups +%}
+# Ntfy
+{% for host in groups['ntfy'] | sort %} 
   - name: portainer @ {{ host }}
     group: core
     url: https://portainer.{{ host }}.{{ domain }}
@@ -122,8 +128,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'core' in gatus_roles %}
-
+{% if 'ntfy' in groups +%}
 # Ntfy
 {% for host in groups['ntfy'] | sort %} 
   - name: ntfy @ {{ host }}
@@ -133,7 +138,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'monitoring' in gatus_roles %}
+{% if 'monitoring' in groups %}
 # Monitoring
 {% for host in groups['monitoring'] | sort %} 
   - name: grafana @ {{ host }}
@@ -148,7 +153,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'mealie' in gatus_roles %}
+{% if 'mealie' in groups %}
 # Mealie
 {% for host in groups['mealie'] | sort %} 
   - name: mealie @ {{ host }}
@@ -158,7 +163,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'memos' in gatus_roles %}
+{% if 'memos' in groups %}
 # Memos
 {% for host in groups['memos'] | sort %} 
   - name: memos @ {{ host }}
@@ -168,7 +173,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'vaultwarden' in gatus_roles %}
+{% if 'vaultwarden' in groups %}
 # Vaultwarden
 {% for host in groups['vaultwarden'] | sort %}
   - name: vaultwarden @ {{ host }}
@@ -178,7 +183,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'vikunja' in gatus_roles %}
+{% if 'vikunja' in groups %}
 # Vikunja
 {% for host in groups['vikunja'] | sort %} 
   - name: vikunja @ {{ host }}
@@ -188,7 +193,7 @@ endpoints:
 {% endfor %}
 {% endif %}
 
-{% if 'netdata' in gatus_roles %}
+{% if 'netdata' in groups %}
 # netdata
 {% for host in groups['netdata'] | sort %} 
   - name: netdata @ {{ host }}
