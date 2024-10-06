@@ -77,7 +77,6 @@ networks:
     # name: traefik
     external: true
   docker:
-  portainer:
 
 volumes:
   traefik:
