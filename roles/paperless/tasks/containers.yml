@@ -3,16 +3,25 @@
   ansible.builtin.file:
     state: directory
     path: "{{ paperless_deploy_path }}/{{ item }}"
-    mode: "0750"
+    mode: "0700"
   loop:
     - consume
     - export
 
-- name: Template compose
-  ansible.builtin.template:
+- name: Copy compose file
+  ansible.builtin.copy:
     src: compose.yml
     dest: "{{ paperless_deploy_path }}/compose.yml"
-    mode: "0750"
+    mode: "0600"
+
+- name: Template env files
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ paperless_deploy_path }}/.{{ item }}"
+    mode: "0600"
+  loop:
+    - env
+    - paperless.env
 
 - name: Create secrets directory
   ansible.builtin.file:
@@ -24,10 +33,10 @@
   no_log: true
   vars:
     secrets:
-      paperless-secret-key: "{{ paperless_secret_key }}"
-      paperless-admin-pass: "{{ paperless_admin_pass }}"
-      paperless-db-pass: "{{ paperless_db_pass }}"
-      paperless-socialaccount-providers: "{{ paperless_socialaccount_providers | to_json }}"
+      secret_key: "{{ paperless_secret_key }}"
+      admin_pass: "{{ paperless_admin_pass }}"
+      db_pass: "{{ paperless_db_pass }}"
+      socialaccount_providers: "{{ paperless_socialaccount_providers | to_json }}"
   loop: "{{ secrets | dict2items }}"
   ansible.builtin.copy:
     content: "{{ item.value }}"

@@ -1,0 +1,95 @@
+---
+services:
+  server:
+    image: ghcr.io/paperless-ngx/paperless-ngx:$PAPERLESS_VERSION
+    restart: always
+    depends_on:
+      - db
+      - cache
+      - gotenberg
+      - tika
+    secrets:
+      - secret_key
+      - db_pass
+      - admin_pass
+      - socialaccount_providers
+    env_file: .paperless.env
+    networks:
+      - default
+      - traefik
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export # TODO: review this and below
+      - ./consume:/usr/src/paperless/consume
+    labels:
+      traefik.enable: true
+      traefik.http.services.paperless.loadbalancer.server.port: 8000
+      traefik.http.routers.paperless.rule: Host(`paperless.$HOSTNAME`)
+      traefik.http.routers.paperless.entrypoints: https
+      traefik.http.routers.paperless.service: paperless
+      homepage.name: paperless
+      homepage.group: apps
+      homepage.description: ocr for documents
+      homepage.href: https://paperless.$HOSTNAME
+      homepage.icon: paperless
+      homepage.siteMonitor: https://paperless.$HOSTNAME
+      com.centurylinklabs.watchtower.enable: true
+
+  gotenberg:
+    image: gotenberg/gotenberg:$GOTENBERG_VERSION
+    restart: always
+    command: gotenberg --chromium-disable-javascript=true --chromium-allow-list=file:///tmp/.*
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  tika:
+    image: ghcr.io/paperless-ngx/tika:$TIKA_VERSION
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  cache:
+    image: valkey/valkey:$VALKEY_VERSION
+    restart: always
+    volumes:
+      - cache:/data
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  db:
+    image: postgres:$PG_VERSION
+    restart: always
+    secrets:
+      - db_pass
+    environment:
+      POSTGRES_DB: $PG_DATABASE
+      POSTGRES_USER: $PG_USER
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
+      PGDATABASE: $PG_DATABASE
+      PGUSER: $PG_USER
+      PGPASSFILE: /run/secrets/db_pass
+    volumes:
+      - db:/var/lib/postgresql/data
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+volumes:
+  data:
+  media:
+  cache:
+  db:
+
+networks:
+  traefik:
+    external: true
+
+secrets:
+  secret_key:
+    file: ./secrets/secret_key
+  admin_pass:
+    file: ./secrets/admin_pass
+  db_pass:
+    file: ./secrets/db_pass
+  socialaccount_providers:
+    file: ./secrets/socialaccount_providers
