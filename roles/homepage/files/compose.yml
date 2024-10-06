@@ -1,12 +1,11 @@
 ---
 services:
   server:
-    image: ghcr.io/gethomepage/homepage:{{ homepage_version }}
+    image: ghcr.io/gethomepage/homepage:$VERSION
     restart: unless-stopped
     environment:
-      TZ: "{{ timezone }}"
-      PUID: "{{ ansible_facts.user_uid }}"
-      PGID: "{{ ansible_facts.user_gid }}"
+      PUID: $PUID
+      PGID: $PGID
     networks:
       - traefik
     volumes:
@@ -14,7 +13,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.homepage.loadbalancer.server.port: 3000
-      traefik.http.routers.homepage.rule: Host(`{{ hostname }}`) || Host(`home.{{ hostname }}`) || Host(`home.{{ domain }}`)
+      traefik.http.routers.homepage.rule: Host(`$HOSTNAME`) || Host(`home.$HOSTNAME`) || Host(`home.$DOMAIN`)
       traefik.http.routers.homepage.entrypoints: https
       traefik.http.routers.homepage.service: homepage
       com.centurylinklabs.watchtower.enable: true
