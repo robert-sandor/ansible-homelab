@@ -3,17 +3,23 @@
   ansible.builtin.file:
     state: directory
     path: "{{ gitea_deploy_path }}/{{ item }}"
-    mode: "0750"
+    mode: "0700"
   loop:
     - data
     - config
     - act_runner
 
-- name: Template compose
-  ansible.builtin.template:
+- name: Copy compose file
+  ansible.builtin.copy:
     src: compose.yml
     dest: "{{ gitea_deploy_path }}/compose.yml"
-    mode: "0755"
+    mode: "0600"
+
+- name: Template env file
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ gitea_deploy_path }}/.env"
+    mode: "0600"
 
 - name: Create secrets directory
   ansible.builtin.file:
@@ -28,17 +34,17 @@
     dest: "{{ gitea_deploy_path }}/secrets/{{ item.dest }}"
     mode: "0600"
   loop:
-    - dest: gitea_postgres_password
+    - dest: pg_pass
       content: "{{ (('gitea-db@' + deployment_secret) | hash('sha256'))[:64] }}"
-    - dest: gitea_jwt_secret
+    - dest: jwt_secret
       content: "{{ (('gitea-jwt@' + deployment_secret) | hash('sha256'))[:64] }}"
-    - dest: gitea_secret_key
+    - dest: secret_key
       content: "{{ (('gitea-secret@' + deployment_secret) | hash('sha256'))[:64] }}"
 
 - name: Initialize runner token
   ansible.builtin.command:
-    cmd: touch {{ gitea_deploy_path }}/secrets/runner_registration_token
-    creates: "{{ gitea_deploy_path }}/secrets/runner_registration_token"
+    cmd: touch {{ gitea_deploy_path }}/secrets/runner_token
+    creates: "{{ gitea_deploy_path }}/secrets/runner_token"
 
 - name: Deploy containers
   community.docker.docker_compose_v2:
@@ -59,7 +65,7 @@
   ansible.builtin.shell:
     chdir: "{{ gitea_deploy_path }}"
     cmd: |
-      docker compose exec -it server gitea actions generate-runner-token > ./secrets/runner_registration_token
-      chmod 0600 ./secrets/runner_registration_token
-    creates: "{{ gitea_deploy_path }}/secrets/runner_registration_token"
+      docker compose exec -it server gitea actions generate-runner-token > ./secrets/runner_token
+      chmod 0600 ./secrets/runner_token
+    creates: "{{ gitea_deploy_path }}/secrets/runner_token"
   notify: Restart act-runner
