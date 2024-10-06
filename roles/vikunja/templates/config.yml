@@ -13,7 +13,7 @@ database:
   type: postgres
   host: db
   user: "{{ vikunja_db_user }}"
-  password: "{{ vikunja_db_password }}"
+  password: "{{ vikunja_db_pass }}"
   database: "{{ vikunja_db_name }}"
 
 typesense:

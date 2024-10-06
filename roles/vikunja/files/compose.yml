@@ -1,8 +1,8 @@
 ---
 services:
   server:
-    image: vikunja/vikunja:{{ vikunja_version }}
-    restart: unless-stopped
+    image: vikunja/vikunja:$VERSION
+    restart: always
     depends_on:
       - db
     networks:
@@ -14,30 +14,29 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.vikunja.loadbalancer.server.port: 3456
-      traefik.http.routers.vikunja.rule: Host(`vikunja.{{ hostname }}`)
+      traefik.http.routers.vikunja.rule: Host(`vikunja.$HOSTNAME`)
       traefik.http.routers.vikunja.entrypoints: https
       traefik.http.routers.vikunja.service: vikunja
       homepage.name: vikunja
       homepage.group: apps
       homepage.description: todo app
-      homepage.href: https://vikunja.{{ hostname }}
+      homepage.href: https://vikunja.$HOSTNAME
       homepage.icon: vikunja
-      homepage.siteMonitor: https://vikunja.{{ hostname }}
+      homepage.siteMonitor: https://vikunja.$HOSTNAME
       com.centurylinklabs.watchtower.enable: true
 
   db:
-    image: postgres:{{ vikunja_postgres_version }}
-    restart: unless-stopped
+    image: postgres:$PG_VERSION
+    restart: always
     secrets:
-      - vikunja_db_password
+      - pg_pass
     environment:
-      TZ: "{{ timezone }}"
-      POSTGRES_USER: "{{ vikunja_db_user }}"
-      POSTGRES_DB: "{{ vikunja_db_name }}"
-      POSTGRES_PASSWORD_FILE: /run/secrets/vikunja_db_password
-      PGUSER: "{{ vikunja_db_user }}"
-      PGDATABASE: "{{ vikunja_db_name }}"
-      PGPASSFILE: /run/secrets/vikunja_db_password
+      POSTGRES_DB: $PG_DATABASE
+      POSTGRES_USER: $PG_USER
+      POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
+      PGDATABASE: $PG_DATABASE
+      PGUSER: $PG_USER
+      PGPASSFILE: /run/secrets/pg_pass
     volumes:
       - db:/var/lib/postgresql/data
     healthcheck:
@@ -54,8 +53,8 @@ volumes:
   db:
 
 secrets:
-  vikunja_db_password:
-    file: ./secrets/vikunja_db_password
+  pg_pass:
+    file: ./secrets/pg_pass
 
 networks:
   traefik:

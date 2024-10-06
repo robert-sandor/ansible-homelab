@@ -5,10 +5,16 @@
     path: "{{ vikunja_deploy_path }}"
     mode: "0750"
 
-- name: Template compose.yml
-  ansible.builtin.template:
+- name: Copy compose file
+  ansible.builtin.copy:
     src: compose.yml
     dest: "{{ vikunja_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Template env file
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ vikunja_deploy_path }}/.env"
     mode: "0640"
 
 - name: Template vikunja config
@@ -27,8 +33,8 @@
 - name: Set db password secret
   no_log: true
   ansible.builtin.copy:
-    content: "{{ vikunja_db_password }}"
-    dest: "{{ vikunja_deploy_path }}/secrets/vikunja_db_password"
+    content: "{{ vikunja_db_pass }}"
+    dest: "{{ vikunja_deploy_path }}/secrets/pg_pass"
     mode: "0600"
 
 - name: Deploy containers
