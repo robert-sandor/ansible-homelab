@@ -4,3 +4,9 @@
   ansible.builtin.command:
     chdir: "{{ media_deploy_path }}"
     cmd: docker compose exec recyclarr recyclarr sync
+
+- name: Restart unpackerr
+  changed_when: true
+  ansible.builtin.command:
+    chdir: "{{ media_deploy_path }}"
+    cmd: docker compose restart unpackerr

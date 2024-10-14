@@ -1,10 +1,12 @@
 ---
 - name: Deploy media services
-  vars:
-    hostname: "{{ ansible_hostname }}.{{ domain }}"
-    media_deploy_path: "{{ deploy_path }}/media"
-    skip_tls: "{{ base_traefik_acme_staging }}"
   block:
+    - name: Set facts
+      ansible.builtin.set_fact:
+        hostname: "{{ ansible_hostname }}.{{ domain }}"
+        media_deploy_path: "{{ deploy_path }}/media"
+        skip_tls: "{{ base_traefik_acme_staging }}"
+
     - name: Deploy containers
       ansible.builtin.import_tasks: ./containers.yml
 
@@ -22,6 +24,9 @@
 
     - name: Configure lidarr
       ansible.builtin.import_tasks: ./lidarr.yml
+
+    - name: Configure unpackerr
+      ansible.builtin.import_tasks: ./unpackerr.yml
 
     - name: Configure prowlarr
       ansible.builtin.import_tasks: ./prowlarr.yml

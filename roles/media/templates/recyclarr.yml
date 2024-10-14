@@ -32,6 +32,7 @@ sonarr:
             qualities:
               - WEBRip-1080p
               - WEBDL-1080p
+          - name: Bluray-1080p
     custom_formats:
       - quality_profiles:
           - name: 1080p-4k

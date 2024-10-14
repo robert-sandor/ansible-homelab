@@ -1,0 +1,7 @@
+---
+- name: Unpackerr - template config
+  ansible.builtin.template:
+    src: unpackerr.conf
+    dest: "{{ media_deploy_path }}/unpackerr/unpackerr.conf"
+    mode: "0644"
+  notify: Restart unpackerr

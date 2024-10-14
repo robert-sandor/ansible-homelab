@@ -11,6 +11,7 @@
     - path: radarr
     - path: recyclarr
     - path: lidarr
+    - path: unpackerr
     - path: bazarr
     - path: prowlarr
     - path: overseerr

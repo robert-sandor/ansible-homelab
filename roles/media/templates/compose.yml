@@ -2,8 +2,7 @@
 services:
   transmission:
     image: ghcr.io/linuxserver/transmission:{{ media_transmission_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -34,8 +33,7 @@ services:
 
   sonarr:
     image: ghcr.io/linuxserver/sonarr:{{ media_sonarr_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -43,6 +41,7 @@ services:
     networks:
       - traefik
       - recyclarr
+      - unpackerr
     volumes:
       - ./sonarr:/config
       - media:/media
@@ -69,8 +68,7 @@ services:
 
   radarr:
     image: ghcr.io/linuxserver/radarr:{{ media_radarr_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -78,6 +76,7 @@ services:
     networks:
       - traefik
       - recyclarr
+      - unpackerr
     volumes:
       - ./radarr:/config
       - media:/media
@@ -104,8 +103,7 @@ services:
 
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr:{{ media_recyclarr_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     read_only: true
     tmpfs: /tmp
@@ -123,14 +121,14 @@ services:
 
   lidarr:
     image: ghcr.io/linuxserver/lidarr:{{ media_lidarr_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
       PGID: "{{ ansible_facts.user_gid }}"
     networks:
       - traefik
+      - unpackerr
     volumes:
       - ./lidarr:/config
       - media:/media
@@ -155,10 +153,26 @@ services:
       homepage.siteMonitor: https://lidarr.{{ hostname }}
       com.centurylinklabs.watchtower.enable: true
 
+  unpackerr:
+    image: golift/unpackerr:{{ media_unpackerr_version }}
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    environment:
+      TZ: "{{ timezone }}"
+    networks:
+      - unpackerr
+    volumes:
+      - ./unpackerr:/config
+      - media:/media
+    depends_on:
+      - sonarr
+      - radarr
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
   bazarr:
     image: ghcr.io/linuxserver/bazarr:{{ media_bazarr_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -192,8 +206,7 @@ services:
 
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:{{ media_prowlarr_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -228,8 +241,7 @@ services:
 
   overseerr:
     image: ghcr.io/linuxserver/overseerr:{{ media_overseerr_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -258,8 +270,7 @@ services:
 
   plex:
     image: ghcr.io/linuxserver/plex:{{ media_plex_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -311,8 +322,7 @@ services:
 
   jellyfin:
     image: ghcr.io/linuxserver/jellyfin:{{ media_jellyfin_version }}
-    restart: unless-stopped
-    pull_policy: always
+    restart: always
     environment:
       TZ: "{{ timezone }}"
       PUID: "{{ ansible_facts.user_uid }}"
@@ -370,3 +380,4 @@ networks:
     external: true
   recyclarr:
     name: recyclarr
+  unpackerr:
