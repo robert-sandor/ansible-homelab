@@ -1,17 +1,7 @@
-#
-# WARNING: Make sure to use the docker-compose.yml of the current release:
-#
-# https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
-#
-# The compose file on main may not be compatible with the latest release.
-#
-
-name: immich
-
 services:
   server:
     image: ghcr.io/immich-app/immich-server:{{ immich_version }}
-    restart: unless-stopped
+    restart: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     extends:
       file: hwaccel.transcoding.yml
@@ -37,7 +27,7 @@ services:
       disable: false
     labels:
       traefik.enable: true
-      traefik.http.services.immich.loadbalancer.server.port: 3001
+      traefik.http.services.immich.loadbalancer.server.port: 2283
       traefik.http.routers.immich.rule: Host(`immich.{{ hostname }}`)
       traefik.http.routers.immich.entrypoints: https
       traefik.http.routers.immich.service: immich
@@ -53,7 +43,7 @@ services:
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
     image: ghcr.io/immich-app/immich-machine-learning:{{ immich_version }}{{ '' if immich_hwaccel_ml == 'cpu' else '-' + immich_hwaccel_ml }}
-    restart: unless-stopped
+    restart: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/ml-hardware-acceleration
       file: hwaccel.ml.yml
@@ -74,8 +64,8 @@ services:
 
   # NOTE: immich team is planning to drop this - no need to update to valkey or newer version
   cache:
-    image: docker.io/redis:6.2-alpine@sha256:2d1463258f2764328496376f5d965f20c6a67f66ea2b06dc42af351f75248792
-    restart: unless-stopped
+    image: docker.io/redis:6.2-alpine@sha256:2ba50e1ac3a0ea17b736ce9db2b0a9f6f8b85d4c27d5f5accc6a416d8f42c6d5
+    restart: always
     volumes:
       - cache:/data
     healthcheck:

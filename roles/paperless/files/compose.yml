@@ -79,7 +79,6 @@ volumes:
   media:
   cache:
   db:
-
 networks:
   traefik:
     external: true

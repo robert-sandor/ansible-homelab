@@ -9,4 +9,9 @@ pkgs.mkShell {
     gnumake
     python312Packages.jmespath
   ];
+
+  shellHook = # bash
+    ''
+      ansible-galaxy collection install -U -r ./requirements.yml > /dev/null
+    '';
 }
