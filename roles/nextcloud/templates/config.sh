@@ -53,5 +53,8 @@ $occ ldap:set-config s01 ldapUuidGroupAttribute auto
 $occ ldap:set-config s01 ldapUuidUserAttribute auto
 $occ ldap:set-config s01 ldapExpertUsernameAttr user_id
 
+# configure preview generator
+$occ app:install previewgenerator || $occ app:enable previewgenerator
+
 # create already run flag
 touch .config-done

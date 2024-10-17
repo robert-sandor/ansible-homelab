@@ -4,13 +4,15 @@ services:
     container_name: nextcloud-aio-mastercontainer
     hostname: nextcloud-aio-mastercontainer
     image: nextcloud/all-in-one:{{ nextcloud_version }}
-    restart: unless-stopped
+    restart: always
     pull_policy: always
     init: true
     environment:
       APACHE_IP_BINDING: 0.0.0.0
       APACHE_PORT: 11000
-      NEXTCLOUD_DATADIR: "{{ nextcloud_data_dir }}"
+      NEXTCLOUD_DATADIR: nextcloud_aio_nextcloud_datadir
+      NEXTCLOUD_ENABLE_DRI_DEVICE: true
+      AIO_COMMUNITY_CONTAINERS: "memories"
     networks:
       - traefik
       - nextcloud

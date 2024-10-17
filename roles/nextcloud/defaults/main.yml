@@ -1,4 +1,20 @@
 ---
 nextcloud_version: latest
 
-nextcloud_data_dir: /mnt/nextcloud-data
+# Storage setup for nextcloud
+# type can be "local", "cifs" or "nfs" see https://docs.docker.com/reference/cli/docker/volume/create/#opt
+#
+# Examples:
+#
+# nextcloud_storage:
+#   data:
+#     type: local
+#   backup:
+#     type: cifs
+#     device: //nas.domain.my/nextcloud-backup
+#     o: user=nextcloud,pass=superstrongpassword,uid=33,gid=0,file_mode=0750,dir_mode=0750
+nextcloud_storage:
+  data:
+    type: local
+  backup:
+    type: local
