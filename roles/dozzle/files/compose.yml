@@ -2,7 +2,7 @@
 services:
   agent:
     image: amir20/dozzle:$DOZZLE_VERSION
-    restart: unless-stopped
+    restart: always
     command: agent
     environment:
       DOZZLE_HOSTNAME: $DOZZLE_HOSTNAME
@@ -23,7 +23,7 @@ services:
   server:
     profiles: [server]
     image: amir20/dozzle:$DOZZLE_VERSION
-    restart: unless-stopped
+    restart: always
     environment:
       DOZZLE_AUTH_PROVIDER: forward-proxy
       DOZZLE_ENABLE_ACTIONS: true

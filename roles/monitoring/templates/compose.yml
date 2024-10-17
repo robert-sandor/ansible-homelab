@@ -2,7 +2,7 @@
 services:
   grafana:
     image: grafana/grafana-oss:{{ monitoring_grafana_version }}
-    restart: unless-stopped
+    restart: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     depends_on:
       - grafana-db
@@ -33,7 +33,7 @@ services:
 
   grafana-db:
     image: postgres:{{ monitoring_grafana_postgres_version }}
-    restart: unless-stopped
+    restart: always
     secrets:
       - grafana_db_password
     environment:
@@ -57,7 +57,7 @@ services:
 
   loki:
     image: grafana/loki:{{ monitoring_loki_version }}
-    restart: unless-stopped
+    restart: always
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - traefik
@@ -74,7 +74,7 @@ services:
 
   prometheus:
     image: prom/prometheus:{{ monitoring_prometheus_version }}
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     volumes:

@@ -2,7 +2,7 @@
 services:
   server:
     image: adguard/adguardhome:{{ adguardhome_version }}
-    restart: unless-stopped
+    restart: always
     environment:
       TZ: "{{ timezone }}"
     networks:

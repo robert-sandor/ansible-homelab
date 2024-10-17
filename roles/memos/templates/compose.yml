@@ -2,7 +2,7 @@
 services:
   server:
     image: neosmemo/memos:{{ memos_version }}
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     volumes:

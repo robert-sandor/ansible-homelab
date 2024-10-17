@@ -1,6 +1,6 @@
 ---
 gitea_version: "1.22" # https://github.com/go-gitea/gitea/releases
-gitea_runner_version: "0.2.11" # https://gitea.com/gitea/act_runner/releases
+gitea_runner_version: 0.2.11 # https://gitea.com/gitea/act_runner/releases
 gitea_pg_version: "16"
 gitea_pg_database: gitea
 gitea_pg_user: gitea

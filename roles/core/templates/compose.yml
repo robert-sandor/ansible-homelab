@@ -2,7 +2,7 @@
 services:
   mailrise:
     image: ghcr.io/yoryan/mailrise:{{ core_mailrise_version }}
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     volumes:
@@ -19,7 +19,7 @@ services:
 
   lldap:
     image: lldap/lldap:{{ core_lldap_version }}
-    restart: unless-stopped
+    restart: always
     secrets:
       - lldap_jwt_secret
       - lldap_user_pass
@@ -55,7 +55,7 @@ services:
 
   lldap-db:
     image: postgres:{{ core_lldap_postgres_version }}
-    restart: unless-stopped
+    restart: always
     secrets:
       - lldap_postgres_password
     environment:
@@ -81,7 +81,7 @@ services:
 
   authelia:
     image: ghcr.io/authelia/authelia:{{ core_authelia_version }}
-    restart: unless-stopped
+    restart: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     environment:
       TZ: "{{ timezone }}"
@@ -115,7 +115,7 @@ services:
 
   authelia-cache:
     image: valkey/valkey:{{ core_authelia_valkey_version }}
-    restart: unless-stopped
+    restart: always
     networks:
       - authelia
     volumes:
@@ -131,7 +131,7 @@ services:
 
   authelia-db:
     image: postgres:{{ core_authelia_postgres_version }}
-    restart: unless-stopped
+    restart: always
     secrets:
       - authelia_postgres_password
     environment:

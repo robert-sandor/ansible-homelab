@@ -1,7 +1,7 @@
 services:
   server:
     image: edgd1er/webnut
-    restart: unless-stopped
+    restart: always
     environment:
       UPS_HOST: host.docker.internal
       UPS_PORT: "3493"

@@ -2,7 +2,7 @@
 services:
   agent:
     image: netdata/netdata:{{ netdata_version }}
-    restart: unless-stopped
+    restart: always
     pid: host
     network_mode: host
     environment:

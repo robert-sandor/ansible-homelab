@@ -2,7 +2,7 @@
 services:
   server:
     image: gitea/gitea:$GITEA_VERSION
-    restart: unless-stopped
+    restart: always
     user: $PUID:$PGID
     depends_on:
       - db
@@ -36,7 +36,7 @@ services:
       # OIDC
       GITEA__openid__ENABLE_OPENID_SIGNIN: false
       GITEA__openid__ENABLE_OPENID_SIGNUP: false
-      GITEA__openid__WHITELISTED_URIS: "$CORE_HOSTNAME"
+      GITEA__openid__WHITELISTED_URIS: $CORE_HOSTNAME
       GITEA__service__DISABLE_REGISTRATION: false
       GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: true
       GITEA__service__SHOW_REGISTRATION_BUTTON: false
@@ -44,7 +44,7 @@ services:
       - default
       - traefik
     ports:
-      - "2222:2222" # Required for SSH
+      - 2222:2222 # Required for SSH
     volumes:
       - ./data:/var/lib/gitea
       - ./config:/etc/gitea
@@ -66,7 +66,7 @@ services:
 
   db:
     image: postgres:$PG_VERSION
-    restart: unless-stopped
+    restart: always
     secrets:
       - pg_pass
     environment:
@@ -89,7 +89,7 @@ services:
 
   runner:
     image: gitea/act_runner:$RUNNER_VERSION
-    restart: unless-stopped
+    restart: always
     secrets:
       - runner_token
     depends_on:

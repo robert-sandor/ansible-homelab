@@ -2,7 +2,7 @@
 services:
   server:
     image: ghcr.io/gethomepage/homepage:$VERSION
-    restart: unless-stopped
+    restart: always
     environment:
       PUID: $PUID
       PGID: $PGID

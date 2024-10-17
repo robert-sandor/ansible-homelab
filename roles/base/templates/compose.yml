@@ -2,7 +2,7 @@
 services:
   traefik:
     image: traefik:{{ base_traefik_version }}
-    restart: unless-stopped
+    restart: always
     env_file:
       - traefik.env
     networks:
@@ -43,7 +43,7 @@ services:
   watchtower:
     hostname: watchtower
     image: ghcr.io/containrrr/watchtower:{{ base_watchtower_version }}
-    restart: unless-stopped
+    restart: always
     command: --cleanup --label-enable --no-startup-message
     environment:
       TZ: "{{ timezone }}"
@@ -59,7 +59,7 @@ services:
 
   docker_socket_proxy:
     image: ghcr.io/linuxserver/socket-proxy:{{ base_dsp_version }}
-    restart: unless-stopped
+    restart: always
     environment:
       CONTAINERS: 1
       LOG_LEVEL: warning
