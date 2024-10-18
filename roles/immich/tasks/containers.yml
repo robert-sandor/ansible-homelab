@@ -42,9 +42,9 @@
           enabled: true
         scan:
           enabled: true
-          cronExpression: "0 */12 * * *"
+          cronExpression: 0 */6 * * *
       server:
-        externalDomain: "https://immich.{{ hostname }}"
+        externalDomain: https://immich.{{ hostname }}
   ansible.builtin.copy:
     content: "{{ immich_config | to_nice_yaml }}"
     dest: "{{ immich_deploy_path }}/config.yml"

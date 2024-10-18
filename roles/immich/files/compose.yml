@@ -1,8 +1,9 @@
+---
 services:
   server:
     image: ghcr.io/immich-app/immich-server:$IMMICH_VERSION
     restart: always
-    user: "$PUID:$PGID"
+    user: $PUID:$PGID
     extends:
       file: hwaccel.transcoding.yml
       service: $IMMICH_HW_TRANSCODING
@@ -38,7 +39,7 @@ services:
   machine-learning:
     image: ghcr.io/immich-app/immich-machine-learning:$IMMICH_VERSION$IMMICH_ML_TAG
     restart: always
-    user: "$PUID:$PGID"
+    user: $PUID:$PGID
     extends:
       file: hwaccel.ml.yml
       service: $IMMICH_HW_ML
@@ -70,18 +71,32 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
       POSTGRES_USER: $DB_USER
       POSTGRES_DB: $DB_NAME
-      POSTGRES_INITDB_ARGS: "--data-checksums"
+      POSTGRES_INITDB_ARGS: --data-checksums
       PGDATABASE: $DB_NAME
       PGUSER: $DB_USER
       PGPASSFILE: /run/secrets/db_pass
     volumes:
       - db:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready || exit 1; Chksum="$$(psql --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
+      test: pg_isready || exit 1; Chksum="$$(psql --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum
+        failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
       interval: 5m
       start_interval: 30s
       start_period: 5m
-    command: [ "postgres", "-c", "shared_preload_libraries=vectors.so", "-c", 'search_path="$$user", public, vectors', "-c", "logging_collector=on", "-c", "max_wal_size=2GB", "-c", "shared_buffers=512MB", "-c", "wal_compression=on" ]
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=vectors.so
+      - -c
+      - search_path="$$user", public, vectors
+      - -c
+      - logging_collector=on
+      - -c
+      - max_wal_size=2GB
+      - -c
+      - shared_buffers=512MB
+      - -c
+      - wal_compression=on
     restart: always
 
 secrets:
@@ -94,8 +109,6 @@ volumes:
   cache:
   ml-cache:
   ml-config:
-
-
 networks:
   traefik:
     external: true

@@ -1,3 +1,4 @@
+---
 # Configurations for hardware-accelerated machine learning
 
 # If using Unraid or another platform that doesn't allow multiple Compose files,
@@ -15,7 +16,6 @@ services:
       - /usr/lib/libmali.so:/usr/lib/libmali.so:ro # Mali driver for your chipset (always required)
 
   cpu: {}
-
   cuda:
     deploy:
       resources:
@@ -28,7 +28,7 @@ services:
 
   openvino:
     device_cgroup_rules:
-      - "c 189:* rmw"
+      - c 189:* rmw
     devices:
       - /dev/dri:/dev/dri
     volumes:
@@ -41,4 +41,3 @@ services:
     volumes:
       - /dev/bus/usb:/dev/bus/usb
       - /usr/lib/wsl:/usr/lib/wsl
-
