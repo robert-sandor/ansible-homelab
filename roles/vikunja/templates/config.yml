@@ -12,9 +12,9 @@ service:
 database:
   type: postgres
   host: db
-  user: "{{ vikunja_db_user }}"
+  database: vikunja
+  user: vikunja
   password: "{{ vikunja_db_pass }}"
-  database: "{{ vikunja_db_name }}"
 
 typesense:
   # Whether to enable the Typesense integration. If true, all tasks will be synced to the configured Typesense

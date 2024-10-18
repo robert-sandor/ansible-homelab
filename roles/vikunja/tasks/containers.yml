@@ -22,7 +22,7 @@
     src: config.yml
     dest: "{{ vikunja_deploy_path }}/config.yml"
     mode: "0600"
-  notify: Restart vikunja
+  notify: Restart server
 
 - name: Create secrets directory
   ansible.builtin.file:

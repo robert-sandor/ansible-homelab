@@ -5,6 +5,4 @@ vikunja_pg_version: "16"
 vikunja_jwt_secret: "{{ (('vikunja-jwt@' + deployment_secret) | hash('sha256'))[:64] }}"
 vikunja_openid_secret: "{{ (('vikunja@' + deployment_secret) | hash('sha256'))[:64] }}"
 
-vikunja_db_user: vikunja
-vikunja_db_name: vikunja
 vikunja_db_pass: "{{ (('vikunja-db@' + deployment_secret) | hash('sha256'))[:64] }}"
