@@ -93,3 +93,5 @@ core_authelia_gitea_secret: "{{ ('gitea@' + deployment_secret) | hash('sha256') 
 core_authelia_paperless_client: "{{ groups['paperless'] | length > 0 }}"
 core_authelia_paperless_host: "{{ groups['paperless'][0] }}"
 core_authelia_paperless_secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
+
+core_authelia_immich_secret: "{{ ('immich@' + deployment_secret) | hash('sha256') }}"

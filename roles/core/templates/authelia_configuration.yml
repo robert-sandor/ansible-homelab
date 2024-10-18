@@ -228,3 +228,20 @@ identity_providers:
         userinfo_signed_response_alg: none
         token_endpoint_auth_method: client_secret_basic
       # {% endif %}
+      # immich {% if groups['immich'] | length > 0 +%}
+      - client_id: immich
+        client_name: immich
+        client_secret: >-
+          {{ '{{ secret "/run/secrets/authelia_immich_client_secret" }}' }}
+        public: false
+        authorization_policy: one_factor
+        redirect_uris:
+          - https://immich.{{ groups['immich'][0] }}.{{ domain }}/auth/login
+          - https://immich.{{ groups['immich'][0] }}.{{ domain }}/user-settings
+          - app.immich:///oauth-callback
+        scopes:
+          - openid
+          - profile
+          - email
+        userinfo_signed_response_alg: none
+      # {% endif %}

@@ -5,8 +5,8 @@
     path: "{{ immich_deploy_path }}"
     mode: "0750"
 
-- name: Template compose files
-  ansible.builtin.template:
+- name: Copy compose files
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ immich_deploy_path }}/{{ item }}"
     mode: "0640"
@@ -14,19 +14,55 @@
     - compose.yml
     - hwaccel.transcoding.yml
     - hwaccel.ml.yml
+    - immich.env
 
-# - name: Create secrets directory
-#   ansible.builtin.file:
-#     state: directory
-#     path: "{{ immich_deploy_path }}/secrets"
-#     mode: "0700"
+- name: Template env file
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ immich_deploy_path }}/.env"
+    mode: "0640"
 
-# - name: Set db password secret
-#   no_log: true
-#   ansible.builtin.copy:
-#     content: "{{ immich_db_password }}"
-#     dest: "{{ immich_deploy_path }}/secrets/immich_db_password"
-#     mode: "0600"
+- name: Write config file
+  vars:
+    immich_config:
+      machineLearning:
+        enabled: true
+        url: http://machine-learning:3003
+      oauth:
+        buttonText: Login with Authelia
+        clientId: immich
+        clientSecret: "{{ ('immich@' + deployment_secret) | hash('sha256') }}"
+        enabled: true
+        issuerUrl: https://auth.{{ core_hostname }}/.well-known/openid-configuration
+        scope: openid profile email
+      passwordLogin:
+        enabled: true
+      library:
+        watch:
+          enabled: true
+        scan:
+          enabled: true
+          cronExpression: "0 */12 * * *"
+      server:
+        externalDomain: "https://immich.{{ hostname }}"
+  ansible.builtin.copy:
+    content: "{{ immich_config | to_nice_yaml }}"
+    dest: "{{ immich_deploy_path }}/config.yml"
+    mode: "0600"
+  notify: Restart server
+
+- name: Create secrets directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ immich_deploy_path }}/secrets"
+    mode: "0700"
+
+- name: Set db password secret
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ immich_db_password }}"
+    dest: "{{ immich_deploy_path }}/secrets/db_pass"
+    mode: "0600"
 
 - name: Deploy containers
   community.docker.docker_compose_v2:
