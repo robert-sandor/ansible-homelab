@@ -159,14 +159,19 @@ identity_providers:
         token_endpoint_auth_method: client_secret_basic
       # {% endif %}
       # mealie {% if core_authelia_mealie_client +%}
+      # mealie {% if groups['mealie'] | length > 0 +%}
       - client_id: mealie
         client_name: mealie
         public: true
+        client_secret: >-
+          {{ '{{ secret "/run/secrets/authelia_mealie_client_secret" }}' }}
+        public: false
         authorization_policy: one_factor
         require_pkce: true
         pkce_challenge_method: S256
         redirect_uris:
           - https://mealie.{{ core_authelia_mealie_host }}.{{ domain }}/login
+          - https://mealie.{{ groups['mealie'][0] }}.{{ domain }}/login
         scopes:
           - openid
           - profile
@@ -174,6 +179,7 @@ identity_providers:
           - groups
         userinfo_signed_response_alg: none
         token_endpoint_auth_method: none
+        token_endpoint_auth_method: client_secret_basic
       # {% endif %}
       # memos {% if core_authelia_memos_client +%}
       - client_id: memos

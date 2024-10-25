@@ -75,6 +75,8 @@ core_authelia_grafana_client: "{{ groups['monitoring'] | length > 0 }}"
 core_authelia_grafana_host: "{{ groups['monitoring'][0] }}"
 core_authelia_grafana_secret: "{{ ('grafana@' + deployment_secret) | hash('sha256') }}"
 
+core_authelia_mealie_secret: "{{ ('mealie@' + deployment_secret) | hash('sha256') }}"
+
 core_authelia_vikunja_client: "{{ groups['vikunja'] | length > 0 }}"
 core_authelia_vikunja_host: "{{ groups['vikunja'][0] }}"
 core_authelia_vikunja_secret: "{{ ('vikunja@' + deployment_secret) | hash('sha256') }}"
