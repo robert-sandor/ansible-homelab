@@ -1,0 +1,26 @@
+---
+services:
+  server:
+    image: grafana/loki:$VERSION
+    restart: always
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - traefik
+    volumes:
+      - data:/loki
+      - ./loki.yml:/etc/loki/local-config.yaml:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.loki.loadbalancer.server.port: 3100
+      traefik.http.routers.loki.rule: Host(`loki.$HOSTNAME`)
+      traefik.http.routers.loki.entrypoints: https
+      traefik.http.routers.loki.service: loki
+      com.centurylinklabs.watchtower.enable: true
+
+volumes:
+  data:
+
+
+networks:
+  traefik:
+    external: true

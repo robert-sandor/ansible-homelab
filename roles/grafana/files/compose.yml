@@ -1,0 +1,67 @@
+---
+services:
+  server:
+    image: grafana/grafana-oss:$VERSION
+    restart: always
+    user: $PUID:$PGID
+    depends_on:
+      - db
+    secrets:
+      - db_pass
+    networks:
+      - default
+      - traefik
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
+      - ./provisioning:/etc/grafana/provisioning
+      - data:/var/lib/grafana
+    labels:
+      traefik.enable: true
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
+      traefik.http.routers.grafana.rule: Host(`grafana.$HOSTNAME`)
+      traefik.http.routers.grafana.entrypoints: https
+      traefik.http.routers.grafana.service: grafana
+      homepage.name: grafana
+      homepage.group: monitoring
+      homepage.description: metrics and logs viewer
+      homepage.href: https://grafana.$HOSTNAME
+      homepage.icon: grafana
+      homepage.siteMonitor: https://grafana.$HOSTNAME
+      com.centurylinklabs.watchtower.enable: true
+
+  db:
+    image: postgres:$PG_VERSION
+    restart: always
+    secrets:
+      - db_pass
+    environment:
+      TZ: $TZ
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
+      PGDATABASE: $DB_NAME
+      PGUSER: $DB_USER
+      PGPASSFILE: /run/secrets/db_pass
+    volumes:
+      - db:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 5s
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+secrets:
+  db_pass:
+    file: ./secrets/db_pass
+
+volumes:
+  data:
+  db:
+
+
+networks:
+  traefik:
+    external: true

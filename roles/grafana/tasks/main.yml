@@ -1,0 +1,68 @@
+---
+- name: Deploy grafana
+  block:
+    - name: Set deploy path for grafana
+      ansible.builtin.set_fact:
+        grafana_deploy_path: "{{ deploy_path }}/grafana"
+
+    - name: Create directories
+      ansible.builtin.file:
+        state: directory
+        path: "{{ grafana_deploy_path }}/provisioning/datasources"
+        mode: "0755"
+
+    - name: Copy compose file
+      ansible.builtin.copy:
+        src: compose.yml
+        dest: "{{ grafana_deploy_path }}/compose.yml"
+        mode: "0644"
+
+    - name: Template env file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ grafana_deploy_path }}/.env"
+        mode: "0640"
+
+    - name: Template grafana config file
+      ansible.builtin.template:
+        src: grafana.ini
+        dest: "{{ grafana_deploy_path }}/grafana.ini"
+        mode: "0640"
+      notify: Restart server
+
+    - name: Setup provisioning
+      ansible.builtin.template:
+        src: datasources.yml
+        dest: "{{ grafana_deploy_path }}/provisioning/datasources/datasources.yml"
+        mode: "0640"
+      when: (grafana_loki_hosts + grafana_prometheus_hosts) | length > 0
+      notify: Restart server
+
+    - name: Remove provisioning
+      ansible.builtin.file:
+        path: "{{ grafana_deploy_path }}/provisioning/datasources/datasources.yml"
+        state: absent
+      when: (grafana_loki_hosts + grafana_prometheus_hosts) | length == 0
+      notify: Restart server
+
+    - name: Create secrets directory
+      ansible.builtin.file:
+        state: directory
+        path: "{{ grafana_deploy_path }}/secrets"
+        mode: "0700"
+
+    - name: Copy secrets
+      no_log: true
+      ansible.builtin.copy:
+        content: "{{ grafana_pg_pass }}"
+        dest: "{{ grafana_deploy_path }}/secrets/db_pass"
+        mode: "0600"
+
+    - name: Docker compose up
+      community.docker.docker_compose_v2:
+        project_src: "{{ grafana_deploy_path }}"
+        pull: always
+        remove_orphans: true
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers

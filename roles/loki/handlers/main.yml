@@ -1,0 +1,6 @@
+---
+- name: Restart server
+  community.docker.docker_compose_v2:
+    project_src: "{{ loki_deploy_path }}"
+    services: server
+    state: restarted

@@ -1,6 +1,6 @@
 ---
 ### homepage - dashboard
-homepage_version: v0.9.10 # https://github.com/gethomepage/homepage/releases
+homepage_version: v0.9.11 # https://github.com/gethomepage/homepage/releases
 
 homepage_docker: >-
   [

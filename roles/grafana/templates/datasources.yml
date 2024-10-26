@@ -1,0 +1,23 @@
+---
+apiVersion: 1
+
+datasources:
+  # {% for host in grafana_prometheus_hosts +%}
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: https://prometheus.{{ host }}.{{ domain }}
+    jsonData:
+      httpMethod: POST
+      manageAlerts: true
+      prometheusType: Prometheus
+  # {% endfor +%}
+  # {% for host in grafana_loki_hosts +%}
+  - name: Loki
+    type: loki
+    access: proxy
+    url: https://loki.{{ host }}.{{ domain }}
+    jsonData:
+      timeout: 60
+      maxLines: 1000
+  # {% endfor +%}

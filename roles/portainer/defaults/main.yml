@@ -5,7 +5,7 @@
 # Will auto configure Portainer server with an admin user, as well as all other agents deployed as part of the role.
 #
 ###
-portainer_version: 2.22.0 # https://github.com/portainer/portainer/releases
+portainer_version: 2.23.0 # https://github.com/portainer/portainer/releases
 portainer_authelia_secret: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
 
 # Whether to enable the server - this is recommended to enable on one host, unless you have a separate server

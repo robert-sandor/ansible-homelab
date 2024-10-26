@@ -10,6 +10,9 @@ database_url = "postgres://lldap:{{ core_lldap_db_password }}@lldap-db/lldap"
 
 key_seed = "{{ hostname | b64encode }}"
 
+ignored_user_attributes = ["uniquemember"]
+ignored_group_attributes = ["ignored_group_attributes"]
+
 [smtp_options]
 enable_password_reset = true
 server = "mailrise"

@@ -1,0 +1,6 @@
+---
+- name: Restart agent
+  community.docker.docker_compose_v2:
+    project_src: "{{ promtail_deploy_path }}"
+    services: agent
+    state: restarted

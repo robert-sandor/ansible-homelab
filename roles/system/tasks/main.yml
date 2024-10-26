@@ -13,6 +13,14 @@
       community.general.timezone:
         name: "{{ timezone }}"
 
+    - name: Set swappiness to lower value
+      become: true
+      ansible.posix.sysctl:
+        name: vm.swappiness
+        value: 10
+        state: present
+        reload: true
+
     - name: Update system
       become: true
       when: system_update

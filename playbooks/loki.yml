@@ -1,0 +1,5 @@
+---
+- name: Deploy loki
+  hosts: loki
+  roles:
+    - loki

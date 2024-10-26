@@ -1,0 +1,32 @@
+---
+services:
+  agent:
+    image: grafana/promtail:$VERSION
+    restart: always
+    command: -config.file=/etc/promtail/docker-config.yml
+    networks:
+      - traefik
+    volumes:
+      - ./promtail.yml:/etc/promtail/docker-config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log/journal:/var/log/journal:ro
+      - /run/log/journal:/run/log/journal:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.promtail.loadbalancer.server.port: 9080
+      traefik.http.routers.promtail.rule: Host(`promtail.$HOSTNAME`)
+      traefik.http.routers.promtail.entrypoints: https
+      traefik.http.routers.promtail.service: promtail
+      homepage.name: promtail
+      homepage.group: monitoring
+      homepage.description: log aggregator @ $HOST
+      homepage.href: https://promtail.$HOSTNAME
+      homepage.icon: loki
+      homepage.siteMonitor: https://promtail.$HOSTNAME
+      com.centurylinklabs.watchtower.enable: true
+
+networks:
+  traefik:
+    external: true
