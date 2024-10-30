@@ -19,8 +19,6 @@ services:
 
 volumes:
   data:
-
-
 networks:
   traefik:
     external: true

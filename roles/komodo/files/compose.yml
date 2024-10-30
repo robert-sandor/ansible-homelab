@@ -1,0 +1,89 @@
+---
+services:
+  server:
+    image: ghcr.io/mbecker20/komodo:$VERSION
+    restart: always
+    depends_on:
+      - mongo
+    env_file: .core.env
+    environment:
+      KOMODO_DATABASE_ADDRESS: mongo:27017
+      KOMODO_DATABASE_USERNAME: ${DB_USER}
+      KOMODO_DATABASE_PASSWORD: ${DB_PASS}
+    networks:
+      - default
+      - traefik
+    secrets:
+      - passkey
+      - webhook
+      - jwt
+    volumes:
+      - repo-cache:/repo-cache
+    labels:
+      traefik.enable: true
+      traefik.http.services.komodo.loadbalancer.server.port: 9120
+      traefik.http.routers.komodo.rule: Host(`komodo.$HOSTNAME`)
+      traefik.http.routers.komodo.entrypoints: https
+      traefik.http.routers.komodo.service: komodo
+      homepage.name: komodo
+      homepage.group: admin
+      homepage.description: docker deployments
+      homepage.href: https://komodo.$HOSTNAME
+      homepage.icon: komodo
+      homepage.siteMonitor: https://komodo.$HOSTNAME
+      com.centurylinklabs.watchtower.enable: true
+      komodo.skip:
+
+
+  mongo:
+    image: mongo:$MONGO_VERSION
+    restart: always
+    command: --quiet --wiredTigerCacheSizeGB 0.25
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
+    volumes:
+      - mongo-data:/data/db
+      - mongo-config:/data/configdb
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+      komodo.skip:
+
+
+  periphery:
+    image: ghcr.io/mbecker20/periphery:$VERSION
+    restart: always
+    env_file: .periphery.env
+    secrets:
+      - passkey
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc:/proc
+      - ssl-certs:/etc/komodo/ssl
+      - repos:/etc/komodo/repos
+      - stacks:/etc/komodo/stacks
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+      komodo.skip:
+
+
+secrets:
+  passkey:
+    file: ./secrets/passkey
+  webhook:
+    file: ./secrets/webhook
+  jwt:
+    file: ./secrets/jwt
+
+volumes:
+  mongo-data:
+  mongo-config:
+  repo-cache:
+  ssl-certs:
+  repos:
+  stacks:
+
+
+networks:
+  traefik:
+    external: true

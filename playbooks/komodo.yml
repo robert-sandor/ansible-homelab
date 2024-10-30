@@ -1,0 +1,5 @@
+---
+- name: Deploy komodo
+  hosts: komodo
+  roles:
+    - komodo

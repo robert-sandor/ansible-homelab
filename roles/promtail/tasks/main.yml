@@ -40,7 +40,6 @@
         mode: "0640"
       notify: Restart agent
 
-
     - name: Deploy containers
       community.docker.docker_compose_v2:
         project_src: "{{ promtail_deploy_path }}"
