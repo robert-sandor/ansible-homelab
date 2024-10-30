@@ -31,7 +31,7 @@ base_watchtower_version: 1.7.1 # https://github.com/containrrr/watchtower/pkgs/c
 base_watchtower_schedule: 0 0 0 * * *
 
 # Notification URL - check https://containrrr.dev/shoutrrr for supported services
-base_watchtower_notification_url: ntfy://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}/watchtower
+base_watchtower_notification_url: ntfy://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}/watchtower?priority=low
 
 ### Docker Socket Proxy - a proxy to control exposed docker api resources
 base_dsp_version: 1.26.2 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy
