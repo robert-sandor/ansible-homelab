@@ -1,0 +1,25 @@
+---
+# Manyfold - host 3d printed files
+#
+### Don't change settings below this line unless you know what you are doing
+# Version of manyfold to deploy - use version from https://github.com/manyfold3d/manyfold/releases, without the leading "v"
+manyfold_version: 0.88.0 # https://github.com/manyfold3d/manyfold/releases
+
+# Postgres version
+manyfold_pg_version: 17
+
+# Valkey version
+manyfold_vk_version: 8
+
+# Where to deploy manyfold
+manyfold_deploy_path: "{{ deploy_path }}/manyfold"
+
+# DB password for manyfold user
+manyfold_db_pass: "{{ ('manyfold-db@' + deployment_secret) | hash('sha256') }}"
+
+# Secret key base setting
+manyfold_secret_key_base: "{{ ('manyfold-secret@' + deployment_secret) | hash('sha256') }}"
+
+# Authelia OIDC secret
+manyfold_oidc_secret: "{{ ('manyfold@' + deployment_secret) | hash('sha256') }}"
+###

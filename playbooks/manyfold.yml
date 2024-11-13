@@ -1,0 +1,13 @@
+---
+- name: Deploy manyfold
+
+  hosts: manyfold
+
+  vars:
+    task: deploy
+
+  tasks:
+    - name: Import manyfold
+      ansible.builtin.import_role:
+        name: manyfold
+        tasks_from: "{{ task }}"
