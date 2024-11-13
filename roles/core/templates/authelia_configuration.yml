@@ -247,3 +247,18 @@ identity_providers:
           - email
         userinfo_signed_response_alg: none
       # {% endif %}
+      # immich {% if groups['manyfold'] | length > 0 +%}
+      - client_id: manyfold
+        client_name: manyfold
+        client_secret: >-
+          {{ '{{ secret "/run/secrets/authelia_manyfold_client_secret" }}' }}
+        public: false
+        authorization_policy: one_factor
+        redirect_uris:
+          - https://manyfold.{{ groups['manyfold'][0] }}.{{ domain }}/users/auth/openid_connect/callback
+        scopes:
+          - openid
+          - profile
+          - email
+        userinfo_signed_response_alg: none
+      # {% endif %}

@@ -10,6 +10,7 @@
       authelia_gitea_client_secret: "{{ core_authelia_gitea_secret }}"
       authelia_paperless_client_secret: "{{ core_authelia_paperless_secret }}"
       authelia_immich_client_secret: "{{ core_authelia_immich_secret }}"
+      authelia_manyfold_client_secret: "{{ core_authelia_manyfold_secret }}"
       authelia_mealie_client_secret: "{{ core_authelia_mealie_secret }}"
   block:
     - name: Authelia hash OIDC secret
