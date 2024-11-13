@@ -1,3 +1,4 @@
+pip
 ansible
 ansible-lint
 jmespath
