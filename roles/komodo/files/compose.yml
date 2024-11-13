@@ -33,8 +33,6 @@ services:
       homepage.siteMonitor: https://komodo.$HOSTNAME
       com.centurylinklabs.watchtower.enable: true
       komodo.skip:
-
-
   mongo:
     image: mongo:$MONGO_VERSION
     restart: always
@@ -48,8 +46,6 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
       komodo.skip:
-
-
   periphery:
     image: ghcr.io/mbecker20/periphery:$VERSION
     restart: always
@@ -65,8 +61,6 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
       komodo.skip:
-
-
 secrets:
   passkey:
     file: ./secrets/passkey
@@ -82,8 +76,6 @@ volumes:
   ssl-certs:
   repos:
   stacks:
-
-
 networks:
   traefik:
     external: true

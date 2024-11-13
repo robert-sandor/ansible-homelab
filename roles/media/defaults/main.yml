@@ -1,6 +1,6 @@
 ---
 ### Transmission - Bittorrent client
-media_transmission_version: 4.0.6
+media_transmission_version: 4.0.6 # https://fleet.linuxserver.io/image?name=linuxserver/transmission
 media_transmission_download_path: /media/downloads
 # Required settings - changing this will lead to things not working as intended
 media_transmission_required_settings:
@@ -9,15 +9,15 @@ media_transmission_required_settings:
 # Additional setttings
 media_transmission_settings: {}
 ### Sonarr - TV Series manager
-media_sonarr_version: 4.0.9
-media_radarr_version: 5.12.2
-media_lidarr_version: 2.6.4
-media_prowlarr_version: 1.25.4
-media_bazarr_version: 1.4.5
-media_jellyfin_version: 10.9.11
-media_overseerr_version: 1.33.2
+media_sonarr_version: 4.0.10 # https://fleet.linuxserver.io/image?name=linuxserver/sonarr
+media_radarr_version: 5.14.0 # https://fleet.linuxserver.io/image?name=linuxserver/radarr
+media_lidarr_version: 2.7.1 # https://fleet.linuxserver.io/image?name=linuxserver/lidarr
+media_prowlarr_version: 1.25.4 # https://fleet.linuxserver.io/image?name=linuxserver/prowlarr
+media_bazarr_version: 1.4.5 # https://fleet.linuxserver.io/image?name=linuxserver/bazarr
+media_jellyfin_version: 10.10.1 # https://fleet.linuxserver.io/image?name=linuxserver/jellyfin
+media_overseerr_version: 1.33.2 # https://fleet.linuxserver.io/image?name=linuxserver/overseerr
 media_recyclarr_version: 7 # https://github.com/recyclarr/recyclarr/pkgs/container/recyclarr
-media_unpackerr_version: "0.14" # https://hub.docker.com/r/golift/unpackerr/tags
+media_unpackerr_version: "0.14" # https://github.com/Unpackerr/unpackerr/pkgs/container/unpackerr
 
 media_mount_host: localhost
 media_mount_path: media
