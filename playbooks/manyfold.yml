@@ -1,4 +1,13 @@
 ---
-- ansible.builtin.import_playbook: app.yml
+- name: Manyfold
+
+  hosts: manyfold
+
   vars:
-    app_name: manyfold
+    task: deploy
+
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: manyfold
+        tasks_from: "{{ task }}"

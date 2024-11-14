@@ -1,4 +1,13 @@
 ---
-- ansible.builtin.import_playbook: app.yml
+- name: Mealie
+
+  hosts: mealie
+
   vars:
-    app_name: mealie
+    task: deploy
+
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: mealie
+        tasks_from: "{{ task }}"
