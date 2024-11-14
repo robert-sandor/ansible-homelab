@@ -21,6 +21,4 @@ jobs:
           pip install ansible ansible-lint boto3 jmespath
 
       - name: Run ansible-lint
-        run: |
-          cd "${{ github.workspace }}/ansible-homelab" || exit 1
-          ansible-lint || exit 1
+        run: ansible-lint || exit 1
