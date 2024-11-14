@@ -1,5 +1,5 @@
 ---
-name: Run Ansible Lint
+name: Ansible Lint
 on:
   schedule:
     - cron: 0 12 * * 6
@@ -9,13 +9,18 @@ on:
       - main
 
 jobs:
-  lint:
-    name: Ansible Lint
+  ansible-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-pip
+          pip install ansible ansible-lint boto3 jmespath
+
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@main
-        with:
-          collections_yml: requirements.yml
-          python_dependency_file: requirements.txt
+        run: |
+          cd "${{ github.workspace }}/ansible-homelab" || exit 1
+          ansible-lint || exit 1
