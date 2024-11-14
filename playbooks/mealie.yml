@@ -1,5 +1,4 @@
 ---
-- name: Deploy mealie
-  hosts: mealie
-  roles:
-    - mealie
+- ansible.builtin.import_playbook: app.yml
+  vars:
+    app_name: mealie
