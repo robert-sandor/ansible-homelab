@@ -17,8 +17,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends python3-pip
-          pip install ansible ansible-lint boto3 jmespath
+          sudo apt-get install -y --no-install-recommends make python3-pip
+          make deps
 
       - name: Run ansible-lint
         run: ansible-lint || exit 1
