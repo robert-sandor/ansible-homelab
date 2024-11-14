@@ -1,11 +1,8 @@
 ---
 - name: Mealie
-
   hosts: mealie
-
   vars:
     task: deploy
-
   tasks:
     - name: Import role
       ansible.builtin.import_role:

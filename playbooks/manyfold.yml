@@ -1,11 +1,8 @@
 ---
 - name: Manyfold
-
   hosts: manyfold
-
   vars:
     task: deploy
-
   tasks:
     - name: Import role
       ansible.builtin.import_role:
