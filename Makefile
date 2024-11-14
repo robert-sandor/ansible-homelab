@@ -1,5 +1,6 @@
 #!make
 .DEFAULT_GOAL := all
+task = "deploy"
 limit = ""
 
 lint:
@@ -13,5 +14,5 @@ nutscan:
 	ansible-playbook ./playbooks/utils/nutscan.yml -i ./inventory -l ${limit} -v
 
 %:
-	ansible-playbook ./playbooks/$@.yml -i ./inventory -l ${limit} -v
+	./scripts/run.sh -a $@ -t ${task} -l ${limit}
 
