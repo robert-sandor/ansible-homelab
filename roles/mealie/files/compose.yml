@@ -1,9 +1,9 @@
 ---
 services:
-  server:
+  app:
     image: ghcr.io/mealie-recipes/mealie:$VERSION
     restart: always
-    env_file: .env
+    env_file: .mealie.env
     networks:
       - traefik
     volumes:

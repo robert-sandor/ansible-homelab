@@ -1,14 +1,3 @@
 ---
-mealie_version: v2.1.0 # https://github.com/mealie-recipes/mealie/pkgs/container/mealie
-
-# Admin user configuration
-# Passsword for the admin user - this will be set on first run
-# To change it after, you need to change it in the UI, and update this value as well
+# Password for the admin user
 mealie_admin_password: changeme
-
-# NOTE: this is the default password of the admin user - do not change unless you know what you're doing
-# only needed for initialization
-mealie_default_admin_password: MyPassword
-
-# Password for the LLDAP readonly user - same as core_lldap_readonly_password
-mealie_lldap_readonly_password: "{{ (('lldap-readonly@' + deployment_secret) | hash('sha256'))[:64] }}"

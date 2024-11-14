@@ -1,16 +1,16 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 set -eou pipefail
 
-DEPLOY_PATH="{{ mealie_deploy_path }}"
-BACKUP_PATH="{{ backup_path }}/mealie"
-export COMPOSE_FILE="$DEPLOY_PATH/compose.yml"
+BACKUP_PATH="{{ backup_path }}"
+DEPLOY_PATH="{{ deploy_path }}"
+export COMPOSE_FILE="$DEPLOY_PATH/mealie/compose.yml"
 
 function backup {
   echo "stopping mealie"
   docker compose down
 
   echo "copying data files"
-  cp -vr "$DEPLOY_PATH/data" "$BACKUP_PATH/"
+  rsync -a "$DEPLOY_PATH/mealie" "$BACKUP_PATH"
 
   echo "starting mealie"
   docker compose up -d
@@ -18,10 +18,10 @@ function backup {
 
 function restore {
   echo "ensure mealie is down"
-  docker compose down
+  [ -f "$COMPOSE_FILE" ] && docker compose down
 
   echo "copying data files"
-  cp -vr "$BACKUP_PATH/data" "$DEPLOY_PATH/"
+  rsync -a "$BACKUP_PATH/mealie" "$DEPLOY_PATH"
 
   echo "starting mealie"
   docker compose up -d
@@ -32,3 +32,5 @@ if [[ ${1-backup} == restore ]]; then
 else
   backup
 fi
+
+# vi ft=bash
