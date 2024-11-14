@@ -1,11 +1,11 @@
 ---
-vaultwarden_version: 1.32.3 # https://github.com/dani-garcia/vaultwarden/releases
-vaultwarden_pg_version: "16"
+###
+# Vaultwarden - password manager
+###
 
-# Whether to allow new signups - for better security, disable once accounts are created
+# Allow new accounts to be created
+# Recommend disabling it once accounts you are needed are created
 vaultwarden_allow_signups: true
 
-# Postgres user and database - only change if you know what you are doing
-vaultwarden_db_pass: "{{ ('vaultwarden-db@' + deployment_secret) | hash('sha256') }}"
-vaultwarden_db_user: vaultwarden
-vaultwarden_db_name: vaultwarden
+# Show password hints
+vaultwarden_show_password_hint: false

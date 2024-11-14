@@ -51,6 +51,8 @@ services:
 
 volumes:
   db:
+
+
 secrets:
   pg_pass:
     file: ./secrets/pg_pass

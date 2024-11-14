@@ -1,18 +1,32 @@
-#! /usr/bin/env bash
-DEPLOY_PATH="{{ vaultwarden_deploy_path }}"
-BACKUP_PATH="{{ backup_path }}/vaultwarden"
-export COMPOSE_FILE="$DEPLOY_PATH/compose.yml"
+#!/usr/bin/env bash
+set -euo pipefail
+
+BACKUP_PATH="{{ backup_path }}"
+DEPLOY_PATH="{{ deploy_path }}"
+export COMPOSE_FILE="$DEPLOY_PATH/vaultwarden/compose.yml"
 
 function backup {
-  echo "copying data files"
-  cp -vr "$DEPLOY_PATH/data" "$BACKUP_PATH/"
+  echo "stop vaultwarden"
+  docker compose stop server
+
+  echo "sync files to backup"
+  rsync -a "$DEPLOY_PATH/vaultwarden" "$BACKUP_PATH"
 
   echo "dumping database"
   docker compose exec -T db pg_dump >"$BACKUP_PATH/pg_dump.sql"
+
+  echo "start vaultwarden"
+  docker compose up -d
 }
 
 function restore {
-  echo "stating db"
+  echo "ensure server is not running"
+  [ -f "$COMPOSE_FILE" ] && docker compose down server
+
+  echo "sync files to deploy path"
+  rsync -a "$BACKUP_PATH/vaultwarden" "$DEPLOY_PATH"
+
+  echo "start db container"
   docker compose up -d db
 
   RETRY_COUNT=0
@@ -30,14 +44,11 @@ function restore {
   echo "running database restore"
   docker compose exec -T db psql <"$BACKUP_PATH/pg_dump.sql"
 
-  echo "copying data files"
-  cp -vr "$BACKUP_PATH/data" "$DEPLOY_PATH/"
-
   echo "starting server"
   docker compose up -d
 }
 
-if [[ $1 == restore ]]; then
+if [[ ${1:-backup} == restore ]]; then
   restore
 else
   backup

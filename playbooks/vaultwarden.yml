@@ -1,5 +1,10 @@
 ---
-- name: Deploy vaultwarden
+- name: Vaultwarden
   hosts: vaultwarden
-  roles:
-    - vaultwarden
+  vars:
+    task: deploy
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: vaultwarden
+        tasks_from: "{{ task }}"

@@ -1,0 +1,10 @@
+---
+vaultwarden_deploy_path: "{{ deploy_path }}/vaultwarden"
+
+vaultwarden_version: 1.32.3 # https://github.com/dani-garcia/vaultwarden/releases
+vaultwarden_pg_version: "16"
+
+# Postgres user and database - only change if you know what you are doing
+vaultwarden_db_pass: "{{ ('vaultwarden-db@' + deployment_secret) | hash('sha256') }}"
+vaultwarden_db_user: vaultwarden
+vaultwarden_db_name: vaultwarden
