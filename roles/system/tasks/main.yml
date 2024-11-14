@@ -43,6 +43,7 @@
           - lshw
           - ncdu
           - python3-virtualenv
+          - ripgrep
           - rsync
           - tmux
           - unzip
