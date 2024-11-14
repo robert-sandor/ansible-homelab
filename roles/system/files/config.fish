@@ -32,7 +32,7 @@ if status is-interactive
     abbr dcp "docker compose ps -a"
 
     # lazydocker
-    abbr lzd "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock lazyteam/lazydocker"
+    abbr lzd lazydocker
 
     # aliases
     type -q eza; and alias l="eza -la"

@@ -76,6 +76,9 @@
     - name: Install neovim
       ansible.builtin.import_tasks: ./neovim.yml
 
+    - name: Install lazydocker
+      ansible.builtin.import_tasks: ./lazydocker.yml
+
     - name: Configure bashrc to auto-open fish when interactive
       ansible.builtin.lineinfile:
         path: ~/.bashrc
