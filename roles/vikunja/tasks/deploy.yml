@@ -1,8 +1,8 @@
 ---
-- name: Create deploy directory
+- name: Create directories
   ansible.builtin.file:
     state: directory
-    path: "{{ vikunja_deploy_path }}"
+    path: "{{ vikunja_deploy_path }}/files"
     mode: "0750"
 
 - name: Copy compose file
@@ -22,7 +22,7 @@
     src: config.yml
     dest: "{{ vikunja_deploy_path }}/config.yml"
     mode: "0600"
-  notify: Restart server
+  notify: Restart app
 
 - name: Create secrets directory
   ansible.builtin.file:
@@ -37,8 +37,20 @@
     dest: "{{ vikunja_deploy_path }}/secrets/pg_pass"
     mode: "0600"
 
-- name: Deploy containers
+- name: Template backup script
+  ansible.builtin.template:
+    src: backup.sh.j2
+    dest: "{{ vikunja_deploy_path }}/backup.sh"
+    mode: "0750"
+
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@vikunja.timer
+    state: started
+    enabled: true
+
+- name: Start services
   community.docker.docker_compose_v2:
     project_src: "{{ vikunja_deploy_path }}"
-    pull: always
     remove_orphans: true

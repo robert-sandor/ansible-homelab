@@ -1,6 +1,6 @@
 ---
 services:
-  server:
+  app:
     image: vikunja/vikunja:$VERSION
     restart: always
     depends_on:
@@ -10,7 +10,7 @@ services:
       - traefik
     volumes:
       - ./config.yml:/app/vikunja/config.yml:ro
-      - files:/app/vikunja/files
+      - ./files:/app/vikunja/files
     labels:
       traefik.enable: true
       traefik.http.services.vikunja.loadbalancer.server.port: 3456
@@ -39,18 +39,13 @@ services:
       PGPASSFILE: /run/secrets/pg_pass
     volumes:
       - db:/var/lib/postgresql/data
-    healthcheck:
-      test: pg_isready
-      interval: 5s
-      timeout: 2s
-      retries: 5
-      start_period: 5s
     labels:
       com.centurylinklabs.watchtower.enable: true
 
 volumes:
-  files:
   db:
+
+
 secrets:
   pg_pass:
     file: ./secrets/pg_pass
