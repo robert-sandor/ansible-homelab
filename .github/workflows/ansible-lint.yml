@@ -16,3 +16,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
+        with:
+          collections_yml: requirements.yml
+          python_dependency_file: requirements.txt
