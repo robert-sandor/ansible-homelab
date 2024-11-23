@@ -1,10 +1,10 @@
 ---
 services:
   server:
-    image: adguard/adguardhome:{{ adguardhome_version }}
+    image: adguard/adguardhome:${VERSION}
     restart: always
     environment:
-      TZ: "{{ timezone }}"
+      TZ: ${TZ}
     networks:
       - traefik
     ports:
@@ -17,15 +17,15 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.adguardhome.loadbalancer.server.port: 3000
-      traefik.http.routers.adguardhome.rule: Host(`adguardhome.{{ hostname }}`)
+      traefik.http.routers.adguardhome.rule: Host(`adguardhome.${HOSTNAME}`)
       traefik.http.routers.adguardhome.entrypoints: https
       traefik.http.routers.adguardhome.service: adguardhome
       homepage.name: adguardhome
       homepage.group: admin
-      homepage.description: network adblocker @ {{ ansible_hostname }}
-      homepage.href: https://adguardhome.{{ hostname }}
+      homepage.description: network adblocker @ ${HOSTNAME_SHORT}
+      homepage.href: https://adguardhome.${HOSTNAME}
       homepage.icon: adguard-home
-      homepage.siteMonitor: https://adguardhome.{{ hostname }}
+      homepage.siteMonitor: https://adguardhome.${HOSTNAME}
       com.centurylinklabs.watchtower.enable: true
 
 networks:

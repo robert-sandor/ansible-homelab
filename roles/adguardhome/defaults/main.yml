@@ -1,8 +1,5 @@
 ---
 ### Adguard Home
-# version of adguardhome to use
-adguardhome_version: v0.107.54 # https://hub.docker.com/r/adguard/adguardhome/tags
-
 # User and password for the adguardhome admin user
 # NOTE: this only applies on first deploy - changing the value after that will fail the playbook
 adguardhome_user: admin
@@ -28,11 +25,13 @@ adguardhome_cache_size: 256
 # i.e. for a host named 'raspberrypi' added to this list,
 # all dns requests for subdomains of 'raspberrypi.{{ domain }}' will be redirected to 'raspberrypi.{{ domain }}'
 adguardhome_wildcard_hosts: []
+
 # additional dns rewrites
 # list of objects containing
 #   domain: this is the domain to rewrite
 #   answer: this is the answer adguardhome will give
 adguardhome_rewrites: []
+
 # list of adblocking lists for adguardhome to use - defaults to the lists adguardhome defaults to
 adguardhome_filter_lists:
   - name: AdGuard DNS filter

@@ -1,5 +1,10 @@
 ---
-- name: Deploy adguardhome
+- name: AdguardHome
   hosts: adguardhome
-  roles:
-    - adguardhome
+  vars:
+    task: deploy
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: adguardhome
+        tasks_from: "{{ task }}"
