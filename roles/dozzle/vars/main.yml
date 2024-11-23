@@ -1,0 +1,9 @@
+---
+dozzle_deploy_path: "{{ deploy_path }}/dozzle"
+
+dozzle_version: v8.8.1 # https://github.com/amir20/dozzle/releases
+
+# Creates the list of agents for a server
+dozzle_hosts: "{{ groups['dozzle'] | sort }}"
+dozzle_suffix: .{{ domain }}:7007
+dozzle_agents: "{{ dozzle_hosts | product([dozzle_suffix]) | map('join') | join(',') }}"

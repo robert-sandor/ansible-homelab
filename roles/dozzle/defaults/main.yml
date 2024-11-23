@@ -1,4 +1,6 @@
 ---
-dozzle_version: v8.7.2 # https://github.com/amir20/dozzle/releases
-
+###
+# Dozzle - docker logs viewer
+#
+# Set to true on one host, to install the server - all other hosts will be agents
 dozzle_server: false

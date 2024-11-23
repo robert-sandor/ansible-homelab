@@ -1,5 +1,10 @@
 ---
-- name: Deploy dozzle
+- name: Dozzle
   hosts: dozzle
-  roles:
-    - dozzle
+  vars:
+    task: deploy
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: dozzle
+        tasks_from: "{{ task }}"
