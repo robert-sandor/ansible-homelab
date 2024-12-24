@@ -1,6 +1,6 @@
 ---
 mealie_deploy_path: "{{ deploy_path }}/mealie"
-mealie_version: v2.2.0 # https://github.com/mealie-recipes/mealie/pkgs/container/mealie
+mealie_version: v2.4.1 # https://github.com/mealie-recipes/mealie/pkgs/container/mealie
 
 # NOTE: this is the default password of the admin user - do not change unless you know what you're doing only needed for initialization
 mealie_default_admin_password: MyPassword
