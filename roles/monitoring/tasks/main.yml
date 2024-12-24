@@ -1,9 +1,0 @@
----
-- name: Deploy monitoring
-  block:
-    - name: Set deploy path for monitoring
-      ansible.builtin.set_fact:
-        monitoring_deploy_path: "{{ deploy_path }}/monitoring"
-
-    - name: Deploy containers
-      ansible.builtin.import_tasks: ./containers.yml
