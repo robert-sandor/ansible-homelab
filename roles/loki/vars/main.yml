@@ -1,0 +1,9 @@
+---
+loki_deploy_path: "{{ deploy_path }}/loki"
+loki_version: 3.3.2
+
+# loki_servers: "{{ hostvars | dict2items | selectattr('value.loki_server', 'equalto', true) }}"
+
+loki_servers_query: "[?value.loki_server].key"
+loki_servers: "{{ hostvars | dict2items | json_query(loki_servers_query) }}"
+

@@ -1,2 +1,14 @@
 ---
-loki_version: 3.2.1 # https://github.com/grafana/loki/releases
+###
+# Loki and Promtail - log aggregator server and agents
+
+# Set this to true to turn on the Loki server on the host
+# Note: at least one host should be the server for this to work
+# unless you have a Loki server deployed somewhere else (see loki_extra_servers)
+loki_server: false
+
+# Full URLs to extra Loki servers the Promtail agents will send to
+# Note: Servers deployes by the playbook are auto-configured
+#
+# Example: https://loki.some_domain.com/loki/api/v1/push
+loki_extra_servers: []

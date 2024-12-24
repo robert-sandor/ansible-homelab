@@ -1,4 +1,0 @@
----
-promtail_version: 3.2.1 # https://github.com/grafana/loki/releases
-
-promtail_clients: "{{ groups['loki'] }}"

@@ -1,6 +1,8 @@
 ---
 services:
   server:
+    profiles:
+      - server
     image: grafana/loki:$VERSION
     restart: always
     command: -config.file=/etc/loki/local-config.yaml
@@ -15,6 +17,27 @@ services:
       traefik.http.routers.loki.rule: Host(`loki.$HOSTNAME`)
       traefik.http.routers.loki.entrypoints: https
       traefik.http.routers.loki.service: loki
+      com.centurylinklabs.watchtower.enable: true
+
+  agent:
+    image: grafana/promtail:$VERSION
+    restart: always
+    command: -config.file=/etc/promtail/docker-config.yml
+    networks:
+      - traefik
+    volumes:
+      - ./promtail.yml:/etc/promtail/docker-config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log/journal:/var/log/journal:ro
+      - /run/log/journal:/run/log/journal:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.promtail.loadbalancer.server.port: 9080
+      traefik.http.routers.promtail.rule: Host(`promtail.$HOSTNAME`)
+      traefik.http.routers.promtail.entrypoints: https
+      traefik.http.routers.promtail.service: promtail
       com.centurylinklabs.watchtower.enable: true
 
 volumes:
