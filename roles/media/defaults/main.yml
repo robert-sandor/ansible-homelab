@@ -9,12 +9,12 @@ media_transmission_required_settings:
 # Additional setttings
 media_transmission_settings: {}
 ### Sonarr - TV Series manager
-media_sonarr_version: 4.0.10 # https://fleet.linuxserver.io/image?name=linuxserver/sonarr
-media_radarr_version: 5.14.0 # https://fleet.linuxserver.io/image?name=linuxserver/radarr
+media_sonarr_version: 4.0.11 # https://fleet.linuxserver.io/image?name=linuxserver/sonarr
+media_radarr_version: 5.15.1 # https://fleet.linuxserver.io/image?name=linuxserver/radarr
 media_lidarr_version: 2.7.1 # https://fleet.linuxserver.io/image?name=linuxserver/lidarr
-media_prowlarr_version: 1.25.4 # https://fleet.linuxserver.io/image?name=linuxserver/prowlarr
+media_prowlarr_version: 1.27.0 # https://fleet.linuxserver.io/image?name=linuxserver/prowlarr
 media_bazarr_version: 1.4.5 # https://fleet.linuxserver.io/image?name=linuxserver/bazarr
-media_jellyfin_version: 10.10.2 # https://fleet.linuxserver.io/image?name=linuxserver/jellyfin
+media_jellyfin_version: 10.10.3 # https://fleet.linuxserver.io/image?name=linuxserver/jellyfin
 media_overseerr_version: 1.33.2 # https://fleet.linuxserver.io/image?name=linuxserver/overseerr
 media_recyclarr_version: 7 # https://github.com/recyclarr/recyclarr/pkgs/container/recyclarr
 media_unpackerr_version: "0.14" # https://github.com/Unpackerr/unpackerr/pkgs/container/unpackerr
@@ -28,7 +28,7 @@ media_mount_opts: uid={{ ansible_facts.user_uid }},gid={{ ansible_facts.user_gid
 media_path: /mnt/media
 
 ### Plex
-media_plex_version: 1.41.2 # https://fleet.linuxserver.io/image?name=linuxserver/plex
+media_plex_version: 1.41.3 # https://fleet.linuxserver.io/image?name=linuxserver/plex
 
 # Token to claim server to your Plex account - Get one from plex.tv/claim
 # NOTE: this claim is only valid for a few minutes
