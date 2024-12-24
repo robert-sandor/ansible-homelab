@@ -1,6 +1,6 @@
 ---
 ### LLDAP - simple LDAP server
-core_lldap_version: v0.6.0 # https://github.com/lldap/lldap/releases
+core_lldap_version: v0.6.1 # https://github.com/lldap/lldap/releases
 core_lldap_postgres_version: "16"
 
 # Password for the admin user

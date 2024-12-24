@@ -25,13 +25,11 @@ adguardhome_cache_size: 256
 # i.e. for a host named 'raspberrypi' added to this list,
 # all dns requests for subdomains of 'raspberrypi.{{ domain }}' will be redirected to 'raspberrypi.{{ domain }}'
 adguardhome_wildcard_hosts: []
-
 # additional dns rewrites
 # list of objects containing
 #   domain: this is the domain to rewrite
 #   answer: this is the answer adguardhome will give
 adguardhome_rewrites: []
-
 # list of adblocking lists for adguardhome to use - defaults to the lists adguardhome defaults to
 adguardhome_filter_lists:
   - name: AdGuard DNS filter
