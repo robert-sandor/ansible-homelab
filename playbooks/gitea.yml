@@ -1,5 +1,10 @@
 ---
-- name: Deploy gitea
+- name: Gitea
   hosts: gitea
-  roles:
-    - gitea
+  vars:
+    task: deploy
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: gitea
+        tasks_from: "{{ task }}"

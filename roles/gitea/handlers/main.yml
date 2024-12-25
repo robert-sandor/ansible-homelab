@@ -5,7 +5,7 @@
     services: server
     state: restarted
 
-- name: Restart act-runner
+- name: Restart runner
   community.docker.docker_compose_v2:
     project_src: "{{ gitea_deploy_path }}"
     services: runner

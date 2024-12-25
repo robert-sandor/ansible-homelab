@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euxo pipefail
+
+BACKUP_PATH="{{ backup_path }}"
+DEPLOY_PATH="{{ deploy_path }}"
+export COMPOSE_FILE="$DEPLOY_PATH/gitea/compose.yml"
+
+function backup {
+  docker compose stop server runner && echo "stopped gitea server and runner"
+
+  docker compose exec -T db pg_dump >"$DEPLOY_PATH/gitea/pg_dump.sql" && echo "dumped database"
+
+  rsync -a "$DEPLOY_PATH/gitea" "$BACKUP_PATH" && echo "synced files to backup path"
+
+  docker compose up -d && echo "started gitea"
+}
+
+function restore {
+  rsync -a "$BACKUP_PATH/gitea" "$DEPLOY_PATH" && echo "synced files to deploy path"
+
+  docker compose up -d db && echo "starting db"
+
+  RETRY_COUNT=0
+  while ! docker compose exec db pg_isready 2>/dev/null; do
+    if [[ $RETRY_COUNT -ge 5 ]]; then
+      echo "out of retries exitting"
+      exit 1
+    fi
+
+    echo "waiting for db to be available"
+    sleep 1
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+  done
+
+  docker compose exec -T db psql <"$DEPLOY_PATH/gitea/pg_dump.sql" && echo "restored database"
+
+  docker compose up -d && echo "started gitea server and runner"
+
+  docker compose exec -it server gitea admin regenerate hooks && echo "regenerating gitea hooks"
+}
+
+if [ $# -ge 1 ] && [[ "$1" == "restore" ]]; then
+  restore
+else
+  backup
+fi
+
+# vim ft=bash

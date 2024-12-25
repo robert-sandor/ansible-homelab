@@ -3,7 +3,7 @@
   ansible.builtin.file:
     state: directory
     path: "{{ gitea_deploy_path }}/{{ item }}"
-    mode: "0700"
+    mode: "0750"
   loop:
     - data
     - config
@@ -13,13 +13,13 @@
   ansible.builtin.copy:
     src: compose.yml
     dest: "{{ gitea_deploy_path }}/compose.yml"
-    mode: "0600"
+    mode: "0640"
 
 - name: Template env file
   ansible.builtin.template:
     src: env.j2
     dest: "{{ gitea_deploy_path }}/.env"
-    mode: "0600"
+    mode: "0640"
 
 - name: Create secrets directory
   ansible.builtin.file:
@@ -46,10 +46,22 @@
     cmd: touch {{ gitea_deploy_path }}/secrets/runner_token
     creates: "{{ gitea_deploy_path }}/secrets/runner_token"
 
+- name: Template backup script
+  ansible.builtin.template:
+    src: backup.sh.j2
+    dest: "{{ gitea_deploy_path }}/backup.sh"
+    mode: "0750"
+
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@gitea.timer
+    state: started
+    enabled: true
+
 - name: Deploy containers
   community.docker.docker_compose_v2:
     project_src: "{{ gitea_deploy_path }}"
-    pull: always
     remove_orphans: true
 
 - name: Wait for gitea to be up
@@ -61,11 +73,19 @@
   delay: 10
   retries: 5
 
-- name: Get act runner registration token
-  ansible.builtin.shell:
+- name: Get runner registration token
+  ansible.builtin.command:
     chdir: "{{ gitea_deploy_path }}"
-    cmd: |
-      docker compose exec -it server gitea actions generate-runner-token > ./secrets/runner_token
-      chmod 0600 ./secrets/runner_token
-    creates: "{{ gitea_deploy_path }}/secrets/runner_token"
-  notify: Restart act-runner
+    cmd: docker compose exec -it server gitea actions generate-runner-token
+  changed_when: false
+  register: gitea_runner_registration_token_result
+
+- name: Save registration token
+  ansible.builtin.copy:
+    content: "{{ gitea_runner_registration_token_result.stdout }}"
+    dest: "{{ gitea_deploy_path }}/secrets/runner_token"
+    mode: "0600"
+  notify: Restart runner
+
+- name: Configure gitea
+  ansible.builtin.import_tasks: ./configure.yml

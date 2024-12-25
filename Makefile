@@ -4,7 +4,7 @@ task = "deploy"
 limit = ""
 
 lint:
-	ansible-lint --fix
+	ansible-lint
 
 deps:
 	pip install --upgrade -r requirements.txt
