@@ -5,16 +5,21 @@
 # Will auto configure Portainer server with an admin user, as well as all other agents deployed as part of the role.
 #
 ###
-portainer_version: 2.23.0 # https://github.com/portainer/portainer/releases
-portainer_authelia_secret: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
 
-# Whether to enable the server - this is recommended to enable on one host, unless you have a separate server
+# Enables the Portainer server - recommended to have this set to true on one host, and false on others
+# If false, will only install the portainer agent
 portainer_server: false
 
-# admin user and password
+# Configure the admin user
 portainer_admin_user: admin
 portainer_admin_password: changeme
 
-# List of additional hosts with Portainer agent to add
-# NOTE: it is expected that these agents listen on port 9001
+# List of additional hosts names with Portainer agents to add to the server
+# Note: These should only be short hostnames, not including protocol, domain or port. Domain is taken from the 'domain' var,
+# protocol and port are set to 'tcp' and '9001' respectively
+#
+# Example:
+# portainer_extra_agents:
+#   - pihole
+#   - media
 portainer_extra_agents: []
