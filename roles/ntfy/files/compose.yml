@@ -21,7 +21,9 @@ services:
       homepage.href: $NTFY_BASE_URL
       homepage.icon: ntfy
       homepage.siteMonitor: $NTFY_BASE_URL
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/binwiederhier/ntfy/releases/tag/v2.11.0
 
 volumes:
   cache:
