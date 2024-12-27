@@ -37,7 +37,9 @@ services:
       homepage.href: https://netdata.{{ hostname }}
       homepage.icon: netdata
       homepage.siteMonitor: https://netdata.{{ hostname }}
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/netdata/netdata/releases/tag/$${raw}
 
 volumes:
   lib:
