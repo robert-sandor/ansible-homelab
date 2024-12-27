@@ -1,0 +1,10 @@
+---
+- name: What's up docker
+  hosts: wud
+  vars:
+    task: deploy
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: wud
+        tasks_from: "{{ task }}"

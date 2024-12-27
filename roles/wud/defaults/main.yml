@@ -1,0 +1,7 @@
+###
+# WUD - What's up docker - https://getwud.github.io/wud/
+# Checks for docker image updates
+
+# Set cron schedule for WUD watchers - https://crontab.guru/
+# Default is every Saturday at 9 AM local time
+wud_cron_schedule: 0 9 * * 6

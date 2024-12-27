@@ -1,0 +1,27 @@
+---
+services:
+  server:
+    image: ghcr.io/getwud/wud:$VERSION
+    restart: always
+    env_file:
+      - wud.env
+    networks:
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.services.wud.loadbalancer.server.port: 3000
+      traefik.http.routers.wud.rule: Host(`wud.$HOSTNAME`)
+      traefik.http.routers.wud.entrypoints: https
+      traefik.http.routers.wud.service: wud
+      homepage.name: wud
+      homepage.group: admin
+      homepage.description: docker contianer updates
+      homepage.href: https://wud.$HOSTNAME
+      homepage.icon: wud
+      homepage.siteMonitor: https://wud.$HOSTNAME
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+
+networks:
+  traefik:
+    external: true

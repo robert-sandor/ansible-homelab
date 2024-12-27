@@ -1,0 +1,42 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ wud_deploy_path }}"
+    mode: "0750"
+
+- name: Copy compose file
+  ansible.builtin.copy:
+    src: compose.yml
+    dest: "{{ wud_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Template env file
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ wud_deploy_path }}/.env"
+    mode: "0640"
+
+- name: Template wud.env file
+  ansible.builtin.template:
+    src: wud.env.j2
+    dest: "{{ wud_deploy_path }}/wud.env"
+    mode: "0640"
+
+- name: Template backup script
+  ansible.builtin.template:
+    src: backup.sh.j2
+    dest: "{{ wud_deploy_path }}/backup.sh"
+    mode: "0750"
+
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@wud.timer
+    state: started
+    enabled: true
+
+- name: Start services
+  community.docker.docker_compose_v2:
+    project_src: "{{ wud_deploy_path }}"
+    remove_orphans: true

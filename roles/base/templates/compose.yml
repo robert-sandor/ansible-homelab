@@ -62,6 +62,10 @@ services:
     restart: always
     environment:
       CONTAINERS: 1
+      ALLOW_START: 1
+      ALLOW_STOP: 1
+      IMAGES: 1
+      POST: 0
       LOG_LEVEL: warning
     networks:
       - docker
@@ -77,6 +81,7 @@ networks:
     # name: traefik
     external: true
   docker:
+
 
 volumes:
   traefik:
