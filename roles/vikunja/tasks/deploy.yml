@@ -54,3 +54,4 @@
   community.docker.docker_compose_v2:
     project_src: "{{ vikunja_deploy_path }}"
     remove_orphans: true
+    pull: always
