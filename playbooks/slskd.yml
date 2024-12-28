@@ -1,0 +1,10 @@
+---
+- name: Slskd
+  hosts: slskd
+  vars:
+    task: deploy
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: slskd
+        tasks_from: "{{ task }}"
