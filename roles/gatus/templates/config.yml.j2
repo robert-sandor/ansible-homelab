@@ -19,7 +19,7 @@ connectivity:
 
 storage:
   type: postgres
-  path: postgres://{{ gatus_db_user }}:{{ gatus_db_password }}@db:5432/{{ gatus_db_name }}?sslmode=disable
+  path: postgres://{{ gatus_db_user }}:{{ gatus_db_pass }}@db:5432/{{ gatus_db_name }}?sslmode=disable
   caching: true
 
 ui:
@@ -46,7 +46,7 @@ alerting:
 endpoints:
 {% if 'gatus' in groups %}
 # Gatus
-{% for host in groups['gatus'] | sort %} 
+{% for host in groups['gatus'] | sort %}
   - name: gatus @ {{ host }}
     group: gatus
     url: https://gatus.{{ host }}.{{ domain }}
@@ -56,7 +56,7 @@ endpoints:
 
 {% if 'adguardhome' in groups %}
 # Adguardhome Web
-{% for host in groups['adguardhome'] | sort %} 
+{% for host in groups['adguardhome'] | sort %}
   - name: adguardhome @ {{ host }}
     group: adguardhome
     url: https://adguardhome.{{ host }}.{{ domain }}
@@ -64,7 +64,7 @@ endpoints:
 {% endfor %}
 
 # Adguardhome DNS
-{% for host in groups['adguardhome'] | difference([ansible_host]) | sort %} 
+{% for host in groups['adguardhome'] | sort %}
   - name: dns @ {{ host }}
     group: dns
     url: "{{ host }}.{{ domain }}"
@@ -82,7 +82,7 @@ endpoints:
 
 {% if 'base' in groups %}
 # Base
-{% for host in groups['base'] | sort %} 
+{% for host in groups['base'] | sort %}
   - name: traefik @ {{ host }}
     group: base
     url: https://traefik.{{ host }}.{{ domain }}
@@ -99,7 +99,7 @@ endpoints:
 
 {% if 'core' in groups %}
 # Core apps
-{% for host in groups['core'] | sort %} 
+{% for host in groups['core'] | sort %}
   - name: homepage @ {{ host }}
     group: core
     url: https://home.{{ host }}.{{ domain }}
@@ -119,18 +119,20 @@ endpoints:
 {% endif %}
 
 {% if 'portainer' in groups +%}
-# Ntfy
-{% for host in groups['ntfy'] | sort %} 
+# Portainer
+{% for host in groups['portainer'] | sort %}
+{% if hostvars[host].portainer_server | default(false) %}
   - name: portainer @ {{ host }}
-    group: core
+    group: admin
     url: https://portainer.{{ host }}.{{ domain }}
     <<: *defaults
+{% endif %}
 {% endfor %}
 {% endif %}
 
 {% if 'ntfy' in groups +%}
 # Ntfy
-{% for host in groups['ntfy'] | sort %} 
+{% for host in groups['ntfy'] | sort %}
   - name: ntfy @ {{ host }}
     group: core
     url: https://ntfy.{{ host }}.{{ domain }}
@@ -140,7 +142,7 @@ endpoints:
 
 {% if 'monitoring' in groups %}
 # Monitoring
-{% for host in groups['monitoring'] | sort %} 
+{% for host in groups['monitoring'] | sort %}
   - name: grafana @ {{ host }}
     group: monitoring
     url: https://grafana.{{ host }}.{{ domain }}
@@ -155,7 +157,7 @@ endpoints:
 
 {% if 'mealie' in groups %}
 # Mealie
-{% for host in groups['mealie'] | sort %} 
+{% for host in groups['mealie'] | sort %}
   - name: mealie @ {{ host }}
     group: apps
     url: https://mealie.{{ host }}.{{ domain }}
@@ -165,7 +167,7 @@ endpoints:
 
 {% if 'memos' in groups %}
 # Memos
-{% for host in groups['memos'] | sort %} 
+{% for host in groups['memos'] | sort %}
   - name: memos @ {{ host }}
     group: apps
     url: https://memos.{{ host }}.{{ domain }}
@@ -185,7 +187,7 @@ endpoints:
 
 {% if 'vikunja' in groups %}
 # Vikunja
-{% for host in groups['vikunja'] | sort %} 
+{% for host in groups['vikunja'] | sort %}
   - name: vikunja @ {{ host }}
     group: apps
     url: https://vikunja.{{ host }}.{{ domain }}
@@ -195,7 +197,7 @@ endpoints:
 
 {% if 'netdata' in groups %}
 # netdata
-{% for host in groups['netdata'] | sort %} 
+{% for host in groups['netdata'] | sort %}
   - name: netdata @ {{ host }}
     group: apps
     url: https://netdata.{{ host }}.{{ domain }}

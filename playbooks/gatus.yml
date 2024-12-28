@@ -1,5 +1,10 @@
 ---
-- name: Deploy gatus
+- name: Gatus
   hosts: gatus
-  roles:
-    - gatus
+  vars:
+    task: deploy
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: gatus
+        tasks_from: "{{ task }}"
