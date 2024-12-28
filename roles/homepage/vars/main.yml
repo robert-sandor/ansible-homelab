@@ -1,0 +1,46 @@
+---
+homepage_deploy_path: "{{ deploy_path }}/homepage"
+
+homepage_version: v0.10.4 # https://github.com/gethomepage/homepage/releases
+
+homepage_default_settings:
+  title: "{{ hostname }}"
+
+  theme: dark
+  color: stone
+
+  headerStyle: clean
+  # statusStyle: dot
+  useEqualHeights: true
+
+  layout:
+    - apps:
+        style: row
+        columns: 4
+    - media:
+        style: row
+        columns: 4
+    - admin:
+        style: row
+        columns: 4
+        initiallyCollapsed: true
+    - monitoring:
+        style: row
+        columns: 4
+        initiallyCollapsed: true
+    - traefik:
+        style: row
+        columns: 4
+        initiallyCollapsed: true
+
+  quicklaunch:
+    searchDescriptions: true
+    hideInternetSearch: true
+
+homepage_autodiscovered_hosts: "{{ groups['base'] | product([domain]) | map('join', '.') }}"
+homepage_docker: >-
+  [
+  {% for host in (homepage_autodiscovered_hosts) | sort %}
+  { 'host': '{{ host }}', 'port': 2375 },
+  {% endfor %}
+  ]

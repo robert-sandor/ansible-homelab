@@ -1,43 +1,16 @@
 ---
-### homepage - dashboard
-homepage_version: v0.10.2 # https://github.com/gethomepage/homepage/releases
+### Homepage - https://gethomepage.dev/
 
-homepage_docker: >-
-  [
-  {% for host in groups['base'] | sort %}
-  { 'host': '{{ host }}.{{ domain }}', 'port': 2375 },
-  {% endfor %}
-  ]
+# Settings for homepage, in YAML format
+# reference: https://gethomepage.dev/configs/settings/
+#
+# This will be merged with the default settings, with this taking priority
+homepage_settings: {}
 
-homepage_settings:
-  title: "{{ hostname }}"
+# Additional services to add to homepage
+# reference: https://gethomepage.dev/configs/services/#services
+homepage_services: []
 
-  cardBlur: md
-  theme: dark
-  color: stone
-
-  headerStyle: clean
-
-  layout:
-    - apps:
-        style: row
-        columns: 4
-    - media:
-        style: row
-        columns: 4
-    - admin:
-        style: row
-        columns: 4
-    - monitoring:
-        style: row
-        columns: 4
-    - traefik:
-        style: row
-        columns: 4
-
-  quicklaunch:
-    searchDescriptions: true
-    hideInternetSearch: true
-
-homepage_services: ""
-homepage_bookmarks: ""
+# Bookmarks to add to homepage
+# reference: https://gethomepage.dev/configs/bookmarks/
+homepage_bookmarks: []

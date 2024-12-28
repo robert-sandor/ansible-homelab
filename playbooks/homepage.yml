@@ -1,5 +1,10 @@
 ---
-- name: Deploy homepage
+- name: Homepage
   hosts: homepage
-  roles:
-    - homepage
+  vars:
+    task: deploy
+  tasks:
+    - name: Import role
+      ansible.builtin.import_role:
+        name: homepage
+        tasks_from: "{{ task }}"
