@@ -25,7 +25,9 @@ services:
       homepage.href: https://manyfold.$HOSTNAME
       homepage.icon: manyfold
       homepage.siteMonitor: https://manyfold.$HOSTNAME
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/manyfold3d/manyfold/releases/tag/v$${raw}
 
   db:
     image: postgres:$PG_VERSION
