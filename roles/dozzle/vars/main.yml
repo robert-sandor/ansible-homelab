@@ -1,7 +1,7 @@
 ---
 dozzle_deploy_path: "{{ deploy_path }}/dozzle"
 
-dozzle_version: v8.9.0 # https://github.com/amir20/dozzle/releases
+dozzle_version: v8.9.1 # https://github.com/amir20/dozzle/releases
 
 # Creates the list of agents for a server
 dozzle_hosts: "{{ groups['dozzle'] | sort }}"

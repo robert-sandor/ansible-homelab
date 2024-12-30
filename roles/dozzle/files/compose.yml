@@ -11,17 +11,19 @@ services:
     ports:
       - 7007:7007
     healthcheck:
-      test: [CMD, /dozzle, healthcheck]
+      test: [ CMD, /dozzle, healthcheck ]
       timeout: 30s
       interval: 5s
       retries: 5
       start_period: 5s
       start_interval: 5s
     labels:
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/amir20/dozzle/releases/tag/$${raw}
 
   server:
-    profiles: [server]
+    profiles: [ server ]
     image: amir20/dozzle:$DOZZLE_VERSION
     restart: always
     environment:
@@ -32,7 +34,7 @@ services:
     networks:
       - traefik
     healthcheck:
-      test: [CMD, /dozzle, healthcheck]
+      test: [ CMD, /dozzle, healthcheck ]
       timeout: 30s
       interval: 5s
       retries: 5
@@ -51,7 +53,9 @@ services:
       homepage.href: https://dozzle.$HOSTNAME
       homepage.icon: dozzle
       homepage.siteMonitor: https://dozzle.$HOSTNAME
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/amir20/dozzle/releases/tag/$${raw}
 
 networks:
   traefik:
