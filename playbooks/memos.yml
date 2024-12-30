@@ -1,5 +1,0 @@
----
-- name: Deploy memos
-  hosts: memos
-  roles:
-    - memos
