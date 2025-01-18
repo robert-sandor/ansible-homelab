@@ -23,7 +23,6 @@ services:
       homepage.href: https://vikunja.$HOSTNAME
       homepage.icon: vikunja
       homepage.siteMonitor: https://vikunja.$HOSTNAME
-      com.centurylinklabs.watchtower.enable: true
       wud.watch: true
       wud.watch.digest: true
       wud.tag.include: ^\d+\.\d+\.\d+$$
@@ -44,7 +43,6 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     labels:
-      com.centurylinklabs.watchtower.enable: true
       wud.watch: true
       wud.watch.digest: true
       wud.tag.include: ^\d+\.\d+$$

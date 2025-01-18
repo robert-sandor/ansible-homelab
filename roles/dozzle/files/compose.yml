@@ -10,20 +10,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 7007:7007
-    healthcheck:
-      test: [ CMD, /dozzle, healthcheck ]
-      timeout: 30s
-      interval: 5s
-      retries: 5
-      start_period: 5s
-      start_interval: 5s
     labels:
       wud.watch: true
       wud.tag.include: ^v\d+\.\d+\.\d+$$
       wud.link.template: https://github.com/amir20/dozzle/releases/tag/$${raw}
 
   server:
-    profiles: [ server ]
+    profiles:
+      - server
     image: amir20/dozzle:$DOZZLE_VERSION
     restart: always
     environment:
@@ -33,13 +27,6 @@ services:
       DOZZLE_REMOTE_AGENT: $DOZZLE_AGENTS
     networks:
       - traefik
-    healthcheck:
-      test: [ CMD, /dozzle, healthcheck ]
-      timeout: 30s
-      interval: 5s
-      retries: 5
-      start_period: 5s
-      start_interval: 5s
     labels:
       traefik.enable: true
       traefik.http.services.dozzle.loadbalancer.server.port: 8080

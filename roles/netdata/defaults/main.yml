@@ -1,5 +1,5 @@
 ---
-netdata_version: v2.1.0 # https://hub.docker.com/r/netdata/netdata/tags
+netdata_version: v2.1.1 # https://hub.docker.com/r/netdata/netdata/tags
 
 netdata_claim_token: ""
 netdata_claim_rooms: ""

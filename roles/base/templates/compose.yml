@@ -37,8 +37,9 @@ services:
       homepage.href: https://traefik.{{ hostname }}
       homepage.icon: traefik
       homepage.siteMonitor: https://traefik.{{ hostname }}
-      # watchtower
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/traefik/traefik/releases/tag/$${raw}
 
   watchtower:
     hostname: watchtower

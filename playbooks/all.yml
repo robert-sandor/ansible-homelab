@@ -18,7 +18,6 @@
 - ansible.builtin.import_playbook: ./manyfold.yml
 - ansible.builtin.import_playbook: ./mealie.yml
 - ansible.builtin.import_playbook: ./media.yml
-- ansible.builtin.import_playbook: ./memos.yml
 - ansible.builtin.import_playbook: ./netdata.yml
 - ansible.builtin.import_playbook: ./nextcloud.yml
 - ansible.builtin.import_playbook: ./ntfy.yml

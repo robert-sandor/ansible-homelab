@@ -1,7 +1,7 @@
 ---
 homepage_deploy_path: "{{ deploy_path }}/homepage"
 
-homepage_version: v0.10.4 # https://github.com/gethomepage/homepage/releases
+homepage_version: v0.10.6 # https://github.com/gethomepage/homepage/releases
 
 homepage_default_settings:
   title: "{{ hostname }}"
