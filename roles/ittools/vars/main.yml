@@ -1,0 +1,4 @@
+---
+ittools_deploy_path: "{{ deploy_path }}/ittools"
+
+ittools_version: "2024.10.22-7ca5933" # https://github.com/CorentinTh/it-tools/releases
