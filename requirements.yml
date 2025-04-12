@@ -3,3 +3,5 @@ collections:
   - name: community.general
   - name: community.docker
   - name: ansible.posix
+
+roles: []

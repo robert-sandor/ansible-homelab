@@ -3,3 +3,31 @@ python = "3.13"
 
 [env]
 '_'.python.venv = { path = ".venv", create = true }
+
+[tasks.deps]
+description = "Install dependencies (requirement.txt and requirements.yml)"
+run = [
+  "pip install --upgrade -r requirements.txt",
+  "ansible-galaxy collection install --upgrade -r requirements.yml",
+  "ansible-galaxy role install -r requirements.yml",
+]
+
+[tasks.deploy]
+run = "ansible-playbook playbooks/deploy.yml -i inventory"
+
+[tasks.teardown]
+run = "ansible-playbook playbooks/teardown.yml -i inventory"
+
+[tasks.backup]
+run = "ansible-playbook playbooks/backup.yml -i inventory"
+
+[tasks.restore]
+run = "ansible-playbook playbooks/restore.yml -i inventory"
+
+[tasks.lint]
+description = "Run ansible lint"
+run = "ansible-lint --exclude .ansible/roles/"
+
+[tasks.nutscan]
+description = "Run nutscan playbook"
+run = "ansible-playbook ./playbooks/utils/nutscan.yml -i ./inventory -l {{arg(name='limit', default='')}}"
