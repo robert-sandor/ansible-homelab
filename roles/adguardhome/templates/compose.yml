@@ -1,10 +1,12 @@
 ---
 services:
   server:
-    image: adguard/adguardhome:${VERSION}
+    image: "{{ adguardhome_image }}"
+    container_name: adguardhome
     restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     environment:
-      TZ: ${TZ}
+      TZ: "{{ timezone }}"
     networks:
       - traefik
     ports:
@@ -17,18 +19,18 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.adguardhome.loadbalancer.server.port: 3000
-      traefik.http.routers.adguardhome.rule: Host(`adguardhome.${HOSTNAME}`)
+      traefik.http.routers.adguardhome.rule: "Host(`adguardhome.{{ hostname }}`)"
       traefik.http.routers.adguardhome.entrypoints: https
       traefik.http.routers.adguardhome.service: adguardhome
       homepage.name: adguardhome
       homepage.group: admin
-      homepage.description: network adblocker @ ${HOSTNAME_SHORT}
-      homepage.href: https://adguardhome.${HOSTNAME}
+      homepage.description: "network adblocker @ {{ ansible_hostname}}"
+      homepage.href: "https://adguardhome.{{ hostname }}"
       homepage.icon: adguard-home
-      homepage.siteMonitor: https://adguardhome.${HOSTNAME}
+      homepage.siteMonitor: "https://adguardhome.{{ hostname }}"
       wud.watch: true
       wud.tag.include: ^v\d+\.\d+\.\d+$$
-      wud.link.template: https://github.com/AdguardTeam/AdGuardHome/releases/tag/$${raw}
+      wud.link.template: https://github.com/AdguardTeam/AdGuardHome/releases
 
 networks:
   traefik:

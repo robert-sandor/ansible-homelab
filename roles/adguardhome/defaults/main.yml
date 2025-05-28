@@ -3,7 +3,7 @@
 # User and password for the adguardhome admin user
 # NOTE: this only applies on first deploy - changing the value after that will fail the playbook
 adguardhome_user: admin
-adguardhome_password: changeme
+adguardhome_password: changeme  # pragma: allowlist secret
 
 # list of DNS servers for adguardhome to use as upstream
 # see documentation for more info https://github.com/AdguardTeam/Adguardhome/wiki/Configuration#upstreams
@@ -24,7 +24,8 @@ adguardhome_cache_size: 256
 # list of hosts for which to add wildcard rewrites, to redirect all subdomains to the same host
 # i.e. for a host named 'raspberrypi' added to this list,
 # all dns requests for subdomains of 'raspberrypi.{{ domain }}' will be redirected to 'raspberrypi.{{ domain }}'
-adguardhome_wildcard_hosts: []
+# defaults to all hosts that have base (traefik) deployed on them
+adguardhome_wildcard_hosts: "{{ groups['base'] }}"
 # additional dns rewrites
 # list of objects containing
 #   domain: this is the domain to rewrite
