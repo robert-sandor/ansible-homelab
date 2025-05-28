@@ -2,5 +2,5 @@
 - name: Restart app
   community.docker.docker_compose_v2:
     project_src: "{{ vikunja_deploy_path }}"
-    services: app
+    services: vikunja
     state: restarted

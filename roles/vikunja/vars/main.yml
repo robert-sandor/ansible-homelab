@@ -1,13 +1,15 @@
 ---
 vikunja_deploy_path: "{{ deploy_path }}/vikunja"
 
-vikunja_version: "0.24" # https://hub.docker.com/r/vikunja/vikunja/tags
-vikunja_pg_version: "17"
+vikunja_version: "0.24.6" # https://hub.docker.com/r/vikunja/vikunja/tags
+vikunja_pg_version: "17.5"
 
 # JWT secret
 vikunja_jwt_secret: "{{ ('vikunja-jwt@' + deployment_secret) | hash('sha256') }}"
 
 # DB password
+vikunja_db_name: vikunja
+vikunja_db_user: vikunja
 vikunja_db_pass: "{{ ('vikunja-db@' + deployment_secret) | hash('sha256') }}"
 
 # OIDC secret

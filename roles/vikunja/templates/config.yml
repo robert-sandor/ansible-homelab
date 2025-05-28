@@ -12,8 +12,8 @@ service:
 database:
   type: postgres
   host: db
-  database: vikunja
-  user: vikunja
+  database: "{{ vikunja_db_name }}"
+  user: "{{ vikunja_db_user }}"
   password: "{{ vikunja_db_pass }}"
 
 typesense:

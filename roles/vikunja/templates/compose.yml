@@ -1,52 +1,48 @@
 ---
 services:
-  app:
-    image: vikunja/vikunja:$VERSION
+  vikunja:
+    container_name: vikunja
+    image: vikunja/vikunja:{{ vikunja_version }}
     restart: always
-    depends_on:
-      - db
-    networks:
-      - default
-      - traefik
+    depends_on: [ db ]
+    networks: [ default, traefik ]
     volumes:
       - ./config.yml:/app/vikunja/config.yml:ro
       - ./files:/app/vikunja/files
     labels:
       traefik.enable: true
       traefik.http.services.vikunja.loadbalancer.server.port: 3456
-      traefik.http.routers.vikunja.rule: Host(`vikunja.$HOSTNAME`)
+      traefik.http.routers.vikunja.rule: Host(`vikunja.{{ hostname }}`)
       traefik.http.routers.vikunja.entrypoints: https
       traefik.http.routers.vikunja.service: vikunja
       homepage.name: vikunja
       homepage.group: apps
       homepage.description: todo app
-      homepage.href: https://vikunja.$HOSTNAME
+      homepage.href: https://vikunja.{{ hostname }}
       homepage.icon: vikunja
-      homepage.siteMonitor: https://vikunja.$HOSTNAME
+      homepage.siteMonitor: https://vikunja.{{ hostname }}
       wud.watch: true
-      wud.watch.digest: true
       wud.tag.include: ^\d+\.\d+\.\d+$$
-      wud.link.template: https://github.com/go-vikunja/vikunja/releases/tag/v$${raw}
+      wud.link.template: https://github.com/go-vikunja/vikunja/releases/
 
   db:
-    image: postgres:$PG_VERSION
+    container_name: vikunja-db
+    image: postgres:{{ vikunja_pg_version }}
     restart: always
-    secrets:
-      - pg_pass
+    secrets: [ pg_pass ]
     environment:
-      POSTGRES_DB: $PG_DATABASE
-      POSTGRES_USER: $PG_USER
+      POSTGRES_DB: "{{ vikunja_db_name }}"
+      POSTGRES_USER: "{{ vikunja_db_user }}"
       POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
-      PGDATABASE: $PG_DATABASE
-      PGUSER: $PG_USER
+      PGDATABASE: "{{ vikunja_db_name }}"
+      PGUSER: "{{ vikunja_db_user }}"
       PGPASSFILE: /run/secrets/pg_pass
     volumes:
       - db:/var/lib/postgresql/data
     labels:
       wud.watch: true
-      wud.watch.digest: true
       wud.tag.include: ^\d+\.\d+$$
-      wud.link.template: https://www.postgresql.org/docs/release/$${raw}
+      wud.link.template: https://www.postgresql.org/docs/release/
 
 volumes:
   db:
