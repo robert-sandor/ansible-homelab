@@ -1,0 +1,39 @@
+---
+services:
+  hub:
+    container_name: beszel-hub
+    image: docker.io/henrygd/beszel:{{ beszel_version }}
+    restart: always
+    profiles: [ hub ]
+    networks: [ traefik ]
+    volumes:
+      - ./data:/beszel_data
+    labels:
+      traefik.enable: true
+      traefik.http.services.beszel.loadbalancer.server.port: 8090
+      traefik.http.routers.beszel.rule: Host(`{{ beszel_hostname }}`)
+      traefik.http.routers.beszel.entrypoints: https
+      traefik.http.routers.beszel.service: beszel
+      homepage.name: beszel
+      homepage.group: monitoring
+      homepage.description: server monitoring
+      homepage.href: https://{{ beszel_hostname }}
+      homepage.icon: beszel
+      homepage.siteMonitor: https://{{ beszel_hostname }}
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/henrygd/beszel/releases/
+
+  agent:
+    container_name: beszel-agent
+    image: docker.io/henrygd/beszel-agent
+    restart: always
+    environment:
+      KEY: "{{ beszel_key | default('') }}"
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  traefik:
+    external: true

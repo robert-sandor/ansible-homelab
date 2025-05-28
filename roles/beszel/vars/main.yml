@@ -1,0 +1,4 @@
+---
+beszel_deploy_path: "{{ deploy_path }}/beszel"
+beszel_version: 0.11.1
+beszel_hostname: "beszel.{{ hostname }}"

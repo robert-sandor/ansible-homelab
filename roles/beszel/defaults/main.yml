@@ -1,0 +1,8 @@
+# ---
+### Beszel - https://beszel.dev
+
+# Whether to run the Beszel hub on this host
+beszel_hub: false
+
+# The Beszel public key from the app
+beszel_key: changeme

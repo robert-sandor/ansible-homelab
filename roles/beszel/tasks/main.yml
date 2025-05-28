@@ -1,0 +1,34 @@
+---
+- name: Create directory structure
+  ansible.builtin.file:
+    dest: "{{ beszel_deploy_path }}"
+    state: directory
+    mode: "0755"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ beszel_deploy_path }}/compose.yml"
+    mode: "0644"
+
+- name: Create data directory
+  when: beszel_hub
+  ansible.builtin.file:
+    dest: "{{ beszel_deploy_path }}/data"
+    state: directory
+    mode: "0700"
+
+- name: Create environment file
+  when: beszel_hub
+  ansible.builtin.copy:
+    content: COMPOSE_PROFILES=hub
+    dest: "{{ beszel_deploy_path }}/.env"
+    mode: "0644"
+
+- name: Start service
+  community.docker.docker_compose_v2:
+    project_src: "{{ beszel_deploy_path }}"
+    pull: always
+    remove_orphans: true
+
+# TODO: auto-configure beszel if I decide to actually keep it
