@@ -1,8 +1,9 @@
 ---
 services:
   server:
-    image: vaultwarden/server:$VERSION
-    user: $PUID:$PGID
+    image: vaultwarden/server:{{ vaultwarden_version }}
+    container_name: vaultwarden
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     restart: always
     depends_on:
       - db
@@ -10,9 +11,9 @@ services:
       - pg_url
     environment:
       DATABASE_URL_FILE: /run/secrets/pg_url
-      DOMAIN: https://vaultwarden.$HOSTNAME
-      SIGNUPS_ALLOWED: $SIGNUPS_ALLOWED
-      SHOW_PASSWORD_HINT: $SHOW_PASSWORD_HINT
+      DOMAIN: https://vaultwarden.{{ hostname }}
+      SIGNUPS_ALLOWED: "{{ vaultwarden_allow_signups }}"
+      SHOW_PASSWORD_HINT: "{{ vaultwarden_show_password_hint }}"
     networks:
       - default
       - traefik
@@ -21,30 +22,31 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.vaultwarden.loadbalancer.server.port: 80
-      traefik.http.routers.vaultwarden.rule: Host(`vaultwarden.$HOSTNAME`)
+      traefik.http.routers.vaultwarden.rule: Host(`vaultwarden.{{ hostname }}`)
       traefik.http.routers.vaultwarden.entrypoints: https
       traefik.http.routers.vaultwarden.service: vaultwarden
       homepage.name: vaultwarden
       homepage.group: apps
       homepage.description: password manager
-      homepage.href: https://vaultwarden.$HOSTNAME
+      homepage.href: https://vaultwarden.{{ hostname }}
       homepage.icon: vaultwarden
-      homepage.siteMonitor: https://vaultwarden.$HOSTNAME
+      homepage.siteMonitor: https://vaultwarden.{{ hostname }}
       wud.watch: true
       wud.tag.include: ^\d+\.\d+.\d+$$
-      wud.link.template: https://github.com/dani-garcia/vaultwarden/releases/tag/$${raw}
+      wud.link.template: https://github.com/dani-garcia/vaultwarden/releases
 
   db:
-    image: postgres:$PG_VERSION
+    image: docker.io/library/postgres:{{ vaultwarden_pg_version }}
+    container_name: vaultwarden-db
     restart: always
     secrets:
       - pg_pass
     environment:
-      POSTGRES_DB: $PG_DATABASE
-      POSTGRES_USER: $PG_USER
+      POSTGRES_DB: "{{ vaultwarden_db_name }}"
+      POSTGRES_USER: "{{ vaultwarden_db_user }}"
       POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
-      PGDATABASE: $PG_DATABASE
-      PGUSER: $PG_USER
+      PGDATABASE: "{{ vaultwarden_db_name }}"
+      PGUSER: "{{ vaultwarden_db_user }}"
       PGPASSFILE: /run/secrets/pg_pass
     volumes:
       - db:/var/lib/postgresql/data
@@ -52,7 +54,7 @@ services:
       wud.watch: true
       wud.watch.digest: true
       wud.tag.include: ^\d+\.\d+$$
-      wud.link.template: https://www.postgresql.org/docs/release/$${raw}
+      wud.link.template: https://www.postgresql.org/docs/release
 
 volumes:
   db:

@@ -1,7 +1,7 @@
 ---
 - name: Run restore script
   ansible.builtin.command:
-    cmd: bash {{ backup_path }}/vaultwarden/backup.sh restore
+    cmd: bash {{ backup_path }}/vaultwarden/restore.sh
   changed_when: true
 
 - name: Enable backup timer

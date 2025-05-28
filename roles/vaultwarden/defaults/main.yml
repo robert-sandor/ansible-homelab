@@ -8,4 +8,4 @@
 vaultwarden_allow_signups: true
 
 # Show password hints
-vaultwarden_show_password_hint: false
+vaultwarden_show_password_hint: false # pragma: allowlist secret
