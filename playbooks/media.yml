@@ -1,6 +1,0 @@
----
-- name: Deploy media
-  hosts: media
-  roles:
-    - system
-    - media

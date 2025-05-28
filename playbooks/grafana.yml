@@ -1,5 +1,0 @@
----
-- name: Deploy grafana
-  hosts: grafana
-  roles:
-    - grafana

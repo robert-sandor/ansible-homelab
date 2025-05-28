@@ -1,5 +1,0 @@
----
-- name: Deploy netdata
-  hosts: netdata
-  roles:
-    - netdata

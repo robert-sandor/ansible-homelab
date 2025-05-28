@@ -1,0 +1,202 @@
+---
+# Template - copy this, replace "template" with the role, and uncomment
+#
+# - name: Deploy docker
+#   hosts: docker
+#   tags: docker
+#   roles: [docker]
+
+- name: Deploy and use a virtualenv
+  hosts: all
+  tags: always
+  roles: [venv]
+
+- name: Deploy system
+  hosts: system
+  tags: system
+  roles: [system]
+
+- name: Deploy nut
+  hosts: nut
+  tags: nut
+  roles: [nut]
+
+- name: Deploy tailscale
+  hosts: tailscale
+  tags: tailscale
+  roles: [tailscale]
+
+- name: Deploy docker
+  hosts: docker
+  tags: docker
+  roles: [docker]
+
+- name: Deploy base
+  hosts: base
+  tags: base
+  roles: [base]
+
+- name: Deploy core
+  hosts: core
+  tags: core
+  roles: [core]
+
+- name: Deploy ntfy
+  hosts: ntfy
+  tags: ntfy
+  roles: [ntfy]
+
+- name: Deploy portainer
+  hosts: portainer
+  tags: portainer
+  roles: [portainer]
+
+- name: Deploy adguardhome
+  hosts: adguardhome
+  tags: adguardhome
+  roles: [adguardhome]
+
+- name: Deploy beszel
+  hosts: beszel
+  tags: beszel
+  roles: [beszel]
+
+- name: Deploy gatus
+  hosts: gatus
+  tags: gatus
+  roles: [gatus]
+
+- name: Deploy loki
+  hosts: loki
+  tags: loki
+  roles: [loki]
+
+- name: Deploy dozzle
+  hosts: dozzle
+  tags: dozzle
+  roles: [dozzle]
+
+- name: Deploy netdata
+  hosts: netdata
+  tags: netdata
+  roles: [netdata]
+
+- name: Deploy mealie
+  hosts: mealie
+  tags: mealie
+  roles: [mealie]
+
+- name: Deploy manyfold
+  hosts: manyfold
+  tags: manyfold
+  roles: [manyfold]
+
+- name: Deploy paperless
+  hosts: paperless
+  tags: paperless
+  roles: [paperless]
+
+- name: Deploy vaultwarden
+  hosts: vaultwarden
+  tags: vaultwarden
+  roles: [vaultwarden]
+
+- name: Deploy vikunja
+  hosts: vikunja
+  tags: vikunja
+  roles: [vikunja]
+
+- name: Deploy WUD (What's up docker)
+  hosts: wud
+  tags: wud
+  roles: [wud]
+
+- name: Deploy IT Tools
+  hosts: ittools
+  tags: ittools
+  roles: [ittools]
+
+- name: Deploy gitea
+  hosts: gitea
+  tags: gitea
+  roles: [gitea]
+
+- name: Deploy homepage
+  hosts: homepage
+  tags: homepage
+  roles: [homepage]
+
+- name: Deploy immich
+  hosts: immich
+  tags: immich
+  roles: [immich]
+
+- name: Deploy komodo
+  hosts: komodo
+  tags: komodo
+  roles: [komodo]
+
+- name: Deploy jellyfin
+  hosts: jellyfin
+  tags: jellyfin
+  roles: [jellyfin]
+
+- name: Deploy plex
+  hosts: plex
+  tags: plex
+  roles: [plex]
+
+- name: Deploy transmission
+  hosts: transmission
+  tags: transmission
+  roles: [transmission]
+
+- name: Deploy sonarr
+  hosts: sonarr
+  tags: sonarr
+  roles: [sonarr]
+
+- name: Deploy radarr
+  hosts: radarr
+  tags: radarr
+  roles: [radarr]
+
+- name: Deploy bazarr
+  hosts: bazarr
+  tags: bazarr
+  roles: [bazarr]
+
+- name: Deploy Recyclarr
+  hosts: recyclarr
+  tags: recyclarr
+  roles: [recyclarr]
+
+- name: Deploy lidarr
+  hosts: lidarr
+  tags: lidarr
+  roles: [lidarr]
+
+- name: Deploy unpackerr
+  hosts: unpackerr
+  tags: unpackerr
+  roles: [unpackerr]
+
+- name: Deploy prowlarr
+  hosts: prowlarr
+  tags: prowlarr
+  roles: [prowlarr]
+
+- name: Deploy overseerr
+  hosts: overseerr
+  tags: overseerr
+  roles: [overseerr]
+
+- name: Deploy jellyseerr
+  hosts: jellyseerr
+  tags: jellyseerr
+  roles: [jellyseerr]
+
+- name: Deploy healthchecks
+  hosts: healthchecks
+  tags: healthchecks
+  roles: [healthchecks]

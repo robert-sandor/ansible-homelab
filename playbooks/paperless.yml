@@ -1,5 +1,0 @@
----
-- name: Deploy paperless
-  hosts: paperless
-  roles:
-    - paperless

@@ -1,5 +1,0 @@
----
-- name: Deploy core
-  hosts: core
-  roles:
-    - core

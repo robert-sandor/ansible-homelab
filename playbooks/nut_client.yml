@@ -1,5 +1,0 @@
----
-- name: Deploy NUT client
-  hosts: nut_client
-  roles:
-    - nut_client
