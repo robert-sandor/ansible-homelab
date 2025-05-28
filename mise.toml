@@ -2,6 +2,7 @@
 python = "3.13"
 
 [env]
+_.file = ".env"
 '_'.python.venv = { path = ".venv", create = true }
 
 [tasks.deps]
@@ -31,3 +32,7 @@ run = "ansible-lint --exclude .ansible/roles/"
 [tasks.nutscan]
 description = "Run nutscan playbook"
 run = "ansible-playbook ./playbooks/utils/nutscan.yml -i ./inventory -l {{arg(name='limit', default='')}}"
+
+[tasks.genvars]
+description = "Generate variables for ansible playbooks"
+run = "bash ./scripts/gen_vars.sh"
