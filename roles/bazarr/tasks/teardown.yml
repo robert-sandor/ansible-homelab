@@ -1,0 +1,19 @@
+---
+# NOTE: workaround for containers not starting on reboot with network shares
+- name: Remove cron job to ensure bazarr is started after a reboot
+  ansible.builtin.cron:
+    state: absent
+    name: ensure bazarr is up
+    special_time: reboot
+    job: "sleep 30 && docker compose -f {{ bazarr_deploy_path }}/compose.yml up -d"
+
+- name: Teardown containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ bazarr_deploy_path }}"
+    state: absent
+    remove_volumes: true
+
+- name: Ensure directories are deleted
+  ansible.builtin.file:
+    state: absent
+    path: "{{ bazarr_deploy_path }}"

@@ -1,0 +1,37 @@
+---
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    dest: "{{ bazarr_config_path }}"
+    state: directory
+    mode: "0750"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ bazarr_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Start container
+  community.docker.docker_compose_v2:
+    project_src: "{{ bazarr_deploy_path }}"
+    pull: always
+    remove_orphans: true
+    state: present
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: bazarr
+    stop_services: bazarr
+
+- name: Enable compose up on boot timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: docker-compose-up@bazarr.timer
+    state: started
+    enabled: true
+
+- ansible.builtin.import_tasks: ./configure.yml # noqa: name

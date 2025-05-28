@@ -1,0 +1,39 @@
+---
+services:
+  bazarr:
+    container_name: bazarr
+    image: "{{ bazarr_image }}"
+    restart: always
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+    networks:
+      - traefik
+    volumes:
+      - "{{ bazarr_config_path }}:{{ bazarr_config_mount }}"
+      - "{{ bazarr_media_path }}:{{ bazarr_media_mount }}"
+    labels:
+      # traefik
+      traefik.enable: true
+      # UI
+      traefik.http.services.bazarr.loadbalancer.server.port: 6767
+      traefik.http.routers.bazarr.rule: Host(`bazarr.{{ hostname }}`)
+      traefik.http.routers.bazarr.entrypoints: https
+      traefik.http.routers.bazarr.service: bazarr
+      traefik.http.routers.bazarr.middlewares: authelia@docker
+      # homepage
+      homepage.name: bazarr
+      homepage.group: media
+      homepage.href: https://bazarr.{{ hostname }}
+      homepage.description: manage subtitles
+      homepage.icon: bazarr
+      homepage.siteMonitor: https://bazarr.{{ hostname }}
+      # What's up docker
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/linuxserver/docker-bazarr/releases
+
+networks:
+  traefik:
+    external: true

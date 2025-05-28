@@ -1,0 +1,8 @@
+---
+bazarr_deploy_path: "{{ deploy_path }}/bazarr"
+bazarr_config_path: "{{ bazarr_deploy_path }}/config"
+
+bazarr_config_mount: /config
+bazarr_media_mount: /media
+
+bazarr_api: https://bazarr.{{ hostname }}/api

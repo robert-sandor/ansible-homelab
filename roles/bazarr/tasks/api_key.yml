@@ -1,0 +1,11 @@
+---
+- name: Read bazarr config file
+  ansible.builtin.slurp:
+    src: "{{ bazarr_config_path }}/config/config.yaml"
+  register: bazarr_config_slurp
+
+- name: Export API key
+  vars:
+    bazarr_config_file_content: "{{ bazarr_config_slurp.content | b64decode | from_yaml }}"
+  ansible.builtin.set_fact:
+    bazarr_api_key: "{{ bazarr_config_file_content.auth.apikey }}"

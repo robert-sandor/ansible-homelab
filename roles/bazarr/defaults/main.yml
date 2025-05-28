@@ -1,0 +1,18 @@
+---
+### Bazarr
+bazarr_version: "1.5.2"
+bazarr_image: "ghcr.io/linuxserver/bazarr:{{ bazarr_version }}"
+
+# Path on the host to mount to the container
+bazarr_media_path: /media
+
+# Try to auto configure sonarr and radarr integration if deployed by this playbook
+bazarr_enable_sonarr: "{{ groups['sonarr'] | length > 0 }}"
+bazarr_sonarr_host: "{% if bazarr_enable_sonarr %}sonarr.{{ groups['sonarr'][0] }}.{{ domain }}{% endif %}"
+bazarr_sonarr_port: "{{ 443 if bazarr_enable_sonarr else 8989 }}"
+bazarr_sonarr_ssl: "{{ bazarr_enable_sonarr }}"
+
+bazarr_enable_radarr: "{{ groups['radarr'] | length > 0 }}"
+bazarr_radarr_host: "{% if bazarr_enable_radarr %}radarr.{{ groups['radarr'][0] }}.{{ domain }}{% endif %}"
+bazarr_radarr_port: "{{ 443 if bazarr_enable_radarr else 7878 }}"
+bazarr_radarr_ssl: "{{ bazarr_enable_radarr }}"

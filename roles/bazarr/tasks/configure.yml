@@ -1,0 +1,43 @@
+---
+- name: Wait for config file to be created
+  ansible.builtin.wait_for:
+    path: "{{ bazarr_config_path }}/config/config.yaml"
+
+- ansible.builtin.import_tasks: ./api_key.yml # noqa: name
+
+- name: Get sonarr API key if not defined
+  ansible.builtin.import_role:
+    name: sonarr
+    tasks_from: api_key
+  when: bazarr_enable_sonarr and sonarr_api_key is not defined and groups['sonarr'] | length > 0
+
+- name: Get radarr API key if not defined
+  ansible.builtin.import_role:
+    name: radarr
+    tasks_from: api_key
+  when: bazarr_enable_radarr and radarr_api_key is not defined and groups['radarr'] | length > 0
+
+- name: Configure bazarr settings
+  when: (bazarr_enable_sonarr and sonarr_api_key is defined) or (bazarr_enable_radarr and radarr_api_key is defined)
+  ansible.builtin.uri:
+    method: POST
+    url: "{{ bazarr_api }}/system/settings"
+    headers:
+      x-api-key: "{{ bazarr_api_key }}"
+    body_format: form-urlencoded
+    body:
+      settings-general-use_sonarr: "{{ bazarr_enable_sonarr | lower }}"
+      settings-sonarr-ip: "{{ bazarr_sonarr_host }}"
+      settings-sonarr-port: "{{ bazarr_sonarr_port }}"
+      settings-sonarr-ssl: "{{ bazarr_sonarr_ssl | lower }}"
+      settings-sonarr-apikey: "{{ sonarr_api_key }}"
+      settings-general-use_radarr: "{{ bazarr_enable_radarr | lower }}"
+      settings-radarr-ip: "{{ bazarr_radarr_host }}"
+      settings-radarr-port: "{{ bazarr_radarr_port }}"
+      settings-radarr-ssl: "{{ bazarr_radarr_ssl | lower }}"
+      settings-radarr-apikey: "{{ radarr_api_key }}"
+    status_code: 204
+  retries: 5
+  delay: 10
+  until: bazarr_settings_result is succeeded
+  register: bazarr_settings_result
