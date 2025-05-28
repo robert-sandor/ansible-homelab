@@ -1,0 +1,3 @@
+---
+ntfy_deploy_path: "{{ deploy_path }}/ntfy"
+ntfy_version: v2.11.0

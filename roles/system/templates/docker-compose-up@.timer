@@ -1,0 +1,9 @@
+[Unit]
+Description=Run Docker compose up on boot for service %i
+
+[Timer]
+Unit=docker-compose-up@%i.service
+OnBootSec=30s
+
+[Install]
+WantedBy=default.target

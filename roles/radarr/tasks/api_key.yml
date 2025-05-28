@@ -1,0 +1,11 @@
+---
+- name: Read API key
+  community.general.xml:
+    path: "{{ radarr_config_path }}/config.xml"
+    xpath: /Config/ApiKey
+    content: text
+  register: radarr_config_xpath_result
+
+- name: Export API key
+  ansible.builtin.set_fact:
+    radarr_api_key: "{{ radarr_config_xpath_result.matches[0].ApiKey }}"

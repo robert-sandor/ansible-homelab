@@ -1,0 +1,14 @@
+---
+- name: Restart periphery
+  community.docker.docker_compose_v2:
+    project_src: "{{ komodo_deploy_path }}"
+    state: restarted
+    services:
+      - periphery
+
+- name: Restart core
+  community.docker.docker_compose_v2:
+    project_src: "{{ komodo_deploy_path }}"
+    state: restarted
+    services:
+      - core

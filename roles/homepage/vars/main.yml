@@ -1,7 +1,7 @@
 ---
 homepage_deploy_path: "{{ deploy_path }}/homepage"
 
-homepage_version: v0.10.6 # https://github.com/gethomepage/homepage/releases
+homepage_version: v1.2.0
 
 homepage_default_settings:
   title: "{{ hostname }}"
@@ -10,7 +10,7 @@ homepage_default_settings:
   color: stone
 
   headerStyle: clean
-  # statusStyle: dot
+  statusStyle: basic
   useEqualHeights: true
 
   layout:
@@ -23,11 +23,9 @@ homepage_default_settings:
     - admin:
         style: row
         columns: 4
-        initiallyCollapsed: true
     - monitoring:
         style: row
         columns: 4
-        initiallyCollapsed: true
     - traefik:
         style: row
         columns: 4

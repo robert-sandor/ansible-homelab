@@ -1,0 +1,2 @@
+---
+system_mounts: "{{ system_group_mounts | combine(system_host_mounts) }}"

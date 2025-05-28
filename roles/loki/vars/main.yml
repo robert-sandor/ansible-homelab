@@ -1,6 +1,6 @@
 ---
 loki_deploy_path: "{{ deploy_path }}/loki"
-loki_version: 3.3.2
+loki_version: 3.5.1
 
 # loki_servers: "{{ hostvars | dict2items | selectattr('value.loki_server', 'equalto', true) }}"
 

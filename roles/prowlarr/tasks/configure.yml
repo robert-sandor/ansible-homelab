@@ -1,0 +1,115 @@
+---
+- name: Wait for config file to be created
+  ansible.builtin.wait_for:
+    path: "{{ prowlarr_config_path }}/config.xml"
+
+- ansible.builtin.import_tasks: ./api_key.yml # noqa: name
+
+- name: Get sonarr API key if not defined
+  ansible.builtin.import_role:
+    name: sonarr
+    tasks_from: api_key
+  when: prowlarr_sonarr_configure and sonarr_api_key is not defined and groups['sonarr'] | length > 0
+  delegate_to: "{{ groups['sonarr'][0] }}"
+
+- name: Get radarr API key if not defined
+  ansible.builtin.import_role:
+    name: radarr
+    tasks_from: api_key
+  when: prowlarr_radarr_configure and radarr_api_key is not defined and groups['radarr'] | length > 0
+  delegate_to: "{{ groups['radarr'][0] }}"
+
+- name: Get lidarr API key if not defined
+  ansible.builtin.import_role:
+    name: lidarr
+    tasks_from: api_key
+  when: prowlarr_lidarr_configure and lidarr_api_key is not defined and groups['lidarr'] | length > 0
+  delegate_to: "{{ groups['lidarr'][0] }}"
+
+- name: Get config
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ prowlarr_api }}/config/host"
+    headers:
+      x-api-key: "{{ prowlarr_api_key }}"
+    status_code: 200
+  register: prowlarr_current_config
+
+- name: Set config
+  when: prowlarr_current_config.json != updated_config
+  vars:
+    updated_config: "{{ prowlarr_current_config.json | combine(prowlarr_wanted_config) }}"
+  ansible.builtin.uri:
+    method: PUT
+    url: "{{ prowlarr_api }}/config/host"
+    headers:
+      x-api-key: "{{ prowlarr_api_key }}"
+    body_format: json
+    body: "{{ updated_config }}"
+    status_code: 202
+
+- name: Get download clients
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ prowlarr_api }}/downloadclient"
+    headers:
+      x-api-key: "{{ prowlarr_api_key }}"
+    status_code: 200
+  register: prowlarr_current_download_clients
+
+- name: Create transmission download client
+  when: prowlarr_transmission_configure and not prowlarr_transmission_configured
+  ansible.builtin.uri:
+    method: POST
+    url: "{{ prowlarr_api }}/downloadclient"
+    headers:
+      x-api-key: "{{ prowlarr_api_key }}"
+    body_format: json
+    body:
+      enable: true
+      priority: 1
+      name: transmission
+      categories: []
+      fields: "{{ prowlarr_transmission | dict2items(key_name='name', value_name='value') }}"
+      implementation: Transmission
+      configContract: TransmissionSettings
+    status_code: 201
+
+- name: Get current applications
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ prowlarr_api }}/applications"
+    headers:
+      x-api-key: "{{ prowlarr_api_key }}"
+    status_code: 200
+  register: current_applications
+
+- name: Get application schema
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ prowlarr_api }}/applications/schema"
+    headers:
+      x-api-key: "{{ prowlarr_api_key }}"
+    status_code: 200
+  register: application_schema_list
+
+- name: Setup Sonarr
+  ansible.builtin.import_tasks: prowlarr_application.yml
+  vars:
+    app_name: Sonarr
+    fields: "{{ prowlarr_sonarr }}"
+  when: prowlarr_sonarr_configure and sonarr_api_key is defined
+
+- name: Setup Radarr
+  ansible.builtin.import_tasks: prowlarr_application.yml
+  vars:
+    app_name: Radarr
+    fields: "{{ prowlarr_radarr }}"
+  when: prowlarr_radarr_configure and radarr_api_key is defined
+
+- name: Setup Lidarr
+  ansible.builtin.import_tasks: prowlarr_application.yml
+  vars:
+    app_name: Lidarr
+    fields: "{{ prowlarr_lidarr }}"
+  when: prowlarr_lidarr_configure and lidarr_api_key is defined

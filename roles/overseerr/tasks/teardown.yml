@@ -1,0 +1,17 @@
+---
+- name: Stop overseerr containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ overseerr_deploy_path }}"
+    state: absent
+
+- name: Disable backup systemd timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@overseerr.timer
+    state: stopped
+    enabled: false
+
+- name: Remove overseerr deploy directory
+  ansible.builtin.file:
+    path: "{{ overseerr_deploy_path }}"
+    state: absent

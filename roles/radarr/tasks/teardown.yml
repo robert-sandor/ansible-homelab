@@ -1,0 +1,27 @@
+---
+# NOTE: workaround for containers not starting on reboot with network shares
+- name: Remove cron job to ensure radarr is started after a reboot
+  ansible.builtin.cron:
+    state: absent
+    name: ensure radarr is up
+    special_time: reboot
+    job: "sleep 30 && docker compose -f {{ radarr_deploy_path }}/compose.yml up -d"
+
+- name: Disable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@radarr.timer
+    state: stopped
+    enabled: false
+    daemon_reload: true
+
+- name: Teardown containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ radarr_deploy_path }}"
+    state: absent
+    remove_volumes: true
+
+- name: Ensure directories are deleted
+  ansible.builtin.file:
+    state: absent
+    path: "{{ radarr_deploy_path }}"

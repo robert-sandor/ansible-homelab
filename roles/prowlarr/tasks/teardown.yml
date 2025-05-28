@@ -1,0 +1,11 @@
+---
+- name: Teardown containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ prowlarr_deploy_path }}"
+    state: absent
+    remove_volumes: true
+
+- name: Ensure directories are deleted
+  ansible.builtin.file:
+    state: absent
+    path: "{{ prowlarr_deploy_path }}"

@@ -1,0 +1,19 @@
+---
+# NOTE: workaround for containers not starting on reboot with network shares
+- name: Remove cron job to ensure sonarr is started after a reboot
+  ansible.builtin.cron:
+    state: absent
+    name: ensure sonarr is up
+    special_time: reboot
+    job: "sleep 30 && docker compose -f {{ sonarr_deploy_path }}/compose.yml up -d"
+
+- name: Teardown containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ sonarr_deploy_path }}"
+    state: absent
+    remove_volumes: true
+
+- name: Ensure directories are deleted
+  ansible.builtin.file:
+    state: absent
+    path: "{{ sonarr_deploy_path }}"

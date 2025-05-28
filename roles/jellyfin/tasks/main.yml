@@ -1,0 +1,50 @@
+---
+- name: Ensure config dir is created
+  ansible.builtin.file:
+    state: directory
+    path: "{{ jellyfin_deploy_path }}/config"
+    mode: "0750"
+
+- name: Get all group ids
+  when: jellyfin_transcode_type == 'qsv'
+  ansible.builtin.getent:
+    database: group
+
+- name: Template compose files
+  ansible.builtin.template:
+    src: "{{ file }}"
+    dest: "{{ jellyfin_deploy_path }}/{{ file }}"
+    mode: "0640"
+  loop:
+    - compose.yml
+    - hw_transcode_extensions.yml
+  loop_control:
+    loop_var: file
+
+- name: Start containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ jellyfin_deploy_path }}"
+    pull: always
+    remove_orphans: true
+    state: present
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: jellyfin
+    stop_containers: jellyfin
+
+- name: Enable backup systemd timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: "{{ timer }}"
+    state: started
+    enabled: true
+  loop:
+    - backup@jellyfin.timer
+    - docker-compose-up@jellyfin.timer
+  loop_control:
+    loop_var: timer

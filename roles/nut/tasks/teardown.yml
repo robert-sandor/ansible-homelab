@@ -1,0 +1,14 @@
+---
+- name: Remove all configuration files
+  become: true
+  ansible.builtin.file:
+    path: "{{ nut_config_dir }}"
+    state: absent
+
+- name: Remove all NUT packages
+  become: true
+  ansible.builtin.package:
+    name:
+      - nut
+      - nut-client
+    state: absent

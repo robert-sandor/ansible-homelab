@@ -1,0 +1,36 @@
+---
+### Prowlarr
+
+# Version of prowlarr to deploy
+prowlarr_version: "1.36.3"
+
+# Try to auto configure transmission if deployed by this playbook
+prowlarr_transmission_configure: "{{ groups['transmission'] | length > 0 }}"
+prowlarr_transmission:
+  host: "transmission.{{ groups['transmission'][0] }}.{{ domain }}"
+  port: 443
+  useSsl: true
+  urlBase: "/transmission/"
+  username: "{{ hostvars[groups['transmission'][0]]['transmission_user'] | default('') }}"
+  password: "{{ hostvars[groups['transmission'][0]]['transmission_pass'] | default('') }}"
+  category: prowlarr
+  addPaused: true
+
+# Try to auto configure applications (sonarr, radarr, lidarr) if deployed by this playbook
+prowlarr_sonarr_configure: "{{ groups['sonarr'] | length > 0 }}"
+prowlarr_sonarr:
+  baseUrl: "https://sonarr.{{ groups['sonarr'][0] }}.{{ domain }}"
+  prowlarrUrl: "{{ prowlarr_url }}"
+  apiKey: "{{ sonarr_api_key }}"
+
+prowlarr_radarr_configure: "{{ groups['radarr'] | length > 0 }}"
+prowlarr_radarr:
+  baseUrl: "https://radarr.{{ groups['radarr'][0] }}.{{ domain }}"
+  prowlarrUrl: "{{ prowlarr_url }}"
+  apiKey: "{{ radarr_api_key }}"
+
+prowlarr_lidarr_configure: "{{ groups['lidarr'] | length > 0 }}"
+prowlarr_lidarr:
+  baseUrl: "https://lidarr.{{ groups['lidarr'][0] }}.{{ domain }}"
+  prowlarrUrl: "{{ prowlarr_url }}"
+  apiKey: "{{ lidarr_api_key }}"

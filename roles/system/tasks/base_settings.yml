@@ -1,0 +1,27 @@
+---
+- name: Set hostname
+  become: true
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+
+- name: Set timezone
+  become: true
+  community.general.timezone:
+    name: "{{ timezone }}"
+
+- name: Set swappiness to lower value
+  become: true
+  ansible.posix.sysctl:
+    name: vm.swappiness
+    value: "{{ system_swappiness }}"
+    state: present
+    reload: true
+
+- name: Setup authorized ssh keys
+  ansible.posix.authorized_key:
+    user: "{{ ansible_facts.user_id }}"
+    state: present
+    key: "{{ key }}"
+  loop: "{{ system_authorized_ssh_keys }}"
+  loop_control:
+    loop_var: key

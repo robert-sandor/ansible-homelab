@@ -12,7 +12,7 @@ portainer_server: false
 
 # Configure the admin user
 portainer_admin_user: admin
-portainer_admin_password: changeme
+portainer_admin_password: changeme # pragma: allowlist secret
 
 # List of additional hosts names with Portainer agents to add to the server
 # Note: These should only be short hostnames, not including protocol, domain or port. Domain is taken from the 'domain' var,

@@ -1,0 +1,21 @@
+---
+# Address and port for upsd to listen on
+nut_server_listen_addr: 0.0.0.0
+nut_server_listen_port: 3493
+
+# User to run nut as
+nut_user: root
+
+# User and password for the NUT admin user
+nut_admin_user: admin
+nut_admin_pass: secret
+
+# User and password for the NUT monitoring user
+nut_mon_user: upsmon
+nut_mon_pass: secret
+
+# URL to the ntfy server to use
+nut_ntfy_url: https://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}/ups
+
+# Config dir for NUT
+nut_config_dir: /etc/{{ 'ups' if 'fedora' in ansible_facts.distribution | lower else 'nut' }}

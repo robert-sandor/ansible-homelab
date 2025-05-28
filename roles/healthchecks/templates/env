@@ -1,0 +1,2 @@
+SUPERUSER_EMAIL={{ healthchecks_su_email }}
+SUPERUSER_PASS={{ healthchecks_su_pass }}

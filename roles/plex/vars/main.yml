@@ -1,0 +1,6 @@
+---
+plex_deploy_path: "{{ deploy_path }}/plex"
+
+# TODO: figure out versioning for pms-docker and wud config
+plex_version: latest
+plex_image: "docker.io/plexinc/pms-docker:{{ plex_version }}"

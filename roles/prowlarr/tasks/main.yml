@@ -1,0 +1,30 @@
+---
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    dest: "{{ prowlarr_config_path }}"
+    state: directory
+    mode: "0750"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ prowlarr_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Start container
+  community.docker.docker_compose_v2:
+    project_src: "{{ prowlarr_deploy_path }}"
+    pull: always
+    remove_orphans: true
+    state: present
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: prowlarr
+    stop_services: prowlarr
+
+- ansible.builtin.import_tasks: ./configure.yml # noqa: name

@@ -1,0 +1,84 @@
+---
+services:
+  core:
+    image: "{{ komodo_core_image }}"
+    container_name: komodo-core
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    profiles:
+      - core
+    depends_on:
+      - db
+      - periphery
+    networks:
+      - traefik
+      - default
+    volumes:
+      - komodo-repo-cache:/repo-cache
+      - komodo-sync:/syncs
+      - ./core.config.toml:/config/config.toml
+    labels:
+      komodo.skip:
+      traefik.enable: true
+      traefik.http.services.komodo.loadbalancer.server.port: 9120
+      traefik.http.routers.komodo.rule: Host(`komodo.{{ hostname }}`)
+      traefik.http.routers.komodo.entrypoints: https
+      traefik.http.routers.komodo.service: komodo
+      homepage.name: komodo
+      homepage.group: admin
+      homepage.description: docker ci/cd
+      homepage.href: https://komodo.{{ hostname }}
+      homepage.icon: komodo
+      homepage.siteMonitor: https://komodo.{{ hostname }}
+      # TODO: add what's up docker labels
+
+  db:
+    image: "{{ komodo_mongo_image }}"
+    container_name: komodo-db
+    restart: always
+    command: --quiet --wiredTigerCacheSizeGB 0.25
+    profiles:
+      - core
+    secrets:
+      - db_pass
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "{{ komodo_db_user }}"
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - komodo-db-data:/data/db
+      - komodo-db-config:/data/configdb
+    labels:
+      komodo.skip:
+        # TODO: add what's up docker labels
+
+  periphery:
+    image: "{{ komodo_periphery_image }}"
+    container_name: komodo-periphery
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    command: periphery --config-path /config/config.toml
+    ports:
+      - 8120:8120/tcp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:z
+      - /proc:/proc
+      - "{{ komodo_root }}:{{ komodo_root }}"
+      - ./periphery.config.toml:/config/config.toml
+    labels:
+      komodo.skip:
+
+
+volumes:
+  komodo-db-data:
+  komodo-db-config:
+  komodo-repo-cache:
+  komodo-sync:
+
+
+secrets:
+  db_pass:
+    file: ./secrets/db_pass
+
+networks:
+  traefik:
+    external: true

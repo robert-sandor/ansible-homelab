@@ -1,12 +1,65 @@
 ---
-- name: Deploy paperless
-  block:
-    - name: Set deploy path fact
-      ansible.builtin.set_fact:
-        paperless_deploy_path: "{{ deploy_path }}/paperless"
+- name: Create directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ paperless_deploy_path }}/{{ item }}"
+    mode: "0755"
+  loop:
+    - consume
+    - export
 
-    - name: Deploy containers
-      ansible.builtin.import_tasks: ./containers.yml
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ paperless_deploy_path }}/compose.yml"
+    mode: "0644"
 
-    - name: Initialize backup script
-      ansible.builtin.import_tasks: ./backup_init.yml
+- name: Template env files
+  ansible.builtin.template:
+    src: "paperless.env.j2"
+    dest: "{{ paperless_deploy_path }}/.paperless.env"
+    mode: "0600"
+
+- name: Create secrets directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ paperless_deploy_path }}/secrets"
+    mode: "0700"
+
+- name: Set secrets
+  no_log: true
+  vars:
+    secrets:
+      secret_key: "{{ paperless_secret_key }}"
+      admin_pass: "{{ paperless_admin_pass }}"
+      db_pass: "{{ paperless_db_pass }}"
+      socialaccount_providers: "{{ paperless_socialaccount_providers | to_json }}"
+  loop: "{{ secrets | dict2items }}"
+  ansible.builtin.copy:
+    content: "{{ item.value }}"
+    dest: "{{ paperless_deploy_path }}/secrets/{{ item.key }}"
+    mode: "0600"
+
+- name: Deploy containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ paperless_deploy_path }}"
+    pull: always
+    remove_orphans: true
+
+- name: Template backup and restore scripts
+  ansible.builtin.template:
+    src: "{{ script }}"
+    dest: "{{ paperless_deploy_path }}/{{ script }}"
+    mode: "0750"
+  loop:
+    - backup.sh
+    - restore.sh
+  loop_control:
+    loop_var: script
+
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@paperless.timer
+    state: started
+    enabled: true

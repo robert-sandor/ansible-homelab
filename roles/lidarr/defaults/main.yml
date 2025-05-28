@@ -1,0 +1,13 @@
+---
+### Lidarr - Music collection manager
+lidarr_deploy_path: "{{ deploy_path }}/lidarr"
+lidarr_version: latest # https://fleet.linuxserver.io/image?name=linuxserver/lidarr
+
+# Path on the host to mount to the container
+lidarr_media_path: /media
+
+# Root folder for music, relative to the media path
+lidarr_root_folder: music
+
+# Try to auto configure transmission if deployed by this playbook
+lidarr_configure_transmission: true

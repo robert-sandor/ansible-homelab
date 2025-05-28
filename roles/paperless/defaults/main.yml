@@ -1,31 +1,11 @@
 ---
-paperless_version: "2.13" # https://github.com/paperless-ngx/paperless-ngx/releases
-paperless_gotenberg_version: "8" # https://hub.docker.com/r/gotenberg/gotenberg/tags
-paperless_tika_version: latest
-paperless_valkey_version: "8"
-paperless_pg_version: "16"
-
+### Paperless-ngx
+# Admin user account and password
 paperless_admin_user: admin
 paperless_admin_pass: changeme
 
+# OCR languages to use - see https://docs.paperless-ngx.com/configuration/#PAPERLESS_OCR_LANGUAGE
 paperless_ocr_language: eng+ron
+
+# Additional OCR languages to enable - see https://docs.paperless-ngx.com/configuration/#PAPERLESS_OCR_LANGUAGES
 paperless_additional_ocr_languages: ron
-
-paperless_db_name: paperless
-paperless_db_user: paperless
-paperless_db_pass: "{{ ('paperless-db@' + deployment_secret) | hash('sha256') }}"
-
-paperless_secret_key: tktk
-
-paperless_socialaccount_providers:
-  openid_connect:
-    SCOPE: [openid, profile, email]
-    OAUTH_PKCE_ENABLED: true,
-    APPS:
-      - provider_id: authelia
-        name: Authelia
-        client_id: paperless
-        secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
-        settings:
-          server_url: https://auth.{{ core_hostname }}
-          token_auth_method: client_secret_basic

@@ -3,18 +3,23 @@
 #
 ### Don't change settings below this line unless you know what you are doing
 # Version of manyfold to deploy - use version from https://github.com/manyfold3d/manyfold/releases, without the leading "v"
-manyfold_version: 0.95.1 # https://github.com/manyfold3d/manyfold/releases
+manyfold_version: 0.111.1 # https://github.com/manyfold3d/manyfold/releases
+manyfold_image: "ghcr.io/manyfold3d/manyfold:{{ manyfold_version }}"
 
 # Postgres version
-manyfold_pg_version: 17
+manyfold_pg_version: "17.5"
+manyfold_pg_image: "docker.io/library/postgres:{{ manyfold_pg_version }}"
 
 # Valkey version
-manyfold_vk_version: 8
+manyfold_valkey_version: "8.1.1"
+manyfold_valkey_image: "docker.io/valkey/valkey:{{ manyfold_valkey_version }}"
 
 # Where to deploy manyfold
 manyfold_deploy_path: "{{ deploy_path }}/manyfold"
 
 # DB password for manyfold user
+manyfold_db_name: manyfold
+manyfold_db_user: manyfold
 manyfold_db_pass: "{{ ('manyfold-db@' + deployment_secret) | hash('sha256') }}"
 
 # Secret key base setting

@@ -1,0 +1,4 @@
+---
+netdata_deploy_path: "{{ deploy_path }}/netdata"
+
+netdata_version: v2.5.1

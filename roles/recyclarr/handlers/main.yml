@@ -1,0 +1,6 @@
+---
+- name: Recyclarr sync
+  changed_when: true
+  ansible.builtin.command:
+    chdir: "{{ recyclarr_deploy_path }}"
+    cmd: docker compose exec recyclarr recyclarr sync

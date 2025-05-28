@@ -1,11 +1,4 @@
 ---
-- name: Disable backup timer
-  ansible.builtin.systemd_service:
-    scope: user
-    service: backup@ittools.timer
-    state: stopped
-    enabled: false
-
 - name: Teardown services
   community.docker.docker_compose_v2:
     project_src: "{{ ittools_deploy_path }}"

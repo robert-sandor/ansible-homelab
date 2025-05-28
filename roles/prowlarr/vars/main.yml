@@ -1,0 +1,14 @@
+---
+prowlarr_image: "ghcr.io/linuxserver/prowlarr:{{ prowlarr_version }}"
+
+prowlarr_deploy_path: "{{ deploy_path }}/prowlarr"
+prowlarr_config_path: "{{ prowlarr_deploy_path }}/config"
+
+prowlarr_url: "https://prowlarr.{{ hostname }}"
+prowlarr_api: "{{ prowlarr_url }}/api/v1"
+
+prowlarr_wanted_config:
+  authenticationMethod: external
+
+# transmission settings
+prowlarr_transmission_configured: "{{ prowlarr_current_download_clients.json | json_query('[?implementation == `Transmission`]') | length > 0 }}"

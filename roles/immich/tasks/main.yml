@@ -1,15 +1,84 @@
 ---
-- name: Deploy immich
-  block:
-    - name: Set deploy path fact
-      ansible.builtin.set_fact:
-        immich_deploy_path: "{{ deploy_path }}/immich"
+- name: Create deploy directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ immich_deploy_path }}"
+    mode: "0750"
 
-    - name: Deploy containers
-      ansible.builtin.import_tasks: ./containers.yml
+- name: Template compose files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ immich_deploy_path }}/{{ item }}"
+    mode: "0640"
+  loop:
+    - compose.yml
+    - hwaccel.transcoding.yml
+    - hwaccel.ml.yml
 
-    # - name: Setup backup script
-    #   ansible.builtin.import_tasks: ./backup_init.yml
+- name: Remove env files
+  ansible.builtin.file:
+    path: "{{ immich_deploy_path }}/{{ item }}"
+    state: absent
+  loop:
+    - .env
+    - immich.env
 
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
+- name: Write config file
+  vars:
+    immich_config:
+      machineLearning:
+        enabled: true
+        urls: ["http://ml:3003"]
+      oauth:
+        buttonText: Login with Authelia
+        clientId: immich
+        clientSecret: "{{ ('immich@' + deployment_secret) | hash('sha256') }}"
+        enabled: true
+        issuerUrl: https://auth.{{ core_hostname }}/.well-known/openid-configuration
+        scope: openid profile email
+      passwordLogin:
+        enabled: true
+      library:
+        watch:
+          enabled: true
+        scan:
+          enabled: true
+          cronExpression: 0 */6 * * *
+      server:
+        externalDomain: https://immich.{{ hostname }}
+  ansible.builtin.copy:
+    content: "{{ immich_config | to_nice_yaml }}"
+    dest: "{{ immich_deploy_path }}/config.yml"
+    mode: "0600"
+  notify: Restart server
+
+- name: Create secrets directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ immich_deploy_path }}/secrets"
+    mode: "0700"
+
+- name: Set db password secret
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ immich_db_password }}"
+    dest: "{{ immich_deploy_path }}/secrets/pg_pass"
+    mode: "0600"
+
+- name: Deploy containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ immich_deploy_path }}"
+    pull: always
+    remove_orphans: true
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: pgdump
+    app_name: immich
+    stop_services: server ml
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

@@ -1,7 +1,9 @@
 ---
 gatus_deploy_path: "{{ deploy_path }}/gatus"
-gatus_version: v5.15.0 # https://github.com/TwiN/gatus/releases
-gatus_postgres_version: "16"
+
+gatus_version: v5.17.0
+gatus_pg_version: "17.5"
+
 gatus_db_pass: "{{ ('gatus-db@' + deployment_secret) | hash('sha256') }}"
 gatus_db_name: gatus
 gatus_db_user: gatus

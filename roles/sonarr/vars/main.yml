@@ -1,0 +1,35 @@
+---
+sonarr_deploy_path: "{{ deploy_path }}/sonarr"
+sonarr_backup_path: "{{ backup_path }}/sonarr"
+sonarr_config_path: "{{ sonarr_deploy_path }}/config"
+
+sonarr_version: "4.0.14"
+sonarr_image: "ghcr.io/linuxserver/sonarr:{{ sonarr_version }}"
+
+sonarr_media_mount: /media
+
+sonarr_api: https://sonarr.{{ hostname }}/api/v3
+
+# for setting the root folder setting
+sonarr_root_path: "{{ sonarr_media_mount }}/{{ sonarr_root_folder }}"
+sonarr_root_folder_query: "[?path == '{{ sonarr_root_path }}']"
+sonarr_root_folder_set: "{{ sonarr_get_root_folder_response.json | json_query(sonarr_root_folder_query) | length > 0 }}"
+
+sonarr_wanted_config:
+  analyticsEnabled: false
+  authenticationMethod: external
+
+# transmission settings
+sonarr_transmission_ansible_host: "{{ groups['transmission'][0] }}"
+sonarr_transmission_configured: "{{ sonarr_current_download_clients.json | json_query('[?implementation == `Transmission`]') | length > 0 }}"
+sonarr_transmission_fields:
+  host: "transmission.{{ sonarr_transmission_ansible_host }}.{{ domain }}"
+  port: 443
+  useSsl: true
+  urlBase: /transmission/
+  username: "{{ hostvars[sonarr_transmission_ansible_host]['transmission_user'] | default('') }}"
+  password: "{{ hostvars[sonarr_transmission_ansible_host]['transmission_pass'] | default('') }}"
+  tvCategory: series
+  recentTvPriority: 0
+  olderTvPriority: 0
+  addPaused: false

@@ -1,0 +1,5 @@
+---
+- name: Run restore script
+  ansible.builtin.command:
+    cmd: "{{ plex_backup_path }}/restore.sh"
+  changed_when: true

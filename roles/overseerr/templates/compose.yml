@@ -1,0 +1,36 @@
+---
+services:
+  overseerr:
+    container_name: overseerr
+    image: "{{ overseerr_image }}"
+    hostname: overseerr-{{ ansible_host }}
+    restart: always
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+    networks:
+      - traefik
+    volumes:
+      - ./config:/config
+    labels:
+      # Traefik
+      traefik.enable: true
+      traefik.http.services.overseerr.loadbalancer.server.port: 5055
+      traefik.http.routers.overseerr.rule: Host(`overseerr.{{ hostname }}`)
+      traefik.http.routers.overseerr.entrypoints: https
+      traefik.http.routers.overseerr.service: overseerr
+      # Homepage
+      homepage.name: overseerr
+      homepage.group: media
+      homepage.href: https://overseerr.{{ hostname }}
+      homepage.description: request media
+      homepage.icon: overseerr
+      homepage.siteMonitor: https://overseerr.{{ hostname }}
+      # What's up docker
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+
+networks:
+  traefik:
+    external: true

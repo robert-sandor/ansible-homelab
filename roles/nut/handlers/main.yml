@@ -1,0 +1,13 @@
+---
+- name: Restart NUT monitor
+  become: true
+  ansible.builtin.service:
+    name: nut-monitor
+    state: restarted
+
+- name: Restart NUT server
+  when: nut_server
+  become: true
+  ansible.builtin.service:
+    name: nut-server
+    state: restarted

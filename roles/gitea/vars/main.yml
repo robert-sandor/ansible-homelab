@@ -1,10 +1,14 @@
 ---
 gitea_deploy_path: "{{ deploy_path }}/gitea"
 
-gitea_version: "1.23.1" # https://github.com/go-gitea/gitea/releases
-gitea_pg_version: "17.2"
+gitea_version: "1.23.8" # https://github.com/go-gitea/gitea/releases
+gitea_pg_version: "17.5"
 
-gitea_runner_version: 0.2.11 # https://gitea.com/gitea/act_runner/releases
+gitea_runner_version: "0.2.11" # https://gitea.com/gitea/act_runner/releases
 
-gitea_pg_database: gitea
-gitea_pg_user: gitea
+gitea_db_name: gitea
+gitea_db_user: gitea
+gitea_db_pass: "{{ (('gitea-db@' + deployment_secret) | hash('sha256'))[:64] }}"
+
+gitea_jwt_secret: "{{ (('gitea-jwt@' + deployment_secret) | hash('sha256'))[:64] }}"
+gitea_secret_key: "{{ (('gitea-secret@' + deployment_secret) | hash('sha256'))[:64] }}"

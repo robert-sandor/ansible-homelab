@@ -1,10 +1,7 @@
 ---
-immich_version: v1.123.0 # https://github.com/immich-app/immich/releases
-
+### Immich - photo backup and storage
 immich_data_path: ./library
 
 # TODO: see if transcoding hw acceleration can be auto discovered
 immich_hwaccel_transcoding: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
 immich_hwaccel_ml: cpu # set to one of [armnn, cuda, openvino, openvino-wsl] for accelerated inference - use the `-wsl` version for WSL2 where applicable
-
-immich_db_password: "{{ (('immich-db@' + deployment_secret) | hash('sha256'))[:64] }}"

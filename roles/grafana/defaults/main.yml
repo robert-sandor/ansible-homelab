@@ -1,7 +1,7 @@
 ---
-grafana_version: 11.4.0 # https://github.com/grafana/grafana/releases
+grafana_version: "11.6.0" # https://github.com/grafana/grafana/releases
 
-grafana_pg_version: "16"
+grafana_pg_version: "17.4"
 grafana_pg_pass: "{{ ('grafana@' + deployment_secret) | hash('sha256') }}"
 
 grafana_loki_hosts: "{{ groups['loki'] | default([]) }}"

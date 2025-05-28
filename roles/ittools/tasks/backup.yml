@@ -1,5 +1,0 @@
----
-- name: Run backup script
-  ansible.builtin.command:
-    cmd: "{{ ittools_deploy_path }}/backup.sh backup"
-  changed_when: true

@@ -1,0 +1,21 @@
+---
+- name: Ensure mount point exists for {{ mount_name }}
+  become: true
+  when: (mount.state is not defined or mount.state != 'absent') and not mount.path is directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ mount.path }}"
+    owner: "{{ ansible_facts.user_id }}"
+    group: "{{ ansible_facts.user_id }}"
+    mode: "0750"
+
+- name: Mount filesystem
+  become: true
+  ansible.posix.mount:
+    boot: true
+    fstype: "{{ mount.fstype }}"
+    opts: "{{ mount.opts | join(',') }}"
+    path: "{{ mount.path }}"
+    src: "{{ mount.src }}"
+    state: "{{ mount.state | default('mounted') }}"
+  notify: Systemd reload daemon - system

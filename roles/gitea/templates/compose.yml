@@ -1,0 +1,116 @@
+---
+services:
+  server:
+    container_name: gitea
+    image: gitea/gitea:{{ gitea_version }}-rootless
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    depends_on: [ db ]
+    secrets: [ pg_pass, jwt_secret, secret_key ]
+    environment:
+      # Database settings
+      GITEA__database__DB_TYPE: postgres
+      GITEA__database__HOST: db
+      GITEA__database__NAME: "{{ gitea_db_name }}"
+      GITEA__database__USER: "{{ gitea_db_user }}"
+      GITEA__database__PASSWD__FILE: /run/secrets/pg_pass
+      # Server settings
+      GITEA__server__ROOT_URL: https://gitea.{{ hostname }}/
+      GITEA__server__DOMAIN: gitea.{{ hostname }}
+      GITEA__server__HTTP_PORT: 3000
+      GITEA__server__SSH_DOMAIN: gitea.{{ hostname }}
+      GITEA__server__SSH_PORT: 2222
+      GITEA__server__OFFLINE_MODE: true
+      GITEA__server__LFS_START_SERVER: true
+      GITEA__server__LFS_JWT_SECRET__FILE: /run/secrets/jwt_secret
+      # General UI settings
+      GITEA__ui__DEFAULT_THEME: gitea-auto
+      # Security settings
+      GITEA__security__INSTALL_LOCK: true
+      GITEA__security__SECRET_KEY__FILE: /run/secrets/secret_key
+      GITEA__security__REVERSE_PROXY_LIMIT: 1
+      GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES: 172.0.0.0/8
+      # OIDC
+      GITEA__openid__ENABLE_OPENID_SIGNIN: false
+      GITEA__openid__ENABLE_OPENID_SIGNUP: false
+      GITEA__openid__WHITELISTED_URIS: "{{ core_hostname }}"
+      GITEA__service__DISABLE_REGISTRATION: false
+      GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+      GITEA__service__SHOW_REGISTRATION_BUTTON: false
+    networks: [ default, traefik ]
+    ports:
+      - 2222:2222 # Required for SSH
+    volumes:
+      - ./data:/var/lib/gitea
+      - ./config:/etc/gitea
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.gitea.loadbalancer.server.port: 3000
+      traefik.http.routers.gitea.rule: Host(`gitea.{{ hostname }}`)
+      traefik.http.routers.gitea.entrypoints: https
+      traefik.http.routers.gitea.service: gitea
+      homepage.name: gitea
+      homepage.group: apps
+      homepage.description: git server
+      homepage.href: https://gitea.{{ hostname }}
+      homepage.icon: gitea
+      homepage.siteMonitor: https://gitea.{{ hostname }}
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+-rootless$$
+      wud.link.template: https://github.com/go-gitea/gitea/releases
+
+  db:
+    container_name: gitea-db
+    image: postgres:{{ gitea_pg_version }}
+    restart: always
+    secrets: [ pg_pass ]
+    environment:
+      POSTGRES_DB: "{{ gitea_db_name }}"
+      POSTGRES_USER: "{{ gitea_db_user }}"
+      POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
+      PGDATABASE: "{{ gitea_db_name }}"
+      PGUSER: "{{ gitea_db_user }}"
+      PGPASSFILE: /run/secrets/pg_pass
+    volumes:
+      - db:/var/lib/postgresql/data
+    labels:
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+$$
+      wud.link.template: https://www.postgresql.org/docs/release
+
+  runner:
+    container_name: gitea-runner
+    image: gitea/act_runner:{{ gitea_runner_version }}
+    restart: always
+    secrets: [ runner_token ]
+    depends_on: [ server ]
+    volumes:
+      - runner:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      GITEA_INSTANCE_URL: https://gitea.{{ hostname }}
+      GITEA_RUNNER_REGISTRATION_TOKEN_FILE: /run/secrets/runner_token
+    labels:
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://gitea.com/gitea/act_runner/releases
+
+secrets:
+  pg_pass:
+    file: ./secrets/pg_pass
+  jwt_secret:
+    file: ./secrets/jwt_secret
+  secret_key:
+    file: ./secrets/secret_key
+  runner_token:
+    file: ./secrets/runner_token
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  db:
+  runner:

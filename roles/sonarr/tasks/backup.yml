@@ -1,0 +1,5 @@
+---
+- name: Run backup script
+  ansible.builtin.command:
+    cmd: "{{ sonarr_deploy_path }}/backup.sh"
+  changed_when: true

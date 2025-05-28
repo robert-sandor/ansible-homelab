@@ -1,0 +1,25 @@
+---
+services:
+  cpu: {}
+
+  qsv:
+    group_add:
+      - "{{ ansible_facts.getent_group[jellyfin_transcode_qsv_render_group][1] }}"
+    devices:
+      - "{{ jellyfin_transcode_qsv_device }}:{{ jellyfin_transcode_qsv_device }}"
+
+  vaapi:
+    group_add:
+      - "{{ ansible_facts.getent_group[jellyfin_transcode_vaapi_render_group][1] }}"
+    devices:
+      - "{{ jellyfin_transcode_vaapi_device }}:{{ jellyfin_transcode_vaapi_device }}"
+
+  nvidia:
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

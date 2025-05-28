@@ -1,0 +1,10 @@
+---
+### Radarr
+# Path on the host to mount to the container
+radarr_media_path: /media
+
+# Root folder for movies, relative to the media path
+radarr_root_folder: movies
+
+# Try to auto configure transmission if deployed by this playbook
+radarr_configure_transmission: true

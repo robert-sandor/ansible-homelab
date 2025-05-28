@@ -1,0 +1,99 @@
+---
+services:
+  server:
+    image: ghcr.io/paperless-ngx/paperless-ngx:{{ paperless_version }}
+    container_name: paperless
+    restart: always
+    depends_on:
+      - db
+      - cache
+      - gotenberg
+      - tika
+    secrets:
+      - secret_key
+      - db_pass
+      - admin_pass
+      - socialaccount_providers
+    env_file: .paperless.env
+    networks:
+      - default
+      - traefik
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export # TODO: review this and below
+      - ./consume:/usr/src/paperless/consume
+    labels:
+      traefik.enable: true
+      traefik.http.services.paperless.loadbalancer.server.port: 8000
+      traefik.http.routers.paperless.rule: Host(`paperless.{{ hostname }}`)
+      traefik.http.routers.paperless.entrypoints: https
+      traefik.http.routers.paperless.service: paperless
+      homepage.name: paperless
+      homepage.group: apps
+      homepage.description: ocr for documents
+      homepage.href: https://paperless.{{ hostname }}
+      homepage.icon: paperless
+      homepage.siteMonitor: https://paperless.{{ hostname }}
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/paperless-ngx/paperless-ngx/releases/
+
+  gotenberg:
+    image: gotenberg/gotenberg:{{ paperless_gotenberg_version }}
+    container_name: paperless-gotenberg
+    restart: always
+    command: gotenberg --chromium-disable-javascript=true --chromium-allow-list=file:///tmp/.*
+
+  tika:
+    image: ghcr.io/paperless-ngx/tika:{{ paperless_tika_version }}
+    container_name: paperless-tika
+    restart: always
+
+  cache:
+    image: valkey/valkey:{{ paperless_valkey_version }}
+    container_name: paperless-cache
+    restart: always
+    volumes:
+      - cache:/data
+
+  db:
+    image: postgres:{{ paperless_pg_version }}
+    container_name: paperless-db
+    restart: always
+    secrets:
+      - db_pass
+    environment:
+      POSTGRES_DB: "{{ paperless_db_name }}"
+      POSTGRES_USER: "{{ paperless_db_user }}"
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
+      PGDATABASE: "{{ paperless_db_name }}"
+      PGUSER: "{{ paperless_db_user }}"
+      PGPASSFILE: /run/secrets/db_pass
+    volumes:
+      - db:/var/lib/postgresql/data
+    labels:
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+$$
+      wud.link.template: https://www.postgresql.org/docs/release/
+
+volumes:
+  data:
+  media:
+  cache:
+  db:
+
+
+networks:
+  traefik:
+    external: true
+
+secrets:
+  secret_key:
+    file: ./secrets/secret_key
+  admin_pass:
+    file: ./secrets/admin_pass
+  db_pass:
+    file: ./secrets/db_pass
+  socialaccount_providers:
+    file: ./secrets/socialaccount_providers

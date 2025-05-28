@@ -1,0 +1,44 @@
+---
+services:
+  sonarr:
+    image: "{{ sonarr_image }}"
+    container_name: sonarr
+    restart: always
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+    networks:
+      - traefik
+    volumes:
+      - ./config:/config
+      - "{{ sonarr_media_path }}:{{ sonarr_media_mount }}"
+    labels:
+      # traefik
+      traefik.enable: true
+      # UI
+      traefik.http.services.sonarr.loadbalancer.server.port: 8989
+      traefik.http.routers.sonarr.rule: Host(`sonarr.{{ hostname }}`)
+      traefik.http.routers.sonarr.entrypoints: https
+      traefik.http.routers.sonarr.service: sonarr
+      traefik.http.routers.sonarr.middlewares: authelia@docker
+      # API
+      traefik.http.services.sonarr-api.loadbalancer.server.port: 8989
+      traefik.http.routers.sonarr-api.rule: Host(`sonarr.{{ hostname }}`) && PathPrefix(`/api`)
+      traefik.http.routers.sonarr-api.entrypoints: https
+      traefik.http.routers.sonarr-api.service: sonarr-api
+      # homepage
+      homepage.name: sonarr
+      homepage.group: media
+      homepage.href: https://sonarr.{{ hostname }}
+      homepage.description: manage tv series
+      homepage.icon: sonarr
+      homepage.siteMonitor: https://sonarr.{{ hostname }}
+      # What's up docker
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/linuxserver/docker-sonarr/releases
+
+networks:
+  traefik:
+    external: true

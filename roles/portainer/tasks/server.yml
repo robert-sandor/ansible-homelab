@@ -71,9 +71,9 @@
       register: portainer_endpoints
 
     - name: Add local environment
-      when: portainer_endpoints.json | json_query(query) | length == 0
+      when: portainer_endpoints.json | json_query(jq) | length == 0
       vars:
-        query: "[?contains(URL, 'unix:///var/run/docker.sock')]"
+        jq: "[?contains(URL, 'unix:///var/run/docker.sock')]"
       ansible.builtin.uri:
         method: POST
         url: "{{ portainer_api }}/endpoints"
@@ -89,8 +89,8 @@
     - name: Update agents
       vars:
         portainer_agents: "{{ groups['portainer'] | difference([ansible_hostname]) | product(['.' + domain]) | map('join') | list + portainer_extra_agents }}"
-        query: "[?Type == to_number('2')].{Id: Id, Name: Name, Type: Type, URL: URL}"
-        agents: "{{ portainer_endpoints.json | json_query(query) }}"
+        jq: "[?Type == to_number('2')].{Id: Id, Name: Name, Type: Type, URL: URL}"
+        agents: "{{ portainer_endpoints.json | json_query(jq) }}"
         agent_urls: "{{ ['tcp://'] | product(portainer_agents) | map('join') | list | product([':9001']) | map('join') | list }}"
       block:
         - name: Remove agent
@@ -107,9 +107,9 @@
             loop_var: agent
 
         - name: Add agent
-          when: portainer_endpoints.json | json_query(query) | length == 0
+          when: portainer_endpoints.json | json_query(jq) | length == 0
           vars:
-            query: "[?contains(URL, '{{ agent }}')]"
+            jq: "[?contains(URL, '{{ agent }}')]"
           ansible.builtin.uri:
             method: POST
             url: "{{ portainer_api }}/endpoints"

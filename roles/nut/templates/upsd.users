@@ -1,0 +1,9 @@
+[{{ nut_admin_user }}]
+  password = {{ nut_admin_pass }}
+  actions = set
+  actions = fsd
+  instcmds = all
+
+[{{ nut_mon_user }}]
+  password = {{ nut_mon_pass }}
+  upsmon secondary

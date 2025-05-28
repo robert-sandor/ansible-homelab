@@ -1,0 +1,100 @@
+---
+services:
+  server:
+    container_name: immich
+    image: ghcr.io/immich-app/immich-server:{{ immich_version }}
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    extends:
+      file: hwaccel.transcoding.yml
+      service: "{{ immich_hwaccel_transcoding }}"
+    secrets: [ pg_pass ]
+    environment:
+      TZ: "{{ timezone }}"
+      DB_HOSTNAME: db
+      DB_DATABASE_NAME: "{{ immich_db_name }}"
+      DB_USERNAME: "{{ immich_db_user }}"
+      DB_PASSWORD_FILE: /run/secrets/pg_pass
+      REDIS_HOSTNAME: cache
+      IMMICH_CONFIG_FILE: /config.yml
+    volumes:
+      - ./config.yml:/config.yml:ro
+      - "{{ immich_data_path }}:/usr/src/app/upload"
+      - /etc/localtime:/etc/localtime:ro
+    networks: [ default, traefik ]
+    depends_on: [ db, cache ]
+    labels:
+      traefik.enable: true
+      traefik.http.services.immich.loadbalancer.server.port: 2283
+      traefik.http.routers.immich.rule: Host(`immich.{{ hostname }}`)
+      traefik.http.routers.immich.entrypoints: https
+      traefik.http.routers.immich.service: immich
+      homepage.name: immich
+      homepage.group: apps
+      homepage.description: pictures
+      homepage.href: https://immich.{{ hostname }}
+      homepage.icon: immich
+      homepage.siteMonitor: https://immich.{{ hostname }}
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/immich-app/immich/releases
+
+  ml:
+    container_name: immich-ml
+    image: ghcr.io/immich-app/immich-machine-learning:{{ immich_version }}{{ immich_ml_tag }}
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    environment:
+      DB_HOSTNAME: db
+      DB_DATABASE_NAME: "{{ immich_db_name }}"
+      DB_USERNAME: "{{ immich_db_user }}"
+      DB_PASSWORD_FILE: /run/secrets/pg_pass
+    extends:
+      file: hwaccel.ml.yml
+      service: "{{ immich_hwaccel_ml }}"
+    secrets: [ pg_pass ]
+    volumes:
+      - ./config.yml:/config.yml:ro
+      - model-cache:/cache
+      - ml-config:/.config
+      - ml-cache:/.cache
+
+  # NOTE: immich team is planning to drop this - no need to update to valkey or newer version
+  cache:
+    container_name: immich-cache
+    image: "{{ immich_redis_image }}"
+    restart: always
+    volumes:
+      - cache:/data
+
+  db:
+    container_name: immich-db
+    image: "{{ immich_pgvecto_image }}"
+    secrets: [ pg_pass ]
+    environment:
+      POSTGRES_INITDB_ARGS: --data-checksums
+      POSTGRES_DB: "{{ immich_db_name }}"
+      POSTGRES_USER: "{{ immich_db_user }}"
+      POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
+      PGDATABASE: "{{ immich_db_name }}"
+      PGUSER: "{{ immich_db_user }}"
+      PGPASSFILE: /run/secrets/pg_pass
+    volumes:
+      - db:/var/lib/postgresql/data
+    restart: always
+
+secrets:
+  pg_pass:
+    file: ./secrets/pg_pass
+
+volumes:
+  model-cache:
+  db:
+  cache:
+  ml-cache:
+  ml-config:
+
+
+networks:
+  traefik:
+    external: true

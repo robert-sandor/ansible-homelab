@@ -1,0 +1,46 @@
+---
+- name: Install packages
+  become: true
+  ansible.builtin.package:
+    name:
+      - git
+      - lshw
+      - rsync
+      - unzip
+      - vim
+
+- name: Install packages - debian
+  become: true
+  ansible.builtin.package:
+    name: dnsutils
+  when: ansible_os_family == 'Debian'
+
+- name: Install packages - redhat
+  become: true
+  ansible.builtin.package:
+    name: bind-utils
+  when: ansible_os_family == 'RedHat'
+
+- name: Install VM dependencies
+  become: true
+  ansible.builtin.package:
+    name: qemu-guest-agent
+  when: ansible_facts.virtualization_role == 'guest'
+
+- name: Update system - debian
+  become: true
+  when: system_update and ansible_os_family == 'Debian'
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: full
+    autoclean: true
+    autoremove: true
+  notify: Reboot
+
+- name: Update system - redhat # noqa: package-latest
+  become: true
+  when: system_update and ansible_os_family == 'RedHat'
+  ansible.builtin.dnf:
+    update_cache: true
+    name: "*"
+    state: latest

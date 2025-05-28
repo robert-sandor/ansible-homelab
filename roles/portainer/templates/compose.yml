@@ -1,0 +1,53 @@
+---
+services:
+  agent:
+    container_name: portainer-agent
+    image: portainer/agent:{{ portainer_version }}
+    restart: always
+    profiles:
+      - agent
+    ports:
+      - 9001:9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      wud.watch: true
+      wud.watch.digest: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/portainer/portainer/releases
+
+  server:
+    container_name: portainer-server
+    image: portainer/portainer-ce:{{ portainer_version }}
+    restart: always
+    profiles:
+      - server
+    networks:
+      - traefik
+    volumes:
+      - data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      traefik.enable: true
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
+      traefik.http.routers.portainer.rule: Host(`portainer.{{ hostname }}`)
+      traefik.http.routers.portainer.entrypoints: https
+      traefik.http.routers.portainer.service: portainer
+      homepage.name: portainer
+      homepage.group: admin
+      homepage.description: manage docker and k8s
+      homepage.href: https://portainer.{{ hostname }}
+      homepage.icon: portainer
+      homepage.siteMonitor: https://portainer.{{ hostname }}
+      wud.watch: true
+      wud.watch.digest: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/portainer/portainer/releases
+
+volumes:
+  data:
+
+
+networks:
+  traefik:
+    external: true

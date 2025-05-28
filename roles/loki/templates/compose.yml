@@ -1,0 +1,53 @@
+---
+services:
+  server:
+    container_name: loki
+    image: grafana/loki:{{ loki_version }}
+    restart: always
+    command: -config.file=/etc/loki/local-config.yaml
+    profiles: [ server ]
+    networks: [ traefik ]
+    ports: [ "3100:3100" ] # TODO: remove
+    volumes:
+      - data:/loki
+      - ./loki.yml:/etc/loki/local-config.yaml:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.loki.loadbalancer.server.port: 3100
+      traefik.http.routers.loki.rule: Host(`loki.{{ hostname }}`)
+      traefik.http.routers.loki.entrypoints: https
+      traefik.http.routers.loki.service: loki
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/grafana/loki/releases
+
+  agent:
+    container_name: promtail
+    image: grafana/promtail:{{ loki_version }}
+    restart: always
+    command: -config.file=/etc/promtail/docker-config.yml
+    networks: [ traefik ]
+    volumes:
+      - ./promtail.yml:/etc/promtail/docker-config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log/journal:/var/log/journal:ro
+      - /run/log/journal:/run/log/journal:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    labels:
+      traefik.enable: true
+      traefik.http.services.promtail.loadbalancer.server.port: 9080
+      traefik.http.routers.promtail.rule: Host(`promtail.{{ hostname }}`)
+      traefik.http.routers.promtail.entrypoints: https
+      traefik.http.routers.promtail.service: promtail
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/grafana/loki/releases
+
+volumes:
+  data:
+
+
+networks:
+  traefik:
+    external: true

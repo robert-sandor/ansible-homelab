@@ -1,0 +1,8 @@
+---
+- name: Install Intel driver
+  become: true
+  ansible.builtin.package:
+    name:
+      - intel-media-va-driver-non-free
+      - intel-gpu-tools
+  notify: Reboot

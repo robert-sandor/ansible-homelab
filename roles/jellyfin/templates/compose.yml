@@ -1,0 +1,48 @@
+---
+services:
+  jellyfin:
+    image: "{{ jellyfin_image }}"
+    container_name: jellyfin
+    hostname: jellyfin-{{ ansible_host }}
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    extends:
+      file: hw_transcode_extensions.yml
+      service: "{{ jellyfin_transcode_type }}"
+    networks:
+      - traefik
+    ports:
+      # both used for auto discovery
+      - 1900:1900/udp
+      - 7359:7359/udp
+    volumes:
+      - ./config:/config
+      - cache:/cache
+      - "{{ jellyfin_media_path }}:/media"
+    labels:
+      # Traefik
+      # TODO: check the other rules and mws here https://jellyfin.org/docs/general/networking/traefik
+      traefik.enable: true
+      traefik.http.services.jellyfin.loadbalancer.server.port: 8096
+      traefik.http.routers.jellyfin.rule: Host(`jellyfin.{{ hostname }}`)
+      traefik.http.routers.jellyfin.entrypoints: https
+      traefik.http.routers.jellyfin.service: jellyfin
+      # Homepage
+      homepage.name: jellyfin
+      homepage.group: media
+      homepage.description: media server
+      homepage.href: https://jellyfin.{{ hostname }}
+      homepage.icon: jellyfin
+      homepage.siteMonitor: https://jellyfin.{{ hostname }}/health
+      # What's up docker
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/jellyfin/jellyfin/releases
+
+volumes:
+  cache:
+
+
+networks:
+  traefik:
+    external: true

@@ -1,7 +1,7 @@
 ---
 - name: Run restore script
   ansible.builtin.command:
-    cmd: bash {{ backup_path }}/mealie/backup.sh restore
+    cmd: bash {{ backup_path }}/mealie/restore.sh
   changed_when: true
 
 - name: Enable backup timer

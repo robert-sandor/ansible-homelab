@@ -1,0 +1,21 @@
+---
+jellyfin_media_path: "{{ jellyfin_deploy_path }}/media"
+
+# Configures what transcoding hardware, if any, to add to the jellyfin container
+# - cpu - no hardware transcoding is added - tested
+# - qsv - Intel QuickSync devices are added - tested
+# - vaapi - VA-API hardware decoding (AMD and older Intel) - not tested
+# - nvidia - Use nVidia devices - not tested
+#
+# NOTE: this does not configure Jellyfin to use hardware transcoding, that step is manual
+jellyfin_transcode_type: cpu
+
+# Which device to pass through to the container - default is the first intel gpu
+jellyfin_transcode_qsv_device: /dev/dri/renderD128
+# Which posix group to add to the container (should leave as render is most cases)
+jellyfin_transcode_qsv_render_group: render
+
+# Which device to pass through to the container - default is the first gpu
+jellyfin_transcode_vaapi_device: /dev/dri/renderD128
+# Which posix group to add to the container (should leave as render is most cases)
+jellyfin_transcode_vaapi_render_group: render

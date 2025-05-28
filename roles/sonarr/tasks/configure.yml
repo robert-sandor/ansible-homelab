@@ -1,0 +1,91 @@
+---
+- name: Ensure root folder exists
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ sonarr_media_path }}/{{ sonarr_root_folder }}"
+    mode: "0755"
+
+- name: Wait for config file to be created
+  ansible.builtin.wait_for:
+    path: "{{ sonarr_config_path }}/config.xml"
+
+- ansible.builtin.import_tasks: ./api_key.yml # noqa: name
+
+- name: Get root folder
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ sonarr_api }}/rootFolder"
+    headers:
+      x-api-key: "{{ sonarr_api_key }}"
+    status_code: 200
+  until: not sonarr_get_root_folder_response.failed
+  register: sonarr_get_root_folder_response
+
+- name: Set root folder
+  when: not sonarr_root_folder_set
+  ansible.builtin.uri:
+    method: POST
+    url: "{{ sonarr_api }}/rootFolder"
+    headers:
+      x-api-key: "{{ sonarr_api_key }}"
+    body_format: json
+    body:
+      path: "{{ sonarr_root_path }}"
+    status_code: 201
+  until: not sonarr_get_root_folder_response.failed
+
+- name: Get config
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ sonarr_api }}/config/host"
+    headers:
+      x-api-key: "{{ sonarr_api_key }}"
+    status_code: 200
+  register: sonarr_current_config
+
+- name: Set config
+  when: sonarr_current_config.json != updated_config
+  vars:
+    updated_config: "{{ sonarr_current_config.json | combine(sonarr_wanted_config) }}"
+  ansible.builtin.uri:
+    method: PUT
+    url: "{{ sonarr_api }}/config/host"
+    headers:
+      x-api-key: "{{ sonarr_api_key }}"
+    body_format: json
+    body: "{{ updated_config }}"
+    status_code: 202
+
+- name: Configure download client - transmission
+  when: sonarr_configure_transmission and (groups['transmission'] | length > 0)
+  block:
+    - name: Get download clients
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ sonarr_api }}/downloadclient"
+        headers:
+          x-api-key: "{{ sonarr_api_key }}"
+        status_code: 200
+      register: sonarr_current_download_clients
+
+    - name: Create download client
+      when: not sonarr_transmission_configured
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ sonarr_api }}/downloadclient"
+        headers:
+          x-api-key: "{{ sonarr_api_key }}"
+        body_format: json
+        body:
+          enable: true
+          protocol: torrent
+          priority: 1
+          removeCompletedDownloads: true
+          removeFailedDownloads: true
+          name: transmission
+          fields: "{{ sonarr_transmission_fields | dict2items(key_name='name', value_name='value') }}"
+          implementationName: Transmission
+          implementation: Transmission
+          configContract: TransmissionSettings
+          tags: []
+        status_code: 201

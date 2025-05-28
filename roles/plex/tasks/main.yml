@@ -1,0 +1,50 @@
+---
+- name: Ensure directories are created
+  ansible.builtin.file:
+    state: directory
+    path: "{{ plex_deploy_path }}/{{ dir }}"
+    mode: "0750"
+  loop:
+    - config
+    - media
+  loop_control:
+    loop_var: dir
+
+- name: Template compose files
+  ansible.builtin.template:
+    src: "{{ file }}"
+    dest: "{{ plex_deploy_path }}/{{ file }}"
+    mode: "0640"
+  loop:
+    - compose.yml
+    - hw_transcode_extensions.yml
+  loop_control:
+    loop_var: file
+
+- name: Start containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ plex_deploy_path }}"
+    state: present
+    pull: always
+    remove_orphans: true
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: plex
+    stop_services: plex
+
+- name: Enable systemd timers
+  ansible.builtin.systemd_service:
+    scope: user
+    service: "{{ timer }}"
+    state: started
+    enabled: true
+  loop:
+    - backup@plex.timer
+    - docker-compose-up@plex.timer
+  loop_control:
+    loop_var: timer

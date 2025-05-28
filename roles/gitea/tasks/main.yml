@@ -1,0 +1,83 @@
+---
+- name: Create data directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ gitea_deploy_path }}/{{ dir }}"
+    mode: "0750"
+  loop:
+    - data
+    - config
+  loop_control:
+    loop_var: dir
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ gitea_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Create secrets directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ gitea_deploy_path }}/secrets"
+    mode: "0700"
+
+- name: Set secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ gitea_deploy_path }}/secrets/{{ item.dest }}"
+    mode: "0600"
+  loop:
+    - dest: pg_pass
+      content: "{{ gitea_db_pass }}"
+    - dest: jwt_secret
+      content: "{{ gitea_jwt_secret }}"
+    - dest: secret_key
+      content: "{{ gitea_secret_key }}"
+
+- name: Ensure runner token file exists
+  ansible.builtin.file:
+    path: "{{ gitea_deploy_path }}/secrets/runner_token"
+    mode: "0600"
+
+- name: Deploy containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ gitea_deploy_path }}"
+    pull: always
+    remove_orphans: true
+
+- name: Wait for gitea to be up
+  ansible.builtin.uri:
+    method: GET
+    url: https://gitea.{{ hostname }}/api/healthz
+  register: gitea_health
+  until: gitea_health.status == 200
+  delay: 10
+  retries: 5
+
+- name: Get runner registration token
+  ansible.builtin.command:
+    chdir: "{{ gitea_deploy_path }}"
+    cmd: docker compose exec -it server gitea actions generate-runner-token
+  changed_when: false
+  register: gitea_runner_registration_token_result
+
+- name: Save registration token
+  ansible.builtin.copy:
+    content: "{{ gitea_runner_registration_token_result.stdout }}"
+    dest: "{{ gitea_deploy_path }}/secrets/runner_token"
+    mode: "0600"
+  notify: Restart runner
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: pgdump
+    app_name: gitea
+    stop_services: server runner
+
+- name: Configure gitea
+  ansible.builtin.import_tasks: ./configure.yml

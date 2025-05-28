@@ -1,0 +1,19 @@
+---
+# NOTE: workaround for containers not starting on reboot with network shares
+- name: Remove cron job to ensure plex is started after a reboot
+  ansible.builtin.cron:
+    state: absent
+    name: ensure plex is up
+    special_time: reboot
+    job: "sleep 30 && docker compose -f {{ plex_deploy_path }}/compose.yml up -d"
+
+- name: Teardown containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ plex_deploy_path }}"
+    state: absent
+    remove_volumes: true
+
+- name: Ensure directories are deleted
+  ansible.builtin.file:
+    state: absent
+    path: "{{ plex_deploy_path }}"

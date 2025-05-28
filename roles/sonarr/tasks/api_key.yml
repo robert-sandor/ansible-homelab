@@ -1,0 +1,11 @@
+---
+- name: Read API key
+  community.general.xml:
+    path: "{{ sonarr_config_path }}/config.xml"
+    xpath: /Config/ApiKey
+    content: text
+  register: sonarr_config_xpath_result
+
+- name: Export API key
+  ansible.builtin.set_fact:
+    sonarr_api_key: "{{ sonarr_config_xpath_result.matches[0].ApiKey }}"

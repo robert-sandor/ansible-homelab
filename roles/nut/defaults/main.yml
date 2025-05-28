@@ -1,0 +1,19 @@
+---
+### Network UPS Tools (NUT)
+
+# Whether this host is a NUT server - otherwise, it's a client
+nut_server: false
+
+# hostname of the server to monitor (if this is a server, leave as localhost)
+nut_server_address: localhost
+
+# Name of the UPS
+nut_ups_name: ups
+
+# Configuration of the UPS when this is a server
+nut_ups_config:
+  driver: usbhid-ups
+  port: auto
+
+nut_shutdown_event: "{{ 'lowbatt' if nut_server else 'onbatt' }}"
+nut_shutdown_delay_seconds: "{{ 5 if nut_server else 300 }}"

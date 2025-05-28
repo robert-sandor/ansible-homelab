@@ -1,0 +1,26 @@
+---
+services:
+  app:
+    image: ghcr.io/corentinth/it-tools:{{ ittools_version }}
+    container_name: ittools
+    restart: always
+    networks: [ traefik ]
+    labels:
+      traefik.enable: true
+      traefik.http.services.ittools.loadbalancer.server.port: 80
+      traefik.http.routers.ittools.rule: Host(`ittools.{{ hostname }}`)
+      traefik.http.routers.ittools.entrypoints: https
+      traefik.http.routers.ittools.service: ittools
+      homepage.name: it tools
+      homepage.group: apps
+      homepage.description: useful dev tools
+      homepage.href: https://ittools.{{ hostname }}
+      homepage.icon: it-tools
+      homepage.siteMonitor: https://ittools.{{ hostname }}
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+-.*$$
+      wud.link.template: https://github.com/CorentinTh/it-tools/releases
+
+networks:
+  traefik:
+    external: true

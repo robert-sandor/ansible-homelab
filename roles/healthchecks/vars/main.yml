@@ -1,0 +1,14 @@
+---
+healthchecks_deploy_path: "{{ deploy_path }}/healthchecks"
+
+healthchecks_version: v3.9-ls290
+healthchecks_image: ghcr.io/linuxserver/healthchecks:{{ healthchecks_version }}
+
+healthchecks_pg_version: "17.5"
+healthchecks_pg_image: docker.io/library/postgres:{{ healthchecks_pg_version }}
+
+healthchecks_db_name: healthchecks
+healthchecks_db_user: healthchecks
+healthchecks_db_pass: "{{ ('healthchecks-db@' + deployment_secret) | hash('sha256') }}"
+
+healthchecks_secret_key: "{{ ('healthchecks_secret_key@' + deployment_secret) | hash('sha256') }}"

@@ -1,0 +1,6 @@
+---
+jellyfin_deploy_path: "{{ deploy_path }}/jellyfin"
+jellyfin_backup_path: "{{ backup_path }}/jellyfin"
+
+jellyfin_version: "10.10.7"
+jellyfin_image: "docker.io/jellyfin/jellyfin:{{ jellyfin_version }}"

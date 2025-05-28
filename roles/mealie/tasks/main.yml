@@ -1,0 +1,36 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    dest: "{{ mealie_deploy_path }}/data"
+    state: directory
+    mode: "0750"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ mealie_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Start services
+  community.docker.docker_compose_v2:
+    project_src: "{{ mealie_deploy_path }}"
+    remove_orphans: true
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: mealie
+    stop_services: app
+
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@mealie.timer
+    state: started
+    enabled: true
+
+- name: Configure mealie
+  ansible.builtin.import_tasks: configure.yml

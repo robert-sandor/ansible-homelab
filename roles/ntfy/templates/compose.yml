@@ -1,0 +1,41 @@
+---
+services:
+  server:
+    image: binwiederhier/ntfy:{{ ntfy_version }}
+    restart: always
+    command: serve
+    environment:
+      NTFY_HOST: ntfy.{{ hostname }}
+      NTFY_BASE_URL: https://ntfy.{{ hostname }}
+      NTFY_BEHIND_PROXY: true
+      NTFY_CACHE_FILE: /var/lib/ntfy/cache.db
+      NTFY_CACHE_DURATION: 168h
+      NTFY_ATTACHMENT_CACHE_DIR: /var/lib/ntfy/attachments
+      NTFY_UPSTREAM_BASE_URL: https://ntfy.sh
+    networks:
+      - traefik
+    volumes:
+      - cache:/var/lib/ntfy
+    labels:
+      traefik.enable: true
+      traefik.http.services.ntfy.loadbalancer.server.port: 80
+      traefik.http.routers.ntfy.rule: Host(`ntfy.{{ hostname }}`)
+      traefik.http.routers.ntfy.entrypoints: https
+      traefik.http.routers.ntfy.service: ntfy
+      homepage.name: ntfy
+      homepage.group: admin
+      homepage.description: notifications
+      homepage.href: https://ntfy.{{ hostname }}
+      homepage.icon: ntfy
+      homepage.siteMonitor: https://ntfy.{{ hostname }}
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/binwiederhier/ntfy/releases
+
+volumes:
+  cache:
+
+
+networks:
+  traefik:
+    external: true

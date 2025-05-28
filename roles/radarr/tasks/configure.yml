@@ -1,0 +1,91 @@
+---
+- name: Ensure root folder exists
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ radarr_media_path }}/{{ radarr_root_folder }}"
+    mode: "0755"
+
+- name: Wait for config file to be created
+  ansible.builtin.wait_for:
+    path: "{{ radarr_config_path }}/config.xml"
+
+- ansible.builtin.import_tasks: ./api_key.yml # noqa: name
+
+- name: Get root folder
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ radarr_api }}/rootFolder"
+    headers:
+      x-api-key: "{{ radarr_api_key }}"
+    status_code: 200
+  until: not radarr_get_root_folder_response.failed
+  register: radarr_get_root_folder_response
+
+- name: Set root folder
+  when: not radarr_root_folder_set
+  ansible.builtin.uri:
+    method: POST
+    url: "{{ radarr_api }}/rootFolder"
+    headers:
+      x-api-key: "{{ radarr_api_key }}"
+    body_format: json
+    body:
+      path: "{{ radarr_root_path }}"
+    status_code: 201
+  until: not radarr_get_root_folder_response.failed
+
+- name: Get config
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ radarr_api }}/config/host"
+    headers:
+      x-api-key: "{{ radarr_api_key }}"
+    status_code: 200
+  register: radarr_current_config
+
+- name: Set config
+  when: radarr_current_config.json != updated_config
+  vars:
+    updated_config: "{{ radarr_current_config.json | combine(radarr_wanted_config) }}"
+  ansible.builtin.uri:
+    method: PUT
+    url: "{{ radarr_api }}/config/host"
+    headers:
+      x-api-key: "{{ radarr_api_key }}"
+    body_format: json
+    body: "{{ updated_config }}"
+    status_code: 202
+
+- name: Configure download client - transmission
+  when: radarr_configure_transmission and (groups['transmission'] | length > 0)
+  block:
+    - name: Get download clients
+      ansible.builtin.uri:
+        method: GET
+        url: "{{ radarr_api }}/downloadclient"
+        headers:
+          x-api-key: "{{ radarr_api_key }}"
+        status_code: 200
+      register: radarr_current_download_clients
+
+    - name: Create download client
+      when: not radarr_transmission_configured
+      ansible.builtin.uri:
+        method: POST
+        url: "{{ radarr_api }}/downloadclient"
+        headers:
+          x-api-key: "{{ radarr_api_key }}"
+        body_format: json
+        body:
+          enable: true
+          protocol: torrent
+          priority: 1
+          removeCompletedDownloads: true
+          removeFailedDownloads: true
+          name: transmission
+          fields: "{{ radarr_transmission_fields | dict2items(key_name='name', value_name='value') }}"
+          implementationName: Transmission
+          implementation: Transmission
+          configContract: TransmissionSettings
+          tags: []
+        status_code: 201

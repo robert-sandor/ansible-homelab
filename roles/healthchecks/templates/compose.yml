@@ -1,0 +1,82 @@
+---
+services:
+  healthchecks:
+    image: "{{ healthchecks_image }}"
+    container_name: healthchecks
+    restart: always
+    depends_on:
+      - db
+    secrets:
+      - su_email
+      - su_pass
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      SITE_ROOT: "https://healthchecks.{{ hostname }}"
+      SITE_NAME: Healthchecks
+      FILE__SUPERUSER_EMAIL: /run/secrets/su_email
+      FILE__SUPERUSER_PASSWORD: /run/secrets/su_pass
+      APPRISE_ENABLED: "True"
+      REGISTRATION_OPEN: "False"
+      DEBUG: "False"
+      INTEGRATIONS_ALLOW_PRIVATE_IPS: "True"
+      DB: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: "{{ healthchecks_db_name }}"
+      DB_USER: "{{ healthchecks_db_user }}"
+      DB_PASSWORD: "{{ healthchecks_db_pass }}"
+      DEFAULT_FROM_EMAIL: healthchecks@{{ domain }}
+      SECRET_KEY: "{{ healthchecks_secret_key }}"
+    networks:
+      - default
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.services.healthchecks.loadbalancer.server.port: 8000
+      traefik.http.routers.healthchecks.rule: Host(`healthchecks.{{ hostname }}`)
+      traefik.http.routers.healthchecks.entrypoints: https
+      traefik.http.routers.healthchecks.service: healthchecks
+      homepage.name: healthchecks
+      homepage.group: monitoring
+      homepage.description: cron job monitoring
+      homepage.href: https://healthchecks.{{ hostname }}
+      homepage.icon: healthchecks
+      homepage.siteMonitor: https://healthchecks.{{ hostname }}
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+-ls\d+$$
+      wud.tag.transform: ^(\d+.\d+)-.*$$ => $$1
+      wud.link.template: https://github.com/healthchecks/healthchecks/releases
+
+  db:
+    image: "{{ healthchecks_pg_image }}"
+    container_name: healthchecks-db
+    restart: always
+    environment:
+      POSTGRES_DB: "{{ healthchecks_db_name }}"
+      POSTGRES_USER: "{{ healthchecks_db_user }}"
+      POSTGRES_PASSWORD: "{{ healthchecks_db_pass }}"
+      PGDATABASE: "{{ healthchecks_db_name }}"
+      PGUSER: "{{ healthchecks_db_user }}"
+      PGPASS: "{{ healthchecks_db_pass }}"
+    volumes:
+      - db:/var/lib/postgresql/data
+    labels:
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+$$
+      wud.link.template: https://www.postgresql.org/docs/release/
+
+volumes:
+  db:
+
+
+secrets:
+  su_email:
+    environment: SUPERUSER_EMAIL
+  su_pass:
+    environment: SUPERUSER_PASS
+
+networks:
+  traefik:
+    external: true

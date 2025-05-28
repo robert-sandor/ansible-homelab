@@ -1,0 +1,44 @@
+---
+services:
+  radarr:
+    image: "{{ radarr_image }}"
+    container_name: radarr
+    restart: always
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+    networks:
+      - traefik
+    volumes:
+      - ./config:/config
+      - "{{ radarr_media_path }}:{{ radarr_media_mount }}"
+    labels:
+      # traefik
+      traefik.enable: true
+      # UI
+      traefik.http.services.radarr.loadbalancer.server.port: 7878
+      traefik.http.routers.radarr.rule: Host(`radarr.{{ hostname }}`)
+      traefik.http.routers.radarr.entrypoints: https
+      traefik.http.routers.radarr.service: radarr
+      traefik.http.routers.radarr.middlewares: authelia@docker
+      # API
+      traefik.http.services.radarr-api.loadbalancer.server.port: 7878
+      traefik.http.routers.radarr-api.rule: Host(`radarr.{{ hostname }}`) && PathPrefix(`/api`)
+      traefik.http.routers.radarr-api.entrypoints: https
+      traefik.http.routers.radarr-api.service: radarr-api
+      # homepage
+      homepage.name: radarr
+      homepage.group: media
+      homepage.href: https://radarr.{{ hostname }}
+      homepage.description: manage movies
+      homepage.icon: radarr
+      homepage.siteMonitor: https://radarr.{{ hostname }}
+      # What's up docker
+      wud.watch: true
+      wud.tag.include: ^v\\d+\\.\\d+\\.\\d+$
+      wud.link.template: https://github.com/linuxserver/docker-radarr/releases
+
+networks:
+  traefik:
+    external: true

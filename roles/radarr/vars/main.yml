@@ -1,0 +1,34 @@
+---
+radarr_deploy_path: "{{ deploy_path }}/radarr"
+radarr_backup_path: "{{ backup_path }}/radarr"
+radarr_config_path: "{{ radarr_deploy_path }}/config"
+
+radarr_version: "5.22.4" # Updated to a common Radarr version
+radarr_image: "ghcr.io/linuxserver/radarr:{{ radarr_version }}"
+
+radarr_media_mount: /media
+
+radarr_api: https://radarr.{{ hostname }}/api/v3
+
+# for setting the root folder setting
+radarr_root_path: "{{ radarr_media_mount }}/{{ radarr_root_folder }}"
+radarr_root_folder_query: "[?path == '{{ radarr_root_path }}']"
+radarr_root_folder_set: "{{ radarr_get_root_folder_response.json | json_query(radarr_root_folder_query) | length > 0 }}"
+
+radarr_wanted_config:
+  analyticsEnabled: false
+  authenticationMethod: external
+
+# transmission settings
+radarr_transmission_ansible_host: "{{ groups['transmission'][0] }}"
+radarr_transmission_configured: "{{ radarr_current_download_clients.json | json_query('[?implementation == `Transmission`]') | length > 0 }}"
+radarr_transmission_fields:
+  host: "transmission.{{ radarr_transmission_ansible_host }}.{{ domain }}"
+  port: 443
+  useSsl: true
+  urlBase: /transmission/
+  username: "{{ hostvars[radarr_transmission_ansible_host]['transmission_user'] | default('') }}"
+  password: "{{ hostvars[radarr_transmission_ansible_host]['transmission_pass'] | default('') }}"
+  movieCategory: movies
+  # recentTvPriority and olderTvPriority removed as they are Sonarr specific
+  addPaused: false

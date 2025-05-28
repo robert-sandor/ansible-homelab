@@ -1,0 +1,17 @@
+---
+plex_claim_token: changeme
+
+plex_mount: false
+plex_mount_fstype: cifs
+plex_mount_src: "//nas.{{ domain }}/media"
+plex_mount_opts:
+  - user=changeme
+  - pass=changeme
+  - uid={{ ansible_facts.user_uid }}
+  - gid={{ ansible_facts.user_gid }}
+  - dir_mode=0755
+  - file_mode=0644
+  - x-systemd.automount
+  - x-systemd.requires=network-online.target
+
+plex_transcode_type: cpu

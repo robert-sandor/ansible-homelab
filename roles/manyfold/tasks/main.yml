@@ -1,0 +1,27 @@
+---
+- name: Create directories
+  ansible.builtin.file:
+    dest: "{{ manyfold_deploy_path }}/libraries/models"
+    state: directory
+    mode: "0750"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ manyfold_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Start services
+  community.docker.docker_compose_v2:
+    project_src: "{{ manyfold_deploy_path }}"
+    pull: always
+    remove_orphans: true
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: pgdump
+    app_name: manyfold
+    stop_services: app

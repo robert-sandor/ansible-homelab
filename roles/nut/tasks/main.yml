@@ -1,0 +1,75 @@
+---
+- name: Install nut {{ 'server' if nut_server else 'client' }}
+  become: true
+  ansible.builtin.package:
+    name: "{{ 'nut' if nut_server else 'nut-client' }}"
+    state: present
+
+- name: Get connected UPS
+  become: true
+  when: nut_server
+  ansible.builtin.command: nut-scanner -UPq
+  register: connected_ups
+  changed_when: false
+
+- name: No UPS connected message
+  when: nut_server
+  ansible.builtin.assert:
+    that: connected_ups.stdout | trim | length > 0
+    fail_msg: No connected UPS found on host. Output of nut-scanner -Uq is '{{ connected_ups.stdout }}'
+
+- name: Ensure config dir exists {{ nut_config_dir }}
+  become: true
+  ansible.builtin.file:
+    path: "{{ nut_config_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Template common NUT config files
+  become: true
+  ansible.builtin.template:
+    src: "{{ template.name }}"
+    dest: "{{ nut_config_dir }}/{{ template.name }}"
+    mode: "{{ template.mode | default('0640') }}"
+  notify:
+    - Restart NUT server
+    - Restart NUT monitor
+  loop_control:
+    loop_var: template
+  loop:
+    - name: nut.conf
+    - name: upsmon.conf
+    - name: upssched.conf
+    - name: upssched-cmd.sh
+      mode: "0740"
+
+- name: Template server NUT config files
+  when: nut_server
+  become: true
+  ansible.builtin.template:
+    src: "{{ template }}"
+    dest: "{{ nut_config_dir }}/{{ template }}"
+    mode: "0640"
+  notify:
+    - Restart NUT server
+  loop_control:
+    loop_var: template
+  loop:
+    - ups.conf
+    - upsd.conf
+    - upsd.users
+
+- name: Ensure NUT server service is running and enabled
+  when: nut_server
+  become: true
+  ansible.builtin.service:
+    name: nut-server
+    state: started
+    enabled: true
+
+- name: Ensure NUT monitor service is running and enabled
+  become: true
+  ansible.builtin.service:
+    name: nut-monitor
+    state: started
+    enabled: true

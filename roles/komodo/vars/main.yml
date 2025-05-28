@@ -1,0 +1,22 @@
+---
+komodo_server: true
+
+# TODO: split above into defaults file
+komodo_deploy_path: "{{ deploy_path }}/komodo"
+
+komodo_version: latest
+komodo_core_image: "ghcr.io/moghtech/komodo-core:{{ komodo_version }}"
+komodo_periphery_image: "ghcr.io/moghtech/komodo-periphery:{{ komodo_version }}"
+
+# TODO: check for mongodb versions
+komodo_mongo_version: latest
+komodo_mongo_image: "docker.io/library/mongo:{{ komodo_mongo_version }}"
+
+komodo_db_user: komodo
+komodo_db_pass: "{{ ('komodo-db@' + deployment_secret) | hash('sha256') }}"
+
+komodo_passkey: "{{ ('komodo-passkey@' + deployment_secret) | hash('sha256') }}"
+komodo_jwt_secret: "{{ ('komodo-jwt@' + deployment_secret) | hash('sha256') }}"
+komodo_webhook_secret: "{{ ('komodo-webhook@' + deployment_secret) | hash('sha256') }}"
+
+komodo_root: "{{ komodo_deploy_path }}/root"

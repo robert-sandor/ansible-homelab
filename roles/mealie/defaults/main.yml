@@ -1,3 +1,6 @@
 ---
 # Password for the admin user
-mealie_admin_password: changeme
+mealie_admin_password: changeme # pragma: allowlist secret
+
+# Whether to allow new signups - defaults to false, since it uses OIDC with Authelia
+mealie_allow_signup: false

@@ -1,0 +1,52 @@
+---
+- name: Create directory structure
+  ansible.builtin.file:
+    state: directory
+    path: "{{ homepage_deploy_path }}/config"
+    mode: "0750"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ homepage_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Copy homepage config
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ homepage_deploy_path }}/config/{{ item.dest }}"
+    mode: "0600"
+  loop:
+    - dest: settings.yaml
+      content: "{{ homepage_default_settings | combine(homepage_settings, recursive=True) | to_nice_yaml }}"
+    - dest: docker.yaml
+      content: "{{ homepage_docker | to_nice_yaml }}"
+    - dest: services.yaml
+      content: "{{ homepage_services | to_nice_yaml if homepage_services | length > 0 else '' }}"
+    - dest: bookmarks.yaml
+      content: "{{ homepage_bookmarks | to_nice_yaml if homepage_bookmarks | length > 0 else '' }}"
+  notify: Restart homepage
+
+- name: Deploy containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ homepage_deploy_path }}"
+    pull: always
+    remove_orphans: true
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: homepage
+
+- name: Enable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@homepage.timer
+    state: started
+    enabled: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

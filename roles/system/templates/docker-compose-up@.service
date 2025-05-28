@@ -1,0 +1,6 @@
+[Unit]
+Description=Run Docker compose up for service %i
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker compose -f {{ deploy_path }}/%i/compose.yml up -d

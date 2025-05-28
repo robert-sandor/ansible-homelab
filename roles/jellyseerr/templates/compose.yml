@@ -1,0 +1,34 @@
+---
+services:
+  jellyseerr:
+    container_name: jellyseerr
+    image: "{{ jellyseerr_image }}"
+    restart: always
+    environment:
+      TZ: "{{ timezone }}"
+    networks:
+      - traefik
+    volumes:
+      - "{{ jellyseerr_config_path }}:/app/config"
+    labels:
+      # Traefik
+      traefik.enable: true
+      traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
+      traefik.http.routers.jellyseerr.rule: Host(`jellyseerr.{{ hostname }}`)
+      traefik.http.routers.jellyseerr.entrypoints: https
+      traefik.http.routers.jellyseerr.service: jellyseerr
+      # Homepage
+      homepage.name: jellyseerr
+      homepage.group: media
+      homepage.href: https://jellyseerr.{{ hostname }}
+      homepage.description: request media
+      homepage.icon: jellyseerr
+      homepage.siteMonitor: https://jellyseerr.{{ hostname }}
+      # What's up docker
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/fallenbagel/jellyseerr/releases
+
+networks:
+  traefik:
+    external: true

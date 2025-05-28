@@ -2,29 +2,50 @@
 # Toggle on to update all system packages
 system_update: false
 
-# Neovim version
-system_neovim_version: v0.10.2 # https://github.com/neovim/neovim/releases
+# SSH keys to authorize on the servers
+system_authorized_ssh_keys: []
+
 
 # Mounts
 #
 # system_group_mounts and system_host_mounts allow you to setup mounts for a group of nodes, separately from mounts that only go on one server
-# these will be combined on a per-host basis - NOTE: no deduplication is done, so avoid mounting the same path in both places
+# these will be combined on a per-host basis - NOTE: deduplication is done on the key basis, so avoid mounting the same path in both places
 #
 # See https://docs.ansible.com/ansible/latest/collections/ansible/posix/mount_module.html# for full reference
 # All mounts in this list are set with state=mounted and boot=true (mounts the filesystem, and auto-mounts on boot)
 # Examples:
 #
 # NFS:
-#   - src: 192.168.1.5:/nfs/remote/path
+#
+#   nfsshare:
+#     src: 192.168.1.5:/nfs/remote/path
 #     path: /mnt/nfsshare
 #     opts: rw,sync,hard
 #     fstype: nfs
 #
 # SMB/CIFS:
-#   - src: //192.168.1.5/smbshare
+#
+#   smbshare:
+#     src: //192.168.1.5/smbshare
 #     path: /mnt/smbshare
 #     opts: "rw,vers=3,file_mode=0600,dir_mode=0700,username=smbuser,password=verysecurepassword"
 #     fstype: cifs
-system_group_mounts: []
-system_host_mounts: []
-system_mounts: "{{ system_group_mounts + system_host_mounts }}"
+system_group_mounts: {}
+system_host_mounts: {}
+
+### Graphics - supports nvidia and intel - #TODO: add supoort for amd
+
+# Set this to 'auto' to automatically detect and install gpu drivers, or set it to a list of gpu vendors (only intel and nvidia supported so far)
+system_gpu_vendor: auto
+
+# Swappiness level
+system_swappiness: 10
+
+# Backup integration with healthchecks.io
+system_healthchecks_enabled: >
+  {{
+  healthchecks_ping_key is defined and
+  groups['healthchecks'] is defined and
+  groups['healthchecks'] | length > 0
+  }}
+system_healthchecks_base_url: "https://healthchecks.{{ groups['healthchecks'][0] }}.{{ domain }}/ping/{{ healthchecks_ping_key }}"

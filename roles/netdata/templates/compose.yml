@@ -1,6 +1,7 @@
 ---
 services:
   agent:
+    container_name: netdata
     image: netdata/netdata:{{ netdata_version }}
     restart: always
     pid: host

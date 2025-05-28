@@ -1,33 +1,26 @@
 ---
-- name: Install needed packages
+# TODO: only install if needed
+- name: Install needed packages - debian
   become: true
+  when: ansible_os_family == 'Debian'
   ansible.builtin.apt:
     name:
       - cifs-utils
       - nfs-common
 
-- name: Ensure mount point exists
+- name: Install needed packages - redhat
   become: true
-  when: (mount.state is not defined or mount.state != 'absent') and not mount.path is directory
-  ansible.builtin.file:
-    state: directory
-    path: "{{ mount.path }}"
-    owner: "{{ ansible_facts.user_id }}"
-    group: "{{ ansible_facts.user_id }}"
-    mode: "0750"
-  loop: "{{ system_mounts }}"
-  loop_control:
-    loop_var: mount
+  when: ansible_os_family == 'RedHat'
+  ansible.builtin.dnf:
+    name:
+      - cifs-utils
+      - nfs-utils
 
-- name: Mount filesystem
-  become: true
-  ansible.posix.mount:
-    boot: true
-    fstype: "{{ mount.fstype }}"
-    opts: "{{ mount.opts }}"
-    path: "{{ mount.path }}"
-    src: "{{ mount.src }}"
-    state: "{{ mount.state | default('mounted') }}"
-  loop: "{{ system_mounts }}"
+- name: Handle mounts
+  ansible.builtin.include_tasks: ./mount.yml
+  vars:
+    mount_name: "{{ mnt.key }}"
+    mount: "{{ mnt.value }}"
+  loop: "{{ system_mounts | dict2items }}"
   loop_control:
-    loop_var: mount
+    loop_var: mnt

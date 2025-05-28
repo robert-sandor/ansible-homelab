@@ -1,0 +1,38 @@
+---
+- name: Autodetect GPU
+  vars:
+    lshw_json: "{{ lshw_output.stdout | from_json }}"
+    nvidia_gpu_query: "[?vendor == 'NVIDIA Corporation']"
+    intel_gpu_query: "[?vendor == 'Intel Corporation']"
+    has_nvidia_gpu: "{{ 'nvidia' in system_gpu_vendor or (lshw_json | json_query(nvidia_gpu_query) | length > 0) }}"
+    has_intel_gpu: "{{ 'amd' in system_gpu_vendor or (lshw_json | json_query(intel_gpu_query) | length > 0) }}"
+  block:
+    - name: Validate system_gpu_vendor
+      ansible.builtin.assert:
+        that:
+          - system_gpu_vendor == 'auto' or
+            (system_gpu_vendor is iterable and
+            system_gpu_vendor | select('in', ['intel', 'nvidia']) | list | length > 0)
+        fail_msg: "system_gpu_vendor must be 'auto' or a list containing 'intel' and/or 'nvidia'."
+
+    - name: Ensure lshw is installed
+      become: true
+      ansible.builtin.package:
+        name: lshw
+        state: present
+      when: system_gpu_vendor == 'auto'
+
+    - name: List hardware on the host
+      become: true
+      ansible.builtin.command: lshw -class display -json
+      changed_when: false
+      when: system_gpu_vendor == 'auto'
+      register: lshw_output
+
+    - name: Install NVIDIA GPU driver
+      when: has_nvidia_gpu
+      ansible.builtin.include_tasks: ./graphics/nvidia_{{ ansible_facts.os_family | lower }}.yml
+
+    - name: Install Intel GPU driver
+      when: has_intel_gpu
+      ansible.builtin.include_tasks: ./graphics/intel_{{ ansible_facts.os_family | lower }}.yml

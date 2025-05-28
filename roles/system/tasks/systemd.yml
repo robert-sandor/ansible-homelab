@@ -1,5 +1,4 @@
 ---
-# Allow for systemd timers to run when user is not logged in
 - name: Enable lingering for user {{ ansible_facts.user_id }}
   become: true
   ansible.builtin.command:
@@ -9,16 +8,19 @@
 - name: Ensure systemd config dir exists
   ansible.builtin.file:
     state: directory
-    path: /home/{{ ansible_facts.user_id }}/.config/systemd/user
+    path: "{{ ansible_env.HOME }}/.config/systemd/user"
     mode: "0750"
 
-# Create templates for backup service and timer
 - name: Template generic backup service and timer
   ansible.builtin.template:
-    src: "{{ item }}"
-    dest: /home/{{ ansible_facts.user_id }}/.config/systemd/user/{{ item }}
+    src: "{{ unit }}"
+    dest: "{{ ansible_env.HOME }}/.config/systemd/user/{{ unit }}"
     mode: "0640"
   loop:
     - backup@.service
     - backup@.timer
-  notify: Systemd reload daemon
+    - docker-compose-up@.service
+    - docker-compose-up@.timer
+  loop_control:
+    loop_var: unit
+  notify: Reload systemd daemon

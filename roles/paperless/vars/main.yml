@@ -1,0 +1,28 @@
+---
+paperless_deploy_path: "{{ deploy_path }}/paperless"
+
+# When updating version - check https://github.com/paperless-ngx/paperless-ngx/blob/dev/docker/compose/docker-compose.postgres-tika.yml
+paperless_version: "2.16.1"
+paperless_gotenberg_version: "8.20"
+paperless_tika_version: latest
+paperless_valkey_version: "8"
+paperless_pg_version: "17.5"
+
+paperless_db_name: paperless
+paperless_db_user: paperless
+paperless_db_pass: "{{ ('paperless-db@' + deployment_secret) | hash('sha256') }}"
+
+paperless_secret_key: tktk
+
+paperless_socialaccount_providers:
+  openid_connect:
+    SCOPE: [openid, profile, email]
+    OAUTH_PKCE_ENABLED: true,
+    APPS:
+      - provider_id: authelia
+        name: Authelia
+        client_id: paperless
+        secret: "{{ ('paperless@' + deployment_secret) | hash('sha256') }}"
+        settings:
+          server_url: https://auth.{{ core_hostname }}
+          token_auth_method: client_secret_basic

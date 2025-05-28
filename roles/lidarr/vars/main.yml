@@ -1,0 +1,35 @@
+---
+lidarr_deploy_path: "{{ deploy_path }}/lidarr"
+lidarr_backup_path: "{{ backup_path }}/lidarr"
+lidarr_config_path: "{{ lidarr_deploy_path }}/config"
+
+lidarr_version: "2.11.2"
+lidarr_image: "ghcr.io/linuxserver/lidarr:{{ lidarr_version }}"
+
+lidarr_media_mount: /media
+
+lidarr_api: https://lidarr.{{ hostname }}/api/v1
+
+# for setting the root folder setting
+lidarr_root_path: "{{ lidarr_media_mount }}/{{ lidarr_root_folder }}"
+lidarr_root_folder_query: "[?path == '{{ lidarr_root_path }}']"
+lidarr_root_folder_set: "{{ lidarr_get_root_folder_response.json | json_query(lidarr_root_folder_query) | length > 0 }}"
+
+lidarr_wanted_config:
+  analyticsEnabled: false
+  authenticationMethod: external
+
+# transmission settings
+lidarr_transmission_ansible_host: "{{ groups['transmission'][0] }}"
+lidarr_transmission_configured: "{{ lidarr_current_download_clients.json | json_query('[?implementation == `Transmission`]') | length > 0 }}"
+lidarr_transmission_fields:
+  host: "transmission.{{ lidarr_transmission_ansible_host }}.{{ domain }}"
+  port: 443
+  useSsl: true
+  urlBase: /transmission/
+  username: "{{ hostvars[lidarr_transmission_ansible_host]['transmission_user'] | default('') }}"
+  password: "{{ hostvars[lidarr_transmission_ansible_host]['transmission_pass'] | default('') }}"
+  musicCategory: music
+  recentMusicPriority: 0
+  olderMusicPriority: 0
+  addPaused: false

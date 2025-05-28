@@ -9,8 +9,14 @@
     - net.ipv4.ip_forward
     - net.ipv6.conf.all.forwarding
 
+- name: Setup tailscale repo
+  ansible.builtin.include_tasks: install_{{ ansible_facts.distribution | lower }}.yml
+
 - name: Install tailscale
-  ansible.builtin.include_tasks: install_{{ ansible_facts.os_family }}.yml
+  become: true
+  ansible.builtin.package:
+    name: tailscale
+    state: present
 
 - name: Check tailscale status
   ansible.builtin.command: tailscale status --json
@@ -23,7 +29,7 @@
   when: status.BackendState == 'NeedsLogin'
   block:
     - name: Generate one-time auth key
-      # no_log: true
+      no_log: true
       ansible.builtin.uri:
         method: POST
         url: https://api.tailscale.com/api/v2/tailnet/{{ tailscale_tailnet }}/keys
@@ -60,8 +66,8 @@
 
 - name: Update device
   vars:
-    query: devices[?contains(hostname, '{{ ansible_facts.hostname }}')] | [0].id
-    device_id: "{{ devices_response.json | json_query(query) }}"
+    jq: devices[?contains(hostname, '{{ ansible_facts.hostname }}')] | [0].id
+    device_id: "{{ devices_response.json | json_query(jq) }}"
   block:
     - name: Get advertised and enabled routes for device {{ device_id }}
       ansible.builtin.uri:

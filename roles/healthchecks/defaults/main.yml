@@ -1,0 +1,9 @@
+---
+### Healthchecks - cron job monitoring
+# Superuser email and password - do not change after deployment
+healthchecks_su_email: admin@{{ domain }}
+healthchecks_su_pass: changeme
+
+# Project ping key - this is used by other roles' backup scripts to send status updates
+# Set this after setting up healthchecks
+healthchecks_ping_key: ""

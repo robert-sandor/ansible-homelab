@@ -1,0 +1,38 @@
+---
+- name: NVIDIA Driver Debian
+  when: ansible_facts.distribution == 'Debian'
+  block:
+    - name: Add non-free and non-free-firmware apt repositories
+      become: true
+      ansible.builtin.apt_repository:
+        state: present
+        filename: non-free
+        repo: deb http://deb.debian.org/debian {{ ansible_facts.distribution_release }} contrib non-free
+
+    - name: Setup Nvidia GPG key
+      become: true
+      ansible.builtin.shell:
+        executable: /usr/bin/bash
+        cmd: |
+          set -eo pipefail
+          install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /etc/apt/keyrings/nvidia-container-toolkit-keyring.gpg
+          chmod a+r /etc/apt/keyrings/nvidia-container-toolkit-keyring.gpg
+        creates: /etc/apt/keyrings/nvidia-container-toolkit-keyring.gpg
+
+    - name: Add nvidia-container-toolkit repository
+      become: true
+      ansible.builtin.apt_repository:
+        state: present
+        filename: nvidia-container-toolkit
+        repo: deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH) /
+
+    - name: Install nvidia-driver and container-toolkit
+      become: true
+      ansible.builtin.apt:
+        pkg:
+          - nvidia-driver
+          - nvidia-container-toolkit
+      notify:
+        - Enable nvidia container toolkit
+        - Reboot

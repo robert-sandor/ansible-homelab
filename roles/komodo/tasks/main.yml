@@ -1,0 +1,47 @@
+---
+- name: Ensure directories are created
+  ansible.builtin.file:
+    state: directory
+    path: "{{ komodo_deploy_path }}/{{ dir }}"
+    mode: "0750"
+  loop:
+    - root
+    - secrets
+  loop_control:
+    loop_var: dir
+
+- name: Template Komodo periphery config
+  ansible.builtin.template:
+    src: periphery.config.toml
+    dest: "{{ komodo_deploy_path }}/periphery.config.toml"
+    mode: "0600"
+  notify: Restart periphery
+
+- name: Template Komodo core config
+  when: komodo_server
+  ansible.builtin.template:
+    src: core.config.toml
+    dest: "{{ komodo_deploy_path }}/core.config.toml"
+    mode: "0600"
+  notify: Restart core
+
+- name: Set compose profile
+  when: komodo_server
+  ansible.builtin.copy:
+    content: |
+      COMPOSE_PROFILES=core
+      MONGO_INITDB_ROOT_PASSWORD={{ komodo_db_pass }}
+    dest: "{{ komodo_deploy_path }}/.env"
+    mode: "0640"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ komodo_deploy_path }}/compose.yml"
+    mode: "0750"
+
+- name: Start services
+  community.docker.docker_compose_v2:
+    project_src: "{{ komodo_deploy_path }}"
+    remove_orphans: true
+    pull: always

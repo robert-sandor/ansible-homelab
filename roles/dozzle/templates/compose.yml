@@ -1,0 +1,51 @@
+---
+services:
+  agent:
+    container_name: dozzle-agent
+    image: amir20/dozzle:{{ dozzle_version }}
+    restart: always
+    command: agent
+    environment:
+      DOZZLE_HOSTNAME: "{{ ansible_hostname }}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 7007:7007
+    labels:
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/amir20/dozzle/releases
+
+  server:
+    container_name: dozzle-server
+    profiles:
+      - server
+    image: amir20/dozzle:{{ dozzle_version }}
+    restart: always
+    environment:
+      DOZZLE_AUTH_PROVIDER: forward-proxy
+      DOZZLE_ENABLE_ACTIONS: true
+      DOZZLE_NO_ANALYTICS: true
+      DOZZLE_REMOTE_AGENT: "{{ dozzle_agents }}"
+    networks:
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.services.dozzle.loadbalancer.server.port: 8080
+      traefik.http.routers.dozzle.rule: Host(`dozzle.{{ hostname }}`)
+      traefik.http.routers.dozzle.entrypoints: https
+      traefik.http.routers.dozzle.service: dozzle
+      traefik.http.routers.dozzle.middlewares: authelia@docker
+      homepage.name: dozzle
+      homepage.group: admin
+      homepage.description: docker logs
+      homepage.href: https://dozzle.{{ hostname }}
+      homepage.icon: dozzle
+      homepage.siteMonitor: https://dozzle.{{ hostname }}
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/amir20/dozzle/releases
+
+networks:
+  traefik:
+    external: true

@@ -17,8 +17,7 @@
     group: root
     mode: "0644"
 
-- name: Install tailscale
+- name: Update apt cache
   become: true
   ansible.builtin.apt:
-    name: tailscale
     update_cache: true

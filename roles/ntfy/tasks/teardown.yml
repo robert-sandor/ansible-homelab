@@ -1,0 +1,11 @@
+---
+- name: Teardown services
+  community.docker.docker_compose_v2:
+    project_src: "{{ ntfy_deploy_path }}"
+    state: absent
+    remove_volumes: true
+
+- name: Remove deploy directory and all contents
+  ansible.builtin.file:
+    dest: "{{ ntfy_deploy_path }}"
+    state: absent

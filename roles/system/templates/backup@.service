@@ -4,3 +4,7 @@ Description=Backup %i
 [Service]
 Type=oneshot
 ExecStart={{ deploy_path }}/%i/backup.sh
+{% if system_healthchecks_enabled %}
+ExecStartPre=-/usr/bin/curl -sS -m 10 --retry 5 {{ system_healthchecks_base_url }}/backup-%i-{{ ansible_hostname }}/start?create=1
+ExecStopPost=/usr/bin/curl -sS -m 10 --retry 5 {{ system_healthchecks_base_url }}/backup-%i-{{ ansible_hostname }}/${EXIT_STATUS}
+{% endif %}

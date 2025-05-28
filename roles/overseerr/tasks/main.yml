@@ -1,0 +1,28 @@
+---
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    state: directory
+    path: "{{ overseerr_config_path }}"
+    mode: "0750"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ overseerr_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Start containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ overseerr_deploy_path }}"
+    pull: always
+    remove_orphans: true
+    state: present
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: overseerr
+    stop_containers: overseerr

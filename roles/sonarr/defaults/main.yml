@@ -1,0 +1,10 @@
+---
+### Sonarr
+# Path on the host to mount to the container
+sonarr_media_path: /media
+
+# Root folder for tv series, relative to the media path
+sonarr_root_folder: series
+
+# Try to auto configure transmission if deployed by this playbook
+sonarr_configure_transmission: true

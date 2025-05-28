@@ -1,3 +1,4 @@
 ---
-portainer_version: "2.26.0" # https://github.com/portainer/portainer/releases
+portainer_deploy_path: "{{ deploy_path }}/portainer"
+portainer_version: "2.30.1" # https://github.com/portainer/portainer/releases
 portainer_authelia_secret: "{{ ('portainer@' + deployment_secret) | hash('sha256') }}"
