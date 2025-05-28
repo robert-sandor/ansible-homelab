@@ -5,8 +5,8 @@
     path: "{{ wud_deploy_path }}"
     mode: "0750"
 
-- name: Copy compose file
-  ansible.builtin.copy:
+- name: Template compose file
+  ansible.builtin.template:
     src: compose.yml
     dest: "{{ wud_deploy_path }}/compose.yml"
     mode: "0640"
@@ -17,17 +17,18 @@
     dest: "{{ wud_deploy_path }}/.env"
     mode: "0640"
 
-- name: Template wud.env file
-  ansible.builtin.template:
-    src: wud.env.j2
-    dest: "{{ wud_deploy_path }}/wud.env"
-    mode: "0640"
+- name: Delete wud.env file
+  ansible.builtin.file:
+    path: "{{ wud_deploy_path }}/wud.env"
+    state: absent
 
-- name: Template backup script
-  ansible.builtin.template:
-    src: backup.sh.j2
-    dest: "{{ wud_deploy_path }}/backup.sh"
-    mode: "0750"
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: wud
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:
