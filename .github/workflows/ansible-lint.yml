@@ -13,4 +13,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
       - run: mise deps
-      - run: ansible-lint || exit 1
+      - run: mise lint
