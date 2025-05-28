@@ -1,0 +1,8 @@
+---
+docker_obsolete_packages:
+  - docker.io
+  - docker-compose
+  - docker-doc
+  - podman-docker
+  - containerd
+  - runc

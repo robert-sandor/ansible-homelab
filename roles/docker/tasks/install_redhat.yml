@@ -1,0 +1,11 @@
+---
+- name: Add docker repository
+  become: true
+  ansible.builtin.yum_repository:
+    name: docker-ce
+    description: Docker CE
+    file: docker-ce
+    baseurl: https://download.docker.com/linux/fedora/$releasever/$basearch/stable
+    enabled: true
+    gpgcheck: true
+    gpgkey: https://download.docker.com/linux/fedora/gpg

@@ -1,0 +1,30 @@
+---
+- name: Ensure /etc/apt/keyrings exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Download Docker keyring
+  become: true
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Add Docker repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [arch={{ 'amd64' if 'x86_64' in ansible_facts.architecture else 'arm64' }}
+      signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/debian
+      {{ ansible_facts.distribution_release }} stable
+    state: present
+    filename: docker
+    update_cache: true

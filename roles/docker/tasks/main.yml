@@ -1,0 +1,90 @@
+---
+- name: Load OS specific variables
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      paths: ["vars"]
+      files:
+        - "{{ ansible_facts.distribution | lower }}.yml"
+        - "{{ ansible_facts.os_family | lower }}.yml"
+        - main.yml
+
+- name: Remove obsolete packages
+  become: true
+  when: ansible_os_family == 'Debian'
+  ansible.builtin.package:
+    name: "{{ docker_obsolete_packages }}"
+    state: absent
+
+- name: Remove obsolete packages
+  become: true
+  when: ansible_os_family == 'RedHat'
+  ansible.builtin.dnf:
+    name: "{{ docker_obsolete_packages }}"
+    state: absent
+
+- ansible.builtin.include_tasks: "install_{{ ansible_facts.os_family | lower }}.yml" # noqa: name
+
+- name: Install docker
+  become: true
+  ansible.builtin.package:
+    state: present
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+- name: Install docker python dependencies
+  ansible.builtin.pip:
+    name:
+      - docker
+      - jsondiff
+
+- name: Ensure docker group is present
+  become: true
+  ansible.builtin.group:
+    name: docker
+
+- name: Add user to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ user }}"
+    groups: docker
+    append: true
+  loop: "{{ docker_users }}"
+  loop_control:
+    loop_var: user
+
+- name: Reset connection
+  ansible.builtin.meta: reset_connection
+
+- name: Ensure /etc/docker exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    mode: "0755"
+
+- name: Configure Docker daemon options
+  become: true
+  ansible.builtin.copy:
+    content: "{{ docker_daemon_options | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    mode: "0644"
+  notify: Restart docker
+
+- name: Enable docker daemon to run at boot
+  become: true
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Cleanup docker
+  community.docker.docker_prune:
+    containers: true
+    images: true
+    networks: true
+    volumes: false

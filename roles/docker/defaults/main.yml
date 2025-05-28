@@ -1,0 +1,14 @@
+---
+# Add variables the user should change (i.e. password, etc.)
+
+# Users to add to the docker group - by default, it's the user you connect with
+docker_users: ["{{ ansible_facts.user_id }}"]
+
+# Doecker daemon options - entire docker daemon JSON options support, in yaml form
+docker_daemon_options:
+  insecure-registries: []
+  registry-mirrors: []
+  log-driver: json-file
+  log-opts:
+    max-size: "100m"
+    max-file: "5"
