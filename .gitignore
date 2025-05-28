@@ -1,10 +1,6 @@
+.ansible
 .DS_Store
-tmp
 .direnv
-
-inventory/*
-!inventory/deps
-inventory/host_vars/*
-!inventory/host_vars/.gitkeep
-inventory/group_vars/*
-!inventory/group_vars/sample.all.yml
+.venv
+.env*
+inventory
