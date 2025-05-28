@@ -1,6 +1,7 @@
 ---
 services:
   mailrise:
+    container_name: core-mailrise
     image: ghcr.io/yoryan/mailrise:{{ core_mailrise_version }}
     restart: always
     networks:
@@ -8,16 +9,11 @@ services:
     volumes:
       - ./mailrise.yml:/etc/mailrise.conf:ro
     labels:
-      traefik.enable: true
-      traefik.tcp.routers.mailrise.rule: HostSNI(`*`)
-      traefik.tcp.routers.mailrise.tls: true
-      traefik.tcp.routers.mailrise.entrypoints: smtp
-      traefik.tcp.routers.mailrise.tls.certresolver: letsencrypt
-      traefik.tcp.routers.mailrise.tls.domains[0].main: "mailrise.{{ hostname }}"
-      traefik.tcp.routers.mailrise.tls.domains[0].sans: ""
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.watch.digest: true
 
   lldap:
+    container_name: lldap
     image: lldap/lldap:{{ core_lldap_version }}
     restart: always
     secrets:
@@ -51,9 +47,12 @@ services:
       homepage.href: https://lldap.{{ hostname }}
       homepage.icon: mdi-security
       homepage.siteMonitor: https://lldap.{{ hostname }}
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/lldap/lldap/releases
 
   lldap-db:
+    container_name: lldap-db
     image: postgres:{{ core_lldap_postgres_version }}
     restart: always
     secrets:
@@ -77,9 +76,12 @@ services:
       retries: 5
       start_period: 1s
     labels:
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+$$
+      wud.link.template: https://www.postgresql.org/docs/release
 
   authelia:
+    container_name: authelia
     image: ghcr.io/authelia/authelia:{{ core_authelia_version }}
     restart: always
     user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
@@ -111,25 +113,25 @@ services:
       homepage.href: https://auth.{{ hostname }}
       homepage.icon: authelia
       homepage.siteMonitor: https://auth.{{ hostname }}
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/authelia/authelia/releases
 
   authelia-cache:
+    container_name: authelia-cache
     image: valkey/valkey:{{ core_authelia_valkey_version }}
     restart: always
     networks:
       - authelia
     volumes:
       - authelia_cache:/data
-    healthcheck:
-      test: valkey-cli --raw incr ping
-      interval: 30s
-      timeout: 60s
-      retries: 5
-      start_period: 80s
     labels:
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+.\d+$$
+      wud.link.template: https://github.com/valkey-io/valkey/releases/tag/$${original}
 
   authelia-db:
+    container_name: authelia-db
     image: postgres:{{ core_authelia_postgres_version }}
     restart: always
     secrets:
@@ -146,14 +148,10 @@ services:
       - authelia
     volumes:
       - authelia-postgres:/var/lib/postgresql/data
-    healthcheck:
-      test: pg_isready -d authelia -U authelia
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 1s
     labels:
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+$$
+      wud.link.template: https://www.postgresql.org/docs/release
 
 volumes:
   lldap-postgres:

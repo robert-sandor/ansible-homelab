@@ -1,0 +1,18 @@
+---
+core_deploy_path: "{{ deploy_path }}/core"
+core_backup_path: "{{ backup_path }}/core"
+
+### lldap
+core_lldap_version: v0.6.1 # https://github.com/lldap/lldap/releases
+core_lldap_postgres_version: "17.5"
+
+core_lldap_db_name: lldap
+core_lldap_db_user: lldap
+core_lldap_db_password: "{{ ('lldap-db@' + deployment_secret) | hash('sha256') }}"
+
+core_lldap_jwt_secret: "{{ ('lldap-jwt@' + deployment_secret) | hash('sha256') }}"
+
+### authelia
+core_authelia_version: "4.39.3" # https://github.com/authelia/authelia/releases
+core_authelia_postgres_version: "17.5"
+core_authelia_valkey_version: "8.1.1"

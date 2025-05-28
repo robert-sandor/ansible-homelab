@@ -6,7 +6,7 @@ ldap_base_dn = "{{ ['dc='] | product(domain | split('.')) | map('join') | join('
 ldap_user_dn = "admin"
 ldap_user_email = "admin@{{ domain }}"
 
-database_url = "postgres://lldap:{{ core_lldap_db_password }}@lldap-db/lldap"
+database_url = "postgres://{{ core_lldap_db_user }}:{{ core_lldap_db_password }}@lldap-db/{{ core_lldap_db_name }}"
 
 key_seed = "{{ hostname | b64encode }}"
 
@@ -14,7 +14,7 @@ ignored_user_attributes = ["uniquemember"]
 ignored_group_attributes = ["ignored_group_attributes"]
 
 [smtp_options]
-enable_password_reset = true
+enable_password_reset = true                     # pragma: allowlist secret
 server = "mailrise"
 port = 8025
 smtp_encryption = "NONE"

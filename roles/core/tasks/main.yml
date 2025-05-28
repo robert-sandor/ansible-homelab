@@ -1,15 +1,123 @@
 ---
-- name: Deploy core services
-  block:
-    - name: Set facts
-      ansible.builtin.set_fact:
-        core_deploy_path: "{{ deploy_path }}/core"
+- name: Create directory structure
+  ansible.builtin.file:
+    state: directory
+    path: "{{ core_deploy_path }}/{{ item }}"
+    mode: "0750"
+  loop:
+    - lldap
+    - authelia
+    - secrets
 
-    - name: Deploy containers
-      ansible.builtin.import_tasks: ./containers.yml
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ core_deploy_path }}/compose.yml"
+    mode: "0644"
 
-    - name: Configure LLDAP
-      ansible.builtin.import_tasks: ./lldap_config.yml
+# TODO: see if this can be changed to a simple var (copy with content)
+- name: Template mailrise configuration
+  ansible.builtin.template:
+    src: mailrise.yml
+    dest: "{{ core_deploy_path }}/mailrise.yml"
+    mode: "0644"
+  notify: Restart mailrise
 
-    - name: Setup backup script
-      ansible.builtin.import_tasks: ./backup_init.yml
+- name: Template lldap configuration
+  ansible.builtin.template:
+    src: lldap_config.toml
+    dest: "{{ core_deploy_path }}/lldap/lldap_config.toml"
+    mode: "0600"
+  notify: Restart lldap
+
+- name: Get traefik network info
+  community.docker.docker_network_info:
+    name: traefik
+  register: docker_traefik_network_info
+
+- name: Template authelia configuration
+  ansible.builtin.template:
+    src: authelia_configuration.yml
+    dest: "{{ core_deploy_path }}/authelia/configuration.yml"
+    mode: "0600"
+  notify: Restart authelia
+
+- name: Set LLDAP secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ deploy_path }}/core/secrets/{{ item.dest }}"
+    mode: "0600"
+  notify: Restart lldap
+  loop:
+    - dest: lldap_user_pass
+      content: "{{ core_lldap_admin_password }}"
+    - dest: lldap_readonly_user_pass
+      content: "{{ core_lldap_readonly_password }}"
+    - dest: lldap_postgres_password
+      content: "{{ core_lldap_db_password }}"
+    - dest: lldap_jwt_secret
+      content: "{{ core_lldap_jwt_secret }}"
+
+- name: Set Authelia secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "{{ deploy_path }}/core/secrets/{{ item.dest }}"
+    mode: "0600"
+  notify: Restart authelia
+  loop:
+    - dest: authelia_identity_validation_reset_password_jwt_secret
+      content: "{{ core_authelia_identity_validation_reset_password_jwt_secret }}"
+    - dest: authelia_session_secret
+      content: "{{ core_authelia_session_secret }}"
+    - dest: authelia_storage_secret
+      content: "{{ core_authelia_storage_secret }}"
+    - dest: authelia_postgres_password
+      content: "{{ core_authelia_postgres_password }}"
+    - dest: authelia_oidc_hmac_secret
+      content: "{{ core_authelia_oidc_hmac_secret }}"
+
+- name: Authelia hash secrets
+  ansible.builtin.import_tasks: ./authelia_config.yml
+
+# TODO: see if it makes sense to move this to docker_compose_run_v2
+- name: Generate authelia OIDC HMAC secret
+  ansible.builtin.command:
+    cmd: >
+      docker run -u "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+      -v {{ deploy_path }}/core/secrets:/secrets
+      authelia/authelia:{{ core_authelia_version }}
+      authelia crypto pair rsa generate --bits 4096 --directory /secrets
+      --file.private-key authelia_oidc_issuer_private_key
+      --file.public-key authelia_oidc_issuer_public_key
+    creates: "{{ deploy_path }}/core/secrets/authelia_oidc_issuer_private_key"
+  notify: Restart authelia
+
+- name: Deploy containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ core_deploy_path }}"
+    pull: always
+    remove_orphans: true
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: pgdump
+    app_name: core
+    db_services: lldap-db authelia-db
+
+- name: Enable backup systemd timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@core.timer
+    state: started
+    enabled: true
+
+- name: Configure LLDAP
+  ansible.builtin.import_tasks: ./lldap_config.yml
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
