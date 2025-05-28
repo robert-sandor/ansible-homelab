@@ -1,0 +1,28 @@
+---
+transmission_user: ""
+transmission_pass: ""
+
+transmission_dl_mount_src: "{{ transmission_deploy_path }}/downloads"
+transmission_dl_mount_dst: "/downloads"
+
+transmission_settings:
+  alt-speed-down: 50000 # 50 Mbit/s
+  alt-speed-time-begin: 540 # 9:00 AM
+  alt-speed-time-enabled: true
+  alt-speed-time-end: 0 # 12:00 AM
+  alt-speed-up: 50000 # 50 Mbit/s
+  download-dir: "{{ transmission_dl_mount_dst }}"
+  download-queue-size: 200
+  idle-seeding-limit-enabled: true
+  idle-seeding-limit: 10080
+  incomplete-dir: "{{ transmission_dl_mount_dst }}/incomplete"
+  message-level: 3 # warn+
+  peer-limit-global: 4000
+  peer-limit-per-torrent: 20
+  rename-partial-files: true
+  seed-queue-size: 200
+  seedRatioLimit: 5
+  seedRatioLimited: true
+  start-added-torrents: true
+
+transmission_flood_enable: true

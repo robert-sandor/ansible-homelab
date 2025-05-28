@@ -1,0 +1,21 @@
+---
+transmission_version: 4.0.5
+transmission_image: "ghcr.io/linuxserver/transmission:{{ transmission_version }}"
+
+transmission_peer_port: 51413
+
+transmission_deploy_path: "{{ deploy_path }}/transmission"
+transmission_backup_path: "{{ backup_path }}/transmission"
+transmission_config_path: "{{ transmission_deploy_path }}/config"
+
+# Transmission settings variables
+transmission_settings_path: "{{ transmission_config_path }}/settings.json"
+
+transmission_current_settings: "{{ transmission_settings_slurp.content | b64decode | from_json }}"
+transmission_updated_settings: "{{ transmission_current_settings | combine(transmission_settings, recursive=True) }}"
+transmission_settings_update_needed: "{{ transmission_current_settings != transmission_updated_settings }}"
+
+# Floor for transmission
+transmission_flood_url: https://github.com/johman10/flood-for-transmission/releases/download/latest/flood-for-transmission.zip
+transmission_flood_path: "{{ transmission_config_path }}/flood"
+transmission_flood_webhome: /config/flood/flood-for-transmission

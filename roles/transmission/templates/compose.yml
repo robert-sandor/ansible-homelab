@@ -1,0 +1,45 @@
+---
+services:
+  transmission:
+    image: "{{ transmission_image }}"
+    container_name: transmission
+    restart: always
+    environment:
+      TZ: "{{ timezone }}"
+      PUID: "{{ ansible_facts.user_uid }}"
+      PGID: "{{ ansible_facts.user_gid }}"
+      USER: "{{ transmission_user }}"
+      PASS: "{{ transmission_pass }}"
+      PEERPORT: "{{ transmission_peer_port }}"
+      TRANSMISSION_WEB_HOME: "{{ transmission_flood_webhome if transmission_flood_enable else '' }}"
+    networks:
+      - traefik
+    ports:
+      - "{{ transmission_peer_port }}:{{ transmission_peer_port }}/tcp"
+      - "{{ transmission_peer_port }}:{{ transmission_peer_port }}/udp"
+    volumes:
+      - "{{ transmission_config_path }}:/config"
+      - "{{ transmission_dl_mount_src }}:{{ transmission_dl_mount_dst }}"
+    labels:
+      # traefik
+      traefik.enable: true
+      traefik.http.services.transmission.loadbalancer.server.port: 9091
+      traefik.http.routers.transmission.rule: Host(`transmission.{{ hostname }}`)
+      traefik.http.routers.transmission.entrypoints: https
+      traefik.http.routers.transmission.service: transmission
+      traefik.http.routers.transmission.middlewares: authelia@docker
+      # homepage
+      homepage.name: transmission
+      homepage.group: media
+      homepage.href: https://transmission.{{ hostname }}
+      homepage.description: torrent client
+      homepage.icon: transmission
+      homepage.siteMonitor: https://transmission.{{ hostname }}
+      # What's up docker
+      wud.watch: true
+      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/linuxserver/docker-transmission/releases
+
+networks:
+  traefik:
+    external: true

@@ -1,0 +1,48 @@
+---
+- name: Wait for settings file to be created
+  ansible.builtin.wait_for:
+    path: "{{ transmission_settings_path }}"
+
+- name: Read transmission settings
+  ansible.builtin.slurp:
+    src: "{{ transmission_settings_path }}"
+  register: transmission_settings_slurp
+
+- name: Update transmission settings
+  when: transmission_settings_update_needed
+  block:
+    - name: Stop container
+      community.docker.docker_compose_v2:
+        project_src: "{{ transmission_deploy_path }}"
+        state: stopped
+
+    - name: Write settings
+      ansible.builtin.copy:
+        content: "{{ transmission_updated_settings | to_nice_json }}"
+        dest: "{{ transmission_settings_path }}"
+        mode: "0600"
+  always:
+    - name: Start container
+      community.docker.docker_compose_v2:
+        project_src: "{{ transmission_deploy_path }}"
+
+- name: Set up flood-for-transmission
+  when: transmission_flood_enable
+  block:
+    - name: Ensure flood dir exists
+      ansible.builtin.file:
+        state: directory
+        path: "{{ transmission_flood_path }}"
+        mode: "0750"
+
+    - name: Download latest flood-for-transmission
+      ansible.builtin.get_url:
+        url: "{{ transmission_flood_url }}"
+        dest: "{{ transmission_flood_path }}/flood.zip"
+        mode: "0644"
+
+    - name: Unarchive flood-for-transmission
+      ansible.builtin.unarchive:
+        src: "{{ transmission_flood_path }}/flood.zip"
+        remote_src: true
+        dest: "{{ transmission_flood_path }}"
