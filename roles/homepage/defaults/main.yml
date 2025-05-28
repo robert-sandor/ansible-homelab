@@ -6,11 +6,9 @@
 #
 # This will be merged with the default settings, with this taking priority
 homepage_settings: {}
-
 # Additional services to add to homepage
 # reference: https://gethomepage.dev/configs/services/#services
 homepage_services: []
-
 # Bookmarks to add to homepage
 # reference: https://gethomepage.dev/configs/bookmarks/
 homepage_bookmarks: []

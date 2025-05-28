@@ -11,12 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends make python3-pip
-          make deps
-
-      - name: Run ansible-lint
-        run: ansible-lint || exit 1
+      - uses: jdx/mise-action@v2
+      - run: mise deps
+      - run: ansible-lint || exit 1

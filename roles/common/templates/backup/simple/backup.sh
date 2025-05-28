@@ -4,9 +4,9 @@ set -euo pipefail
 
 DEPLOY_PATH="{{ deploy_path }}"
 BACKUP_PATH="{{ backup_path }}"
-APP_NAME="{{ common_common_app_name }}"
+APP_NAME="{{ common_app_name }}"
 COMPOSE_FILE="$DEPLOY_PATH/$APP_NAME/compose.yml"
-STOP_SERVICES="{{ common_common_stop_services | default('') }}"
+STOP_SERVICES="{{ common_stop_services | default('') }}"
 
 on_exit() {
   if ! docker compose -f "$COMPOSE_FILE" up -d; then

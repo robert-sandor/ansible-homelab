@@ -4,8 +4,6 @@ system_update: false
 
 # SSH keys to authorize on the servers
 system_authorized_ssh_keys: []
-
-
 # Mounts
 #
 # system_group_mounts and system_host_mounts allow you to setup mounts for a group of nodes, separately from mounts that only go on one server
@@ -32,7 +30,6 @@ system_authorized_ssh_keys: []
 #     fstype: cifs
 system_group_mounts: {}
 system_host_mounts: {}
-
 ### Graphics - supports nvidia and intel - #TODO: add supoort for amd
 
 # Set this to 'auto' to automatically detect and install gpu drivers, or set it to a list of gpu vendors (only intel and nvidia supported so far)

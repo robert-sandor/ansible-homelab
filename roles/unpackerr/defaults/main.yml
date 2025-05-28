@@ -15,14 +15,12 @@ unpackerr_config:
 unpackerr_sonarr_config:
   url: "https://sonarr.{{ groups['sonarr'][0] }}.{{ domain }}"
   api_key: "{{ sonarr_api_key }}"
-  paths: ['{{ unpackerr_media_mount }}/downloads']
-
+  paths: ["{{ unpackerr_media_mount }}/downloads"]
 unpackerr_radarr_config:
   url: "https://radarr.{{ groups['radarr'][0] }}.{{ domain }}"
   api_key: "{{ radarr_api_key }}"
-  paths: ['{{ unpackerr_media_mount }}/downloads']
-
+  paths: ["{{ unpackerr_media_mount }}/downloads"]
 unpackerr_lidarr_config:
   url: "https://lidarr.{{ groups['lidarr'][0] }}.{{ domain }}"
   api_key: "{{ lidarr_api_key }}"
-  paths: ['{{ unpackerr_media_mount }}/downloads']
+  paths: ["{{ unpackerr_media_mount }}/downloads"]

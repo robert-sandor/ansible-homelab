@@ -3,7 +3,6 @@
 
 # Users to add to the docker group - by default, it's the user you connect with
 docker_users: ["{{ ansible_facts.user_id }}"]
-
 # Doecker daemon options - entire docker daemon JSON options support, in yaml form
 docker_daemon_options:
   insecure-registries: []

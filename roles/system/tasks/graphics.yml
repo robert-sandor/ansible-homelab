@@ -10,9 +10,7 @@
     - name: Validate system_gpu_vendor
       ansible.builtin.assert:
         that:
-          - system_gpu_vendor == 'auto' or
-            (system_gpu_vendor is iterable and
-            system_gpu_vendor | select('in', ['intel', 'nvidia']) | list | length > 0)
+          - system_gpu_vendor == 'auto' or (system_gpu_vendor is iterable and system_gpu_vendor | select('in', ['intel', 'nvidia']) | list | length > 0)
         fail_msg: "system_gpu_vendor must be 'auto' or a list containing 'intel' and/or 'nvidia'."
 
     - name: Ensure lshw is installed
