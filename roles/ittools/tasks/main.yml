@@ -22,5 +22,5 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: ittools
+    common_type: simple
+    common_app_name: ittools

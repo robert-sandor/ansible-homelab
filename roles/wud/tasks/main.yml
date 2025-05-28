@@ -27,8 +27,8 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: wud
+    common_type: simple
+    common_app_name: wud
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:

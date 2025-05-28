@@ -31,9 +31,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: adguardhome
-    stop_services: server
+    common_type: simple
+    common_app_name: adguardhome
+    common_stop_services: server
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:

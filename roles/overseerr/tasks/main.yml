@@ -23,6 +23,6 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: overseerr
-    stop_containers: overseerr
+    common_type: simple
+    common_app_name: overseerr
+    common_stop_containers: overseerr

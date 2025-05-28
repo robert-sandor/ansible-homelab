@@ -23,9 +23,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: bazarr
-    stop_services: bazarr
+    common_type: simple
+    common_app_name: bazarr
+    common_stop_services: bazarr
 
 - name: Enable compose up on boot timer
   ansible.builtin.systemd_service:

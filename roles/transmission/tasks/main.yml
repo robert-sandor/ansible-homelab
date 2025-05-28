@@ -28,9 +28,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: transmission
-    stop_services: transmission
+    common_type: simple
+    common_app_name: transmission
+    common_stop_services: transmission
 
 - name: Enable backup systemd timer
   ansible.builtin.systemd_service:

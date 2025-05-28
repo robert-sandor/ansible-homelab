@@ -1,4 +1,0 @@
----
-slskd_deploy_path: "{{ deploy_path }}/slskd"
-
-slskd_version: latest

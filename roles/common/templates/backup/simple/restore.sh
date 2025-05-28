@@ -4,9 +4,9 @@ set -euo pipefail
 
 DEPLOY_PATH="{{ deploy_path }}"
 BACKUP_PATH="{{ backup_path }}"
-APP_NAME="{{ app_name }}"
+APP_NAME="{{ common_common_app_name }}"
 COMPOSE_FILE="$DEPLOY_PATH/$APP_NAME/compose.yml"
-STOP_SERVICES="{{ stop_services | default('') }}"
+STOP_SERVICES="{{ common_common_stop_services | default('') }}"
 
 if [[ -f "$COMPOSE_FILE" && -n "$STOP_SERVICES" ]]; then
   read -ra services <<<"$STOP_SERVICES"

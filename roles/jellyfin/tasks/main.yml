@@ -33,9 +33,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: jellyfin
-    stop_containers: jellyfin
+    common_type: simple
+    common_app_name: jellyfin
+    common_stop_containers: jellyfin
 
 - name: Enable backup systemd timer
   ansible.builtin.systemd_service:

@@ -23,8 +23,8 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: prowlarr
-    stop_services: prowlarr
+    common_type: simple
+    common_app_name: prowlarr
+    common_stop_services: prowlarr
 
 - ansible.builtin.import_tasks: ./configure.yml # noqa: name

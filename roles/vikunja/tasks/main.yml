@@ -47,6 +47,6 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: pgdump
-    app_name: vikunja
-    stop_services: vikunja
+    common_type: pgdump
+    common_app_name: vikunja
+    common_stop_services: vikunja

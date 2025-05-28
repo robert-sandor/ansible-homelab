@@ -76,9 +76,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: pgdump
-    app_name: immich
-    stop_services: server ml
+    common_type: pgdump
+    common_app_name: immich
+    common_stop_services: server ml
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

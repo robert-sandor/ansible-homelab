@@ -1,0 +1,25 @@
+---
+- name: Install fuse for appimage support
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - fuse
+      - libfuse2
+
+- name: Ensure .local/bin exists
+  ansible.builtin.file:
+    state: directory
+    path: ~/.local/bin
+    mode: "0755"
+
+- name: Download neovim appimage
+  vars:
+    arch_mapping:
+      x86_64: x86_64
+      aarch64: arm64
+    base_url: https://github.com/neovim/neovim/releases/download/{{ extras_neovim_version }}/nvim-linux-{{ arch_mapping[ansible_architecture] }}.appimage
+  ansible.builtin.get_url:
+    url: "{{ base_url }}"
+    checksum: sha256:{{ base_url }}.sha256sum
+    dest: ~/.local/bin/nvim
+    mode: "0750"

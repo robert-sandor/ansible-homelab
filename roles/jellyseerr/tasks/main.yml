@@ -23,6 +23,6 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: jellyseerr
-    stop_containers: jellyseerr
+    common_type: simple
+    common_app_name: jellyseerr
+    common_stop_containers: jellyseerr

@@ -29,5 +29,5 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: pgdump
-    app_name: healthchecks
+    common_type: pgdump
+    common_app_name: healthchecks

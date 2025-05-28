@@ -5,8 +5,8 @@ recyclarr_image: "ghcr.io/recyclarr/recyclarr:{{ recyclarr_version }}"
 recyclarr_deploy_path: "{{ deploy_path }}/recyclarr"
 
 recyclarr_config:
-  sonarr: "{{ {} if groups['sonarr'] | length <= 0 else {'sonarr' : recyclarr_sonarr_config} }}"
-  radarr: "{{ {} if groups['radarr'] | length <= 0 else {'radarr' : recyclarr_radarr_config} }}"
+  sonarr: "{{ {} if groups['sonarr'] | length <= 0 else {'sonarr': recyclarr_sonarr_config} }}"
+  radarr: "{{ {} if groups['radarr'] | length <= 0 else {'radarr': recyclarr_radarr_config} }}"
 
 recyclarr_sonarr_config:
   base_url: "https://sonarr.{{ groups['sonarr'][0] }}.{{ domain }}"

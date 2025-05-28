@@ -75,9 +75,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: pgdump
-    app_name: gitea
-    stop_services: server runner
+    common_type: pgdump
+    common_app_name: gitea
+    common_stop_services: server runner
 
 - name: Configure gitea
   ansible.builtin.import_tasks: ./configure.yml

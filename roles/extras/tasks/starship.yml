@@ -1,0 +1,23 @@
+---
+- name: Ensure .local/bin exists
+  ansible.builtin.file:
+    state: directory
+    path: ~/.local/bin
+    mode: "0755"
+
+- name: Download starship binary
+  vars:
+    base_url: https://github.com/starship/starship/releases/latest/download
+  ansible.builtin.get_url:
+    url: "{{ base_url }}/starship-{{ ansible_architecture }}-unknown-linux-musl.tar.gz"
+    checksum: sha256:{{ base_url }}/starship-{{ ansible_architecture }}-unknown-linux-musl.tar.gz.sha256
+    dest: ~/.local/bin/starship.tar.gz
+    mode: "0644"
+
+- name: Unarchive starship binary
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: ~/.local/bin/starship.tar.gz
+    dest: ~/.local/bin
+    creates: ~/.local/bin/starship
+    mode: "0744"

@@ -44,6 +44,6 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: recyclarr
-    stop_services: recyclarr
+    common_type: simple
+    common_app_name: recyclarr
+    common_stop_services: recyclarr

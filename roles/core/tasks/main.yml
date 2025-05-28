@@ -105,9 +105,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: pgdump
-    app_name: core
-    db_services: lldap-db authelia-db
+    common_type: pgdump
+    common_app_name: core
+    common_db_services: lldap-db authelia-db
 
 - name: Enable backup systemd timer
   ansible.builtin.systemd_service:

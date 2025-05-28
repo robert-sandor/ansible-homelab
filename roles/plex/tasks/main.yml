@@ -33,9 +33,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: plex
-    stop_services: plex
+    common_type: simple
+    common_app_name: plex
+    common_stop_services: plex
 
 - name: Enable systemd timers
   ansible.builtin.systemd_service:

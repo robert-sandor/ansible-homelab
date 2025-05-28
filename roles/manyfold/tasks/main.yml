@@ -22,6 +22,6 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: pgdump
-    app_name: manyfold
-    stop_services: app
+    common_type: pgdump
+    common_app_name: manyfold
+    common_stop_services: app

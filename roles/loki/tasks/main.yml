@@ -44,8 +44,8 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: loki
+    common_type: simple
+    common_app_name: loki
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:

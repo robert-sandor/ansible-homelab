@@ -50,9 +50,9 @@
     name: common
     tasks_from: backup_and_restore
   vars:
-    type: simple
-    app_name: unpackerr
-    stop_services: unpackerr
+    common_type: simple
+    common_app_name: unpackerr
+    common_stop_services: unpackerr
 
 - name: Enable compose up on boot timer
   ansible.builtin.systemd_service:
