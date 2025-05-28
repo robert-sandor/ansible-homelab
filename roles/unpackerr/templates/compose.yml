@@ -1,0 +1,16 @@
+---
+services:
+  unpackerr:
+    container_name: unpackerr
+    image: "{{ unpackerr_image }}"
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    environment:
+      TZ: "{{ timezone }}"
+    volumes:
+      - ./config:/config
+      - "{{ unpackerr_media_path }}:{{ unpackerr_media_mount }}"
+    labels:
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/Unpackerr/unpackerr/releases

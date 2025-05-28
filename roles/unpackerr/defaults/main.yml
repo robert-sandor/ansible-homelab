@@ -1,0 +1,28 @@
+---
+unpackerr_version: "0.14.5"
+unpackerr_image: "ghcr.io/unpackerr/unpackerr:{{ unpackerr_version }}"
+
+unpackerr_deploy_path: "{{ deploy_path }}/unpackerr"
+unpackerr_media_path: "/media"
+unpackerr_media_mount: "/media"
+
+unpackerr_config:
+  interval: 1m
+  sonarr: "{{ [] if groups['sonarr'] | length <= 0 else [unpackerr_sonarr_config] }}"
+  radarr: "{{ [] if groups['radarr'] | length <= 0 else [unpackerr_radarr_config] }}"
+  lidarr: "{{ [] if groups['lidarr'] | length <= 0 else [unpackerr_lidarr_config] }}"
+
+unpackerr_sonarr_config:
+  url: "https://sonarr.{{ groups['sonarr'][0] }}.{{ domain }}"
+  api_key: "{{ sonarr_api_key }}"
+  paths: ['{{ unpackerr_media_mount }}/downloads']
+
+unpackerr_radarr_config:
+  url: "https://radarr.{{ groups['radarr'][0] }}.{{ domain }}"
+  api_key: "{{ radarr_api_key }}"
+  paths: ['{{ unpackerr_media_mount }}/downloads']
+
+unpackerr_lidarr_config:
+  url: "https://lidarr.{{ groups['lidarr'][0] }}.{{ domain }}"
+  api_key: "{{ lidarr_api_key }}"
+  paths: ['{{ unpackerr_media_mount }}/downloads']

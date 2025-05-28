@@ -1,0 +1,62 @@
+---
+- name: Get sonarr API key if not defined
+  ansible.builtin.import_role:
+    name: sonarr
+    tasks_from: api_key
+  when: sonarr_api_key is not defined and groups['sonarr'] | length > 0
+  delegate_to: "{{ groups['sonarr'][0] }}"
+
+- name: Get radarr API key if not defined
+  ansible.builtin.import_role:
+    name: radarr
+    tasks_from: api_key
+  when: radarr_api_key is not defined and groups['radarr'] | length > 0
+  delegate_to: "{{ groups['radarr'][0] }}"
+
+- name: Get lidarr API key if not defined
+  ansible.builtin.import_role:
+    name: lidarr
+    tasks_from: api_key
+  when: lidarr_api_key is not defined and groups['lidarr'] | length > 0
+  delegate_to: "{{ groups['lidarr'][0] }}"
+
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    dest: "{{ unpackerr_deploy_path }}/config"
+    state: directory
+    mode: "0750"
+
+- name: Copy configuration file
+  ansible.builtin.copy:
+    content: "{{ unpackerr_config | to_toml }}"
+    dest: "{{ unpackerr_deploy_path }}/config/unpackerr.conf"
+    mode: "0640"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ unpackerr_deploy_path }}/compose.yml"
+    mode: "0640"
+
+- name: Start container
+  community.docker.docker_compose_v2:
+    project_src: "{{ unpackerr_deploy_path }}"
+    pull: always
+    remove_orphans: true
+    state: present
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    type: simple
+    app_name: unpackerr
+    stop_services: unpackerr
+
+- name: Enable compose up on boot timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: docker-compose-up@unpackerr.timer
+    state: started
+    enabled: true
