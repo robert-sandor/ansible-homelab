@@ -1,0 +1,11 @@
+---
+# Location for the virtualenv ansible will use on the host
+venv_dir: "{{ ansible_env.HOME }}/.venv"
+venv_python: "{{ venv_dir }}/bin/python"
+venv_pip: "{{ venv_dir }}/bin/pip"
+
+# Required packages
+venv_packages:
+  - setuptools
+  - jmespath
+  - lxml
