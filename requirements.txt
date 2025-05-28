@@ -2,3 +2,4 @@ pip
 ansible
 ansible-lint
 jmespath
+tomli_w
