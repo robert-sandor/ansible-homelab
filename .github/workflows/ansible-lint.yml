@@ -1,8 +1,6 @@
 ---
 name: Ansible Lint
 on:
-  schedule:
-    - cron: 0 12 * * 6
   pull_request:
   push:
     branches:
