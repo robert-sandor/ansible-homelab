@@ -1,37 +1,21 @@
 ---
-# Setup insecure registries for docker
-base_docker_insecure_registries: []
-# Setup docker registry mirrors
-base_docker_registry_mirrors: []
-# Attempt to auto detect GPU vendor and install drivers - currently, only nvidia is supported
-base_gpu_autodetect: true
-# Force installation of nvidia driver
-base_gpu_nvidia: false
-# Force installation of intel driver
-base_gpu_intel: false
-
 ### Traefik - reverse proxy
-base_traefik_version: v3.2.3 # https://hub.docker.com/_/traefik
+
 # Email to use for the letsencrypt certificate
+# Default: admin@{{ domain }}
 base_traefik_acme_email: admin@{{ domain }}
-# Toggle to use the staging letsencrypt server
-# recommend leaving as true until the dns provider and Environment are set up correctly
+
+# Whether to use the staging Let's Encrypt server
+# Note: Production Let's Encrypt server imposes a rate limit
+# Default: true
 base_traefik_acme_staging: true
+
 # DNS provider for acme DNS-01 challenge
+# Default: cloudflare
 base_traefik_dns_provider: cloudflare
-# Environment variables to add to traefik for the above DNS provider - example is for cloudflare
+
+# Dictionary of environment variables needed for the dns provider
+# Default: the set of env variables for cloudflare, taken from ansible controller env
 base_traefik_env:
-  CF_API_EMAIL: admin@{{ domain }}
-  CF_DNS_API_TOKEN: ""
-
-### Watchtower - auto update containers if newwer image exists
-base_watchtower_version: 1.7.1 # https://github.com/containrrr/watchtower/pkgs/container/watchtower
-
-# Cron schedule on when watchtower runs and checks for updates
-base_watchtower_schedule: 0 0 0 * * *
-
-# Notification URL - check https://containrrr.dev/shoutrrr for supported services
-base_watchtower_notification_url: ntfy://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}/watchtower?priority=low
-
-### Docker Socket Proxy - a proxy to control exposed docker api resources
-base_dsp_version: 1.26.2 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy
+  CF_API_EMAIL: "{{ lookup('env', 'CF_API_EMAIL', default='') }}"
+  CF_DNS_API_TOKEN: "{{ lookup('env', 'CF_DNS_API_TOKEN', default='') }}"

@@ -1,21 +1,18 @@
 ---
 services:
   traefik:
-    image: traefik:{{ base_traefik_version }}
+    image: "{{ base_traefik_image }}"
+    container_name: traefik
     restart: always
-    env_file:
-      - traefik.env
-    networks:
-      - traefik
-    extra_hosts:
-      - host.docker.internal:host-gateway
+    env_file: [ traefik.env ]
+    networks: [ traefik ]
+    extra_hosts: [ "host.docker.internal:host-gateway" ]
     ports:
-      - "80:80"
-      - "443:443"
-      - "465:465"
-      - "8080:8080"
+      - "80:80" # HTTP (redirected to HTTPS)
+      - "443:443" # HTTPS
+      - "465:465" # SMTP
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik:/etc/traefik/file_provider:ro
       - ./traefik_secrets:/secrets:ro
@@ -23,43 +20,28 @@ services:
     labels:
       traefik.enable: true
       # Access to dashboard
-      traefik.http.routers.traefik.rule: Host(`traefik.{{ hostname }}`)
+      traefik.http.routers.traefik.rule: Host(`{{ base_traefik_hostname }}`)
       traefik.http.routers.traefik.entrypoints: https
       traefik.http.routers.traefik.service: api@internal
       # Authelia middlewares
+      # TODO: maybe update to authelia hostname ?
       traefik.http.middlewares.authelia.forwardauth.address: http://{{ core_hostname }}:9091/api/authz/forward-auth
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: true
       traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Name,Remote-Email
       # homepage
-      homepage.name: traefik
+      homepage.name: traefik @ {{ ansible_hostname }}
       homepage.group: traefik
       homepage.description: reverse proxy @ {{ ansible_hostname }}
-      homepage.href: https://traefik.{{ hostname }}
+      homepage.href: https://{{ base_traefik_hostname }}
       homepage.icon: traefik
-      homepage.siteMonitor: https://traefik.{{ hostname }}
+      homepage.siteMonitor: https://{{ base_traefik_hostname }}
       wud.watch: true
       wud.tag.include: ^v\d+\.\d+\.\d+$$
-      wud.link.template: https://github.com/traefik/traefik/releases/tag/$${raw}
-
-  watchtower:
-    hostname: watchtower
-    image: ghcr.io/containrrr/watchtower:{{ base_watchtower_version }}
-    restart: always
-    command: --cleanup --label-enable --no-startup-message
-    environment:
-      TZ: "{{ timezone }}"
-      WATCHTOWER_SCHEDULE: "{{ base_watchtower_schedule }}"
-      WATCHTOWER_NOTIFICATION_URL: "{{ base_watchtower_notification_url }}"
-      WATCHTOWER_NOTIFICATIONS_HOSTNAME: watchtower.{{ hostname }}
-    networks:
-      - traefik
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      com.centurylinklabs.watchtower.enable: true
+      wud.link.template: https://github.com/traefik/traefik/releases
 
   docker_socket_proxy:
-    image: ghcr.io/linuxserver/socket-proxy:{{ base_dsp_version }}
+    image: "{{ base_dsp_image }}"
+    container_name: docker-socket-proxy
     restart: always
     environment:
       CONTAINERS: 1
@@ -73,7 +55,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      com.centurylinklabs.watchtower.enable: true
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/linuxserver/docker-socket-proxy/releases
 
 networks:
   traefik:

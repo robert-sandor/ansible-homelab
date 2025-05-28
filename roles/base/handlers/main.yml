@@ -1,19 +1,4 @@
 ---
-- name: Enable nvidia container toolkit
-  ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
-  changed_when: true
-  become: true
-
-- name: Restart docker
-  become: true
-  ansible.builtin.service:
-    name: docker
-    state: restarted
-
-- name: Reboot
-  ansible.builtin.reboot:
-  become: true
-
 - name: Restart traefik
   community.docker.docker_compose_v2:
     project_src: "{{ base_deploy_path }}"

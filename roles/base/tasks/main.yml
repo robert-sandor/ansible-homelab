@@ -1,18 +1,67 @@
 ---
-- name: Base configuration
-  block:
-    - name: Set deploy path fact
-      ansible.builtin.set_fact:
-        base_deploy_path: "{{ deploy_path }}/base"
+# TODO: these first two don't seem like they should be here
+- name: Create deploy path
+  ansible.builtin.file:
+    state: directory
+    path: "{{ deploy_path }}"
+    mode: "0750"
 
-    - name: Install docker
-      ansible.builtin.import_tasks: ./docker.yml
+- name: Create backup path
+  ansible.builtin.file:
+    state: directory
+    path: "{{ backup_path }}"
+    mode: "0700"
 
-    - name: Install graphics drivers
-      ansible.builtin.import_tasks: ./graphics.yml
+- name: Create directory structure
+  ansible.builtin.file:
+    state: directory
+    path: "{{ base_deploy_path }}/{{ item }}"
+    mode: "0755"
+  loop:
+    - traefik
+    - traefik_secrets
 
-    - name: Deploy containers
-      ansible.builtin.import_tasks: ./containers.yml
+- name: Template compose.yml
+  ansible.builtin.template:
+    src: compose.yml
+    dest: "{{ base_deploy_path }}/compose.yml"
+    mode: "0640"
 
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
+- name: Template traefik config file
+  ansible.builtin.template:
+    src: traefik.yml
+    dest: "{{ base_deploy_path }}/traefik.yml"
+    mode: "0640"
+  notify: Restart traefik
+
+# - name: Template traefik config files
+#   when: "'netdata' in groups"
+#   ansible.builtin.template:
+#     src: traefik/netdata.yml
+#     dest: "{{ base_deploy_path }}/traefik/netdata.yml"
+#     mode: "0640"
+#   notify: Restart traefik
+
+- name: Template traefik env
+  ansible.builtin.template:
+    src: traefik.env.j2
+    dest: "{{ base_deploy_path }}/traefik.env"
+    mode: "0600"
+
+- name: Copy traefik secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.value }}"
+    dest: "{{ base_deploy_path }}/traefik_secrets/{{ item.key | lower }}"
+    mode: "0600"
+  loop: "{{ base_traefik_env | dict2items }}"
+
+- name: Create traefik network
+  community.docker.docker_network:
+    name: traefik
+
+- name: Deploy containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ base_deploy_path }}"
+    remove_orphans: true
+    pull: always
