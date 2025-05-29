@@ -2,7 +2,7 @@
 base_deploy_path: "{{ deploy_path }}/base"
 
 ### Traefik - reverse proxy
-base_traefik_version: v3.4.0 # https://hub.docker.com/_/traefik
+base_traefik_version: v3.4.1 # https://hub.docker.com/_/traefik
 base_traefik_image: "docker.io/library/traefik:{{ base_traefik_version }}"
 base_traefik_hostname: "traefik.{{ hostname }}"
 

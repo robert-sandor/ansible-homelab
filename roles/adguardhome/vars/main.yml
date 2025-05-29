@@ -2,5 +2,5 @@
 adguardhome_deploy_path: "{{ deploy_path }}/adguardhome"
 adguardhome_backup_path: "{{ backup_path }}/adguardhome"
 
-adguardhome_version: v0.107.61 # https://hub.docker.com/r/adguard/adguardhome/tags
+adguardhome_version: v0.107.62 # https://hub.docker.com/r/adguard/adguardhome/tags
 adguardhome_image: "docker.io/adguard/adguardhome:{{ adguardhome_version }}"
