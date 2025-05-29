@@ -7,7 +7,7 @@ BACKUP_PATH="{{ backup_path }}"
 APP_NAME="{{ common_app_name }}"
 COMPOSE_FILE="$DEPLOY_PATH/$APP_NAME/compose.yml"
 STOP_SERVICES="{{ common_stop_services | default('') }}"
-DATABASE_SERVICES="{{ db_services | default('db') }}"
+DATABASE_SERVICES="{{ common_db_services | default('db') }}"
 
 pg_dump() {
   local service="$1"
