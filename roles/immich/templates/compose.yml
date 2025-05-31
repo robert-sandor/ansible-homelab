@@ -81,7 +81,6 @@ services:
       PGPASSFILE: /run/secrets/pg_pass
     volumes:
       - db:/var/lib/postgresql/data
-      - /dev/null:/usr/local/bin/set-env.sh # workaround for https://github.com/immich-app/base-images/issues/229
     restart: always
 
 secrets:
