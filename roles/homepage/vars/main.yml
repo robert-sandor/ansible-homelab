@@ -1,7 +1,7 @@
 ---
 homepage_deploy_path: "{{ deploy_path }}/homepage"
 
-homepage_version: v1.2.0
+homepage_version: v1.3.0
 
 homepage_default_settings:
   title: "{{ hostname }}"
