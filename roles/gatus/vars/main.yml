@@ -1,7 +1,7 @@
 ---
 gatus_deploy_path: "{{ deploy_path }}/gatus"
 
-gatus_version: v5.17.0
+gatus_version: v5.18.1
 gatus_pg_version: "17.5"
 
 gatus_db_pass: "{{ ('gatus-db@' + deployment_secret) | hash('sha256') }}"
