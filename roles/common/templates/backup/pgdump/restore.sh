@@ -44,7 +44,7 @@ if [[ -f "$COMPOSE_FILE" && -n "$STOP_SERVICES" ]]; then
   fi
 fi
 
-if ! rsync -ax "$BACKUP_PATH/$APP_NAME" "$DEPLOY_PATH"; then
+if ! rsync -Aax "$BACKUP_PATH/$APP_NAME" "$DEPLOY_PATH"; then
   echo "Error: Failed to sync backup files to $DEPLOY_PATH" >&2
   exit 1
 fi

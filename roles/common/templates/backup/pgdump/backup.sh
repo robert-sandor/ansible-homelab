@@ -15,7 +15,7 @@ pg_dump() {
 
   mkdir -p "$(dirname "$file")"
 
-  if ! docker compose -f "$COMPOSE_FILE" exec -T "$service" pg_dump | gzip >"$file"; then
+  if ! docker compose -f "$COMPOSE_FILE" exec -T "$service" pg_dumpall -c | gzip >"$file"; then
     echo "Error: Failed to dump database for $service" >&2
     exit 1
   fi
@@ -44,7 +44,7 @@ for svc in "${db_services[@]}"; do
   pg_dump "$svc" "$DEPLOY_PATH/$APP_NAME/pg_dump/${svc}_pg_dump.sql.gz"
 done
 
-if ! rsync -ax "$DEPLOY_PATH/$APP_NAME" "$BACKUP_PATH"; then
+if ! rsync -Aax "$DEPLOY_PATH/$APP_NAME" "$BACKUP_PATH"; then
   echo "Error: Failed to sync backup files to $BACKUP_PATH" >&2
   exit 1
 fi

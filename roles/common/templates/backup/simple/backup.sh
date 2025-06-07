@@ -24,7 +24,7 @@ if [ -n "$STOP_SERVICES" ]; then
   fi
 fi
 
-if ! rsync -ax "$DEPLOY_PATH/$APP_NAME" "$BACKUP_PATH"; then
+if ! rsync -Aax "$DEPLOY_PATH/$APP_NAME" "$BACKUP_PATH"; then
   echo "Error: Failed to sync backup files to $BACKUP_PATH" >&2
   exit 1
 fi
