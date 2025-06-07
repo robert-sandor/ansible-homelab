@@ -6,7 +6,7 @@
 #   tags: docker
 #   roles: [docker]
 
-- name: Deploy and use a virtualenv
+- name: Change to venv
   hosts: all
   tags: always
   roles: [venv]
@@ -200,3 +200,8 @@
   hosts: recyclarr
   tags: recyclarr
   roles: [recyclarr]
+
+- name: Deploy nextcloud
+  hosts: nextcloud
+  tags: nextcloud
+  roles: [nextcloud]

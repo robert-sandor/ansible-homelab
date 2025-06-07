@@ -1,0 +1,8 @@
+---
+- name: Create and update venv
+  hosts: all
+  tasks:
+    - name: Create and update venv
+      ansible.builtin.import_role:
+        name: venv
+        tasks_from: create
