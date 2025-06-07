@@ -1,13 +1,79 @@
 ---
-- name: Nextcloud
-  vars:
-    hostname: "{{ ansible_hostname }}.{{ domain }}"
-    core_hostname: "{{ groups['core'][0] }}.{{ domain }}"
-    base_deploy_path: "{{ deploy_path }}/base"
-    nextcloud_deploy_path: "{{ deploy_path }}/nextcloud"
-  block:
-    - name: Containers
-      ansible.builtin.import_tasks: ./containers.yml
+- name: Ensure directory is created
+  ansible.builtin.file:
+    state: directory
+    path: "{{ dir }}"
+    mode: "0750"
+  loop:
+    - "{{ nextcloud_deploy_path }}"
+    - "{{ nextcloud_secrets_path }}"
+    - "{{ nextcloud_appdata_path }}"
+    - "{{ nextcloud_data_path }}"
+    - "{{ nextcloud_post_installation_hooks_path }}"
+    - "{{ nextcloud_post_upgrade_hooks_path }}"
+  loop_control:
+    loop_var: dir
 
-    - name: Config
-      ansible.builtin.import_tasks: ./config.yml
+- name: Get traefik network info
+  community.docker.docker_network_info:
+    name: traefik
+  register: docker_traefik_network_info
+
+- name: Template file
+  ansible.builtin.template:
+    src: "{{ file }}"
+    dest: "{{ nextcloud_deploy_path }}/{{ file }}"
+    mode: "0640"
+  loop:
+    - compose.yml
+    - nginx.conf
+  loop_control:
+    loop_var: file
+  notify: Restart nginx
+
+- name: Create secrets
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ secret.content }}"
+    dest: "{{ nextcloud_secrets_path }}/{{ secret.name }}"
+    mode: "0600"
+  loop:
+    - name: db_pass
+      content: "{{ nextcloud_db_pass }}"
+    - name: admin_pass
+      content: "{{ nextcloud_admin_pass }}"
+  loop_control:
+    loop_var: secret
+
+- name: Template post-installation hook scripts
+  ansible.builtin.template:
+    src: "{{ script }}"
+    dest: "{{ nextcloud_post_installation_hooks_path }}/{{ script | basename }}"
+    mode: "0750"
+  loop: "{{ query('fileglob', role_path + '/templates/post-installation/*.sh') }}"
+  loop_control:
+    loop_var: script
+
+- name: Template post-upgrade hook scripts
+  ansible.builtin.template:
+    src: "{{ script }}"
+    dest: "{{ nextcloud_post_upgrade_hooks_path }}/{{ script | basename }}"
+    mode: "0750"
+  loop: "{{ query('fileglob', role_path + '/templates/post-upgrade/*.sh') }}"
+  loop_control:
+    loop_var: script
+
+- name: Ensure services are started
+  community.docker.docker_compose_v2:
+    project_src: "{{ nextcloud_deploy_path }}"
+    remove_orphans: true
+    pull: always
+
+- name: Create backup and restore scripts
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: backup_and_restore
+  vars:
+    common_type: pgdump
+    common_app_name: nextcloud
+    common_stop_services: server cron

@@ -20,6 +20,15 @@
         name: netdata
         tasks_from: teardown
 
+- name: Teardown nextcloud
+  hosts: nextcloud
+  tags: nextcloud
+  tasks:
+    - name: Import role nextcloud
+      ansible.builtin.import_role:
+        name: nextcloud
+        tasks_from: teardown
+
 - name: Teardown ittools
   hosts: ittools
   tags: ittools

@@ -1,0 +1,7 @@
+---
+- name: Import util teardown
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: teardown
+  vars:
+    util_app: nextcloud

@@ -1,0 +1,16 @@
+---
+nextcloud_deploy_path: "{{ deploy_path }}/nextcloud"
+nextcloud_appdata_path: "{{ nextcloud_deploy_path }}/appdata"
+nextcloud_secrets_path: "{{ nextcloud_deploy_path }}/secrets"
+nextcloud_post_installation_hooks_path: "{{ nextcloud_deploy_path }}/hooks/post-installation"
+nextcloud_post_upgrade_hooks_path: "{{ nextcloud_deploy_path }}/hooks/post-upgrade"
+
+nextcloud_image_type: "fpm-alpine"
+nextcloud_image: "docker.io/library/nextcloud:{{ nextcloud_version }}-{{ nextcloud_image_type }}"
+
+nextcloud_nginx_image: "docker.io/library/nginx:{{ nextcloud_nginx_version }}"
+nextcloud_db_image: "docker.io/library/postgres:{{ nextcloud_postgres_version }}"
+nextcloud_cache_image: "docker.io/valkey/valkey:{{ nextcloud_valkey_version }}"
+
+nextcloud_ldap_base_dn: "{{ ['dc='] | product(domain | split('.')) | map('join') | join(',') }}"
+nextcloud_ldap_agent_pass: "{{ ('lldap-readonly@' + deployment_secret) | hash('sha256') }}"

@@ -1,20 +1,16 @@
 ---
-nextcloud_version: latest
+nextcloud_admin_user: admin
+nextcloud_admin_pass: secret
 
-# Storage setup for nextcloud
-# type can be "local", "cifs" or "nfs" see https://docs.docker.com/reference/cli/docker/volume/create/#opt
-#
-# Examples:
-#
-# nextcloud_storage:
-#   data:
-#     type: local
-#   backup:
-#     type: cifs
-#     device: //nas.domain.my/nextcloud-backup
-#     o: user=nextcloud,pass=superstrongpassword,uid=33,gid=0,file_mode=0750,dir_mode=0750
-nextcloud_storage:
-  data:
-    type: local
-  backup:
-    type: local
+nextcloud_data_path: "{{ nextcloud_deploy_path }}/data"
+
+nextcloud_version: "31.0.5"
+nextcloud_nginx_version: "1.28.0"
+nextcloud_postgres_version: "17.5"
+nextcloud_valkey_version: "8.1.1"
+
+nextcloud_db_name: nextcloud
+nextcloud_db_user: nextcloud
+nextcloud_db_pass: "{{ ('nextcloud-db@' + deployment_secret) | hash('sha256') }}"
+
+nextcloud_maintenance_window_start: 2

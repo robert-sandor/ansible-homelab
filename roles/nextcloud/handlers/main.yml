@@ -1,0 +1,7 @@
+---
+- name: Restart nginx
+  community.docker.docker_compose_v2:
+    project_src: "{{ nextcloud_deploy_path }}"
+    state: restarted
+    services:
+      - nginx

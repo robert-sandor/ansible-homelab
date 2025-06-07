@@ -1,45 +1,136 @@
 ---
 services:
-  nextcloud-aio-mastercontainer:
-    container_name: nextcloud-aio-mastercontainer
-    hostname: nextcloud-aio-mastercontainer
-    image: nextcloud/all-in-one:{{ nextcloud_version }}
+  server:
+    container_name: nextcloud
+    image: "{{ nextcloud_image }}"
     restart: always
-    pull_policy: always
-    init: true
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    depends_on:
+      - db
+      - cache
+    networks:
+      - backend
+      - frontend
+    secrets:
+      - db_pass
+      - admin_pass
     environment:
-      APACHE_IP_BINDING: 0.0.0.0
-      APACHE_PORT: 11000
-      NEXTCLOUD_DATADIR: nextcloud_aio_nextcloud_datadir
-      NEXTCLOUD_ENABLE_DRI_DEVICE: true
-      AIO_COMMUNITY_CONTAINERS: "memories"
+      NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.{{ hostname }}"
+      TRUSTED_PROXIES: "{{ docker_traefik_network_info.network.IPAM.Config[0].Subnet }}"
+      NEXTCLOUD_INIT_HTACCESS: true
+      # Admin user
+      NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
+      NEXTCLOUD_ADMIN_PASSWORD_FILE: /run/secrets/admin_pass
+      # Database variables
+      POSTGRES_DB: "{{ nextcloud_db_name }}"
+      POSTGRES_USER: "{{ nextcloud_db_user }}"
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
+      POSTGRES_HOST: db
+      # Cache
+      REDIS_HOST: cache
+      REDIS_HOST_PORT: 6379
+    volumes:
+      - "{{ nextcloud_appdata_path }}:/var/www/html"
+      - "{{ nextcloud_data_path }}:/var/www/html/data"
+      - "{{ nextcloud_post_installation_hooks_path }}:/docker-entrypoint-hooks.d/post-installation"
+      - "{{ nextcloud_post_upgrade_hooks_path }}:/docker-entrypoint-hooks.d/post-upgrade"
+    labels:
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+-{{ nextcloud_image_type }}$$
+      wud.link.template: https://github.com/nextcloud/server/releases
+
+  # TODO: figure out if this is even needed
+  cron:
+    container_name: nextcloud-cron
+    image: "{{ nextcloud_image }}"
+    restart: always
+    networks:
+      - backend
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+      - cache
+    volumes:
+      - "{{ nextcloud_appdata_path }}:/var/www/html"
+
+  nginx:
+    container_name: nextcloud-nginx
+    image: "{{ nextcloud_nginx_image }}"
+    restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    depends_on:
+      - server
     networks:
       - traefik
-      - nextcloud
+      - frontend
     volumes:
-      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
-      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{ nextcloud_deploy_path }}/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "{{ nextcloud_appdata_path }}:/var/www/html"
     labels:
       traefik.enable: true
-      traefik.http.services.nc-admin.loadbalancer.server.port: 8080
-      traefik.http.services.nc-admin.loadbalancer.server.scheme: https
-      traefik.http.services.nc-admin.loadbalancer.serverstransport: nc-admin@file
-      traefik.http.routers.nc-admin.rule: Host(`nc-admin.{{ hostname }}`)
-      traefik.http.routers.nc-admin.entrypoints: https
-      traefik.http.routers.nc-admin.service: nc-admin
+      traefik.http.services.nextcloud.loadbalancer.server.port: 80
+      traefik.http.routers.nextcloud.rule: Host(`nextcloud.{{ hostname }}`)
+      traefik.http.routers.nextcloud.entrypoints: https
+      traefik.http.routers.nextcloud.service: nextcloud
       homepage.name: nextcloud
       homepage.group: apps
       homepage.description: selfhosted cloud
       homepage.href: https://nextcloud.{{ hostname }}
       homepage.icon: nextcloud
       homepage.siteMonitor: https://nextcloud.{{ hostname }}
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+\.\d+$$
+      wud.link.template: https://github.com/nginx/nginx/releases
 
-volumes:
-  nextcloud_aio_mastercontainer:
-    name: nextcloud_aio_mastercontainer
+  db:
+    container_name: nextcloud-db
+    image: "{{ nextcloud_db_image }}"
+    restart: always
+    networks:
+      - backend
+    secrets:
+      - db_pass
+    environment:
+      POSTGRES_DB: "{{ nextcloud_db_name }}"
+      POSTGRES_USER: "{{ nextcloud_db_user }}"
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
+      PGDATABASE: "{{ nextcloud_db_name }}"
+      PGUSER: "{{ nextcloud_db_user }}"
+      PGPASSFILE: /run/secrets/db_pass
+    volumes:
+      - db:/var/lib/postgresql/data
+    labels:
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+$$
+      wud.link.template: https://www.postgresql.org/docs/release/
+
+  cache:
+    container_name: nextcloud-cache
+    image: "{{ nextcloud_cache_image }}"
+    restart: always
+    networks:
+      - backend
+    volumes:
+      - cache:/data
+    labels:
+      wud.watch: true
+      wud.tag.include: ^\d+\.\d+.\d+$$
+      wud.link.template: https://github.com/valkey-io/valkey/releases
 
 networks:
+  backend:
+  frontend:
   traefik:
     external: true
+
+volumes:
   nextcloud:
-    name: nextcloud
+  db:
+  cache:
+
+
+secrets:
+  db_pass:
+    file: "{{ nextcloud_secrets_path }}/db_pass"
+  admin_pass:
+    file: "{{ nextcloud_secrets_path }}/admin_pass"

@@ -1,0 +1,21 @@
+---
+# Template - copy this, replace "template" with the role, and uncomment
+#
+# - name: Backup template
+#   hosts: template
+#   tags: template
+#   tasks:
+#     - name: Import template backup
+#       ansible.builtin.import_role:
+#         name: template
+#         tasks_from: backup
+
+# Needs to go before docker
+- name: Backup nextcloud
+  hosts: nextcloud
+  tags: nextcloud
+  tasks:
+    - name: Import nextcloud backup
+      ansible.builtin.import_role:
+        name: nextcloud
+        tasks_from: backup
