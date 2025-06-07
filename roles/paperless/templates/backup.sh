@@ -12,7 +12,7 @@ if ! docker compose -f "$COMPOSE_FILE" exec server document_exporter --no-progre
   exit 1
 fi
 
-if ! rsync -ax "$DEPLOY_PATH/$APP_NAME" "$BACKUP_PATH"; then
+if ! rsync -Aax "$DEPLOY_PATH/$APP_NAME" "$BACKUP_PATH"; then
   echo "Error: Failed to sync backup files to $BACKUP_PATH" >&2
   exit 1
 fi

@@ -9,3 +9,7 @@ paperless_ocr_language: eng+ron
 
 # Additional OCR languages to enable - see https://docs.paperless-ngx.com/configuration/#PAPERLESS_OCR_LANGUAGES
 paperless_additional_ocr_languages: ron
+
+# Additional arguments to the OCR flow in paperless
+paperless_ocr_user_args:
+  invalidate_digital_signatures: true # Invalidates digital signatures, but keeps the original document
