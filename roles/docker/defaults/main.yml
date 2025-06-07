@@ -7,7 +7,9 @@ docker_users: ["{{ ansible_facts.user_id }}"]
 docker_daemon_options:
   insecure-registries: []
   registry-mirrors: []
+  live-restore: true # keep containers running on daemon restart
+  # logging settings
   log-driver: json-file
   log-opts:
-    max-size: "100m"
+    max-size: "10m"
     max-file: "5"
