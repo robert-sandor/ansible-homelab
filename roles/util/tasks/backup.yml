@@ -1,0 +1,11 @@
+---
+- name: Stat backup script
+  ansible.builtin.stat:
+    path: "{{ util_deploy_path }}/backup.sh"
+  register: backup_script_stat
+
+- name: Run backup script
+  when: backup_script_stat.stat.exists
+  ansible.builtin.command:
+    cmd: "{{ util_deploy_path }}/backup.sh"
+  changed_when: true

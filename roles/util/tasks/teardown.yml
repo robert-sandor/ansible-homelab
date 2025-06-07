@@ -1,0 +1,26 @@
+---
+- name: Disable backup timer
+  ansible.builtin.systemd_service:
+    scope: user
+    service: backup@{{ util_app }}.timer
+    state: stopped
+    enabled: false
+
+- name: Stat the deploy directory
+  ansible.builtin.stat:
+    path: "{{ util_deploy_path }}"
+  register: util_deploy_path_stat
+
+- name: Ensure services are stopped and deploy path removed
+  when: util_deploy_path_stat.stat.exists
+  block:
+    - name: Ensure services are stopped
+      community.docker.docker_compose_v2:
+        project_src: "{{ util_deploy_path }}"
+        state: absent
+        remove_volumes: true
+
+    - name: Ensure deploy directory is removed
+      ansible.builtin.file:
+        dest: "{{ util_deploy_path }}"
+        state: absent
