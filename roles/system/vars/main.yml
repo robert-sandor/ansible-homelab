@@ -1,2 +1,19 @@
 ---
 system_mounts: "{{ system_group_mounts | combine(system_host_mounts) }}"
+
+system_packages: "{{ system_packages_common + system_packages_by_os_family[ansible_facts.os_family | lower] }}"
+
+system_packages_common:
+  - git
+  - rsync
+  - unzip
+  - vim
+
+system_packages_by_os_family:
+  debian:
+    - dnsutils
+  redhat:
+    - bind-utils
+
+system_guest_packages:
+  - qemu-guest-agent
