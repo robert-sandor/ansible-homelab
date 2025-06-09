@@ -13,6 +13,7 @@
 
 - name: Install packages from repository
   when: shell_packages | length > 0
+  become: true
   ansible.builtin.package:
     name: "{{ shell_packages }}"
     state: present
