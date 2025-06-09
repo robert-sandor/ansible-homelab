@@ -36,7 +36,7 @@ services:
       homepage.siteMonitor: https://lidarr.{{ hostname }}
       # What's up docker
       wud.watch: true
-      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.tag.include: ^\d+\.\d+\.\d+$$
       wud.link.template: https://github.com/linuxserver/docker-lidarr/releases
 
 networks:
