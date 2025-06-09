@@ -1,0 +1,22 @@
+---
+- name: Install chezmoi
+  community.general.homebrew:
+    name: chezmoi
+    state: present
+
+- name: Checkout dotfiles repository # noqa: latest
+  ansible.builtin.git:
+    repo: "{{ shell_dotfiles_repo }}"
+    dest: /home/{{ ansible_facts.user_id }}/.local/share/chezmoi
+    update: "{{ shell_dotfiles_update }}"
+
+- name: Chezmoi init dotfiles
+  ansible.builtin.command:
+    cmd: "{{ shell_chezmoi_init_command }}"
+    creates: /home/{{ ansible_facts.user_id }}/.config/chezmoi
+
+- name: Chezmoi apply
+  when: shell_chezmoi_apply
+  ansible.builtin.command:
+    cmd: "{{ shell_chezmoi_apply_command }}"
+  changed_when: true

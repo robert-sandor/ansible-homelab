@@ -1,0 +1,23 @@
+---
+shell_chezmoi_string_args: >-
+  {% if shell_chezmoi_prompt_strings | length > 0 %}
+  --promptString "{{ shell_chezmoi_prompt_strings | items | map('join', '=') | join(',') }}"
+  {% endif %}
+
+shell_chezmoi_choice_args: >-
+  {% if shell_chezmoi_prompt_choice | length > 0 %}
+  --promptChoice "{{ shell_chezmoi_prompt_choice | items | map('join', '=') | join(',') }}"
+  {% endif %}
+
+shell_chezmoi_defaults: >-
+  {% if shell_chezmoi_prompt_defaults %}
+  --promptDefaults
+  {% endif %}
+
+shell_chezmoi_bin: /home/linuxbrew/.linuxbrew/bin/chezmoi
+shell_chezmoi_init_command: >-
+  {{ shell_chezmoi_bin }} init
+  {{ shell_chezmoi_defaults }}
+  {{ shell_chezmoi_string_args }}
+  {{ shell_chezmoi_choice_args }}
+shell_chezmoi_apply_command: "{{ shell_chezmoi_bin }} --force apply"

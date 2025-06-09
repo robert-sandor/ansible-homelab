@@ -1,0 +1,58 @@
+---
+# Packages to install using distribution's own packages manager (apt / dnf)
+shell_packages: []
+
+# Packages to install using homebrew
+shell_brew_packages:
+  - bat
+  - btop
+  - dust
+  - eza
+  - fd
+  - fish
+  - git
+  - git-delta
+  - neovim
+  - ripgrep
+  - starship
+  - tmux
+  - xh
+  - zoxide
+
+# Packages to install using homebrew, by arch
+# Use this in case a package is not available for a given architecture
+shell_brew_packages_by_arch:
+  # No fzf build exists for aarch64
+  x86_64: [fzf]
+  aarch64: []
+
+# Whether to udpate homebrew packages
+shell_brew_upgrade_packages: true
+
+# Toggle to use [chezmoi](https://chezmoi.io) for dotfiles management
+shell_use_chezmoi: false
+# repository where dotfiles managed with chezmoi are located
+shell_dotfiles_repo: ""
+# Toggle to git pull dotfiles repository
+shell_dotfiles_update: true
+# Toggle for chezmoi init to use default values for prompts
+shell_chezmoi_prompt_defaults: true
+# Prompt keys and values for chezmoi init
+shell_chezmoi_prompt_strings: {}
+shell_chezmoi_prompt_choice: {}
+# Toggle to apply dotfiles to the host
+shell_chezmoi_apply: true
+
+# WARNING: advanced configuration options - may break playbook
+
+# prerequisites for homebrew on debian based distributions
+shell_hb_apt_prerequisites:
+  - build-essential
+  - procps
+  - curl
+  - file
+  - git
+
+# prerequisites for homebrew on redhat based distributions
+shell_hb_dnf_prerequisites:
+  - "@development-tools"

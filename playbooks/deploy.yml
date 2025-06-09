@@ -16,6 +16,11 @@
   tags: system
   roles: [system]
 
+- name: Deploy shell
+  hosts: shell
+  tags: shell
+  roles: [shell]
+
 - name: Deploy nut
   hosts: nut
   tags: nut

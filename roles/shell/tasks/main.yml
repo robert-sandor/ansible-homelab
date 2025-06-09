@@ -1,0 +1,34 @@
+---
+- name: Install prerequisites - debian
+  when: ansible_facts.os_family == "Debian"
+  become: true
+  ansible.builtin.apt:
+    name: "{{ shell_hb_apt_prerequisites }}"
+
+- name: Install prerequisites - redhat
+  when: ansible_facts.os_family == "RedHat"
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ shell_hb_dnf_prerequisites }}"
+
+- name: Install packages from repository
+  when: shell_packages | length > 0
+  ansible.builtin.package:
+    name: "{{ shell_packages }}"
+    state: present
+
+- name: Install homebrew
+  ansible.builtin.shell:
+    cmd: NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    creates: /home/linuxbrew/.linuxbrew
+
+- name: Install packages using homebrew
+  community.general.homebrew:
+    name: "{{ shell_brew_packages + shell_brew_packages_by_arch[ansible_facts.architecture] }}"
+    state: present
+    update_homebrew: true
+    upgrade_all: "{{ shell_brew_upgrade_packages }}"
+
+- name: Include chezmoi
+  when: shell_use_chezmoi
+  ansible.builtin.include_tasks: ./chezmoi.yml

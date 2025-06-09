@@ -25,6 +25,9 @@ run = "ansible-playbook playbooks/backup.yml -i inventory"
 [tasks.restore]
 run = "ansible-playbook playbooks/restore.yml -i inventory"
 
+[tasks.venv]
+run = "ansible-playbook playbooks/venv.yml -i inventory"
+
 [tasks.lint]
 description = "Run ansible lint"
 run = "ansible-lint --exclude .ansible/roles/"
