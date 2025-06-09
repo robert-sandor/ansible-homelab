@@ -36,7 +36,9 @@ services:
       homepage.siteMonitor: https://lidarr.{{ hostname }}
       # What's up docker
       wud.watch: true
-      wud.tag.include: ^\d+\.\d+\.\d+$$
+      # NOTE: lidarr has a weird 8.1 version pushed 3 years ago (as of Jun 9 2025)
+      # this is to try to work around that
+      wud.tag.include: ^[1-7]+\.\d+\.\d+$$
       wud.link.template: https://github.com/linuxserver/docker-lidarr/releases
 
 networks:
