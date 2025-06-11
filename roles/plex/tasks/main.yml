@@ -30,12 +30,12 @@
 
 - name: Create backup and restore scripts
   ansible.builtin.import_role:
-    name: common
+    name: util
     tasks_from: backup_and_restore
   vars:
-    common_type: simple
-    common_app_name: plex
-    common_stop_services: plex
+    util_backup_type: simple
+    util_app: plex
+    util_stop_services: plex
 
 - name: Enable systemd timers
   ansible.builtin.systemd_service:

@@ -28,12 +28,12 @@
 
 - name: Create backup and restore scripts
   ansible.builtin.import_role:
-    name: common
+    name: util
     tasks_from: backup_and_restore
   vars:
-    common_type: simple
-    common_app_name: adguardhome
-    common_stop_services: server
+    util_backup_type: simple
+    util_app: adguardhome
+    util_stop_services: server
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:

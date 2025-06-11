@@ -4,10 +4,10 @@ set -euo pipefail
 
 DEPLOY_PATH="{{ deploy_path }}"
 BACKUP_PATH="{{ backup_path }}"
-APP_NAME="{{ common_app_name }}"
+APP_NAME="{{ util_app }}"
 COMPOSE_FILE="$DEPLOY_PATH/$APP_NAME/compose.yml"
-STOP_SERVICES="{{ common_stop_services | default('') }}"
-DATABASE_SERVICES="{{ common_db_services | default('db') }}"
+STOP_SERVICES="{{ util_stop_services | default('') }}"
+DATABASE_SERVICES="{{ util_db_services | default('db') }}"
 
 pg_restore() {
   local service="$1"

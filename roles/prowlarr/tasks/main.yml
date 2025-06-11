@@ -20,11 +20,11 @@
 
 - name: Create backup and restore scripts
   ansible.builtin.import_role:
-    name: common
+    name: util
     tasks_from: backup_and_restore
   vars:
-    common_type: simple
-    common_app_name: prowlarr
-    common_stop_services: prowlarr
+    util_backup_type: simple
+    util_app: prowlarr
+    util_stop_services: prowlarr
 
 - ansible.builtin.import_tasks: ./configure.yml # noqa: name

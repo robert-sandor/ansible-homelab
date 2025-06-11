@@ -1,4 +1,7 @@
 ---
 util_app: ""
+util_backup_type: ""
+util_stop_services: ""
+util_db_services: "db"
 util_deploy_path: "{{ deploy_path }}/{{ util_app }}"
 util_backup_path: "{{ backup_path }}/{{ util_app }}"

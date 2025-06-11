@@ -39,8 +39,8 @@
 
 - name: Create backup and restore scripts
   ansible.builtin.import_role:
-    name: common
+    name: util
     tasks_from: backup_and_restore
   vars:
-    common_type: pgdump
-    common_app_name: gatus
+    util_backup_type: pgdump
+    util_app: gatus

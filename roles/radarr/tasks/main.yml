@@ -20,12 +20,12 @@
 
 - name: Create backup and restore scripts
   ansible.builtin.import_role:
-    name: common
+    name: util
     tasks_from: backup_and_restore
   vars:
-    common_type: simple
-    common_app_name: radarr
-    common_stop_services: radarr
+    util_backup_type: simple
+    util_app: radarr
+    util_stop_services: radarr
 
 - name: Enable compose up on boot systemd timer
   ansible.builtin.systemd_service:

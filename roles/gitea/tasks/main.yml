@@ -72,12 +72,12 @@
 
 - name: Create backup and restore scripts
   ansible.builtin.import_role:
-    name: common
+    name: util
     tasks_from: backup_and_restore
   vars:
-    common_type: pgdump
-    common_app_name: gitea
-    common_stop_services: server runner
+    util_backup_type: pgdump
+    util_app: gitea
+    util_stop_services: server runner
 
 - name: Configure gitea
   ansible.builtin.import_tasks: ./configure.yml
