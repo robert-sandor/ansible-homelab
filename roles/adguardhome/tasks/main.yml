@@ -1,7 +1,7 @@
 ---
 - name: Disable systemd resolved DNS stubbing
   ansible.builtin.import_role:
-    name: common
+    name: util
     tasks_from: disable_systemdresolved
 
 - name: Create directories
