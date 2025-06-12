@@ -1,0 +1,51 @@
+---
+- name: Check if config file exists
+  ansible.builtin.stat:
+    path: "{{ adguardhome_conf_file_path }}"
+  register: adguardhome_conf_file_stat
+
+- name: Initialize adguardhome
+  when: not adguardhome_conf_file_stat.stat.exists
+  block:
+    - name: Start adguardhome-init
+      community.docker.docker_container:
+        state: started
+        name: adguardhome-init
+        image: "{{ adguardhome_image }}"
+        env:
+          TZ: "{{ timezone }}"
+        ports:
+          - "127.0.0.1:{{ adguardhome_api_port }}:{{ adguardhome_api_port }}"
+        volumes:
+          - "{{ adguardhome_conf_path }}:/opt/adguardhome/conf"
+          - "{{ adguardhome_work_path }}:/opt/adguardhome/work"
+
+    - name: Initialize
+      ansible.builtin.uri:
+        url: "{{ adguardhome_api }}/install/configure"
+        method: POST
+        body_format: json
+        body: "{{ adguardhome_init_body }}"
+        status_code: 200, 403
+      register: adguardhome_init_response
+      until: adguardhome_init_response.status != 404
+      retries: 5
+      delay: 5
+
+    - name: Stop adguardhome-init
+      community.docker.docker_container:
+        state: absent
+        name: adguardhome-init
+
+- name: Update owner for adguardhome files
+  become: true
+  ansible.builtin.file:
+    path: "{{ dir }}"
+    owner: "{{ ansible_facts.user_uid }}"
+    group: "{{ ansible_facts.user_uid }}"
+    recurse: true
+  loop:
+    - "{{ adguardhome_conf_path }}"
+    - "{{ adguardhome_work_path }}"
+  loop_control:
+    loop_var: dir

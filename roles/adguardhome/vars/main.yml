@@ -1,6 +1,35 @@
 ---
 adguardhome_deploy_path: "{{ deploy_path }}/adguardhome"
+adguardhome_conf_path: "{{ adguardhome_deploy_path }}/conf"
+adguardhome_conf_file_path: "{{ adguardhome_conf_path }}/AdGuardHome.yaml"
+adguardhome_work_path: "{{ adguardhome_deploy_path }}/work"
 adguardhome_backup_path: "{{ backup_path }}/adguardhome"
 
-adguardhome_version: v0.107.62 # https://hub.docker.com/r/adguard/adguardhome/tags
 adguardhome_image: "docker.io/adguard/adguardhome:{{ adguardhome_version }}"
+adguardhome_api_port: 3000
+
+adguardhome_api: "http://127.0.0.1:{{ adguardhome_api_port }}/control"
+adguardhome_api_headers:
+  cookie: agh_session={{ adguardhome_auth_response.cookies.agh_session }}
+  accept-encoding: gzip
+
+adguardhome_init_body:
+  username: "{{ adguardhome_user }}"
+  password: "{{ adguardhome_password }}"
+  web:
+    ip: 0.0.0.0
+    port: "{{ adguardhome_api_port }}"
+  dns:
+    ip: 0.0.0.0
+    port: 53
+
+adguardhome_rewrite_list: >-
+  [
+  {% for host in adguardhome_wildcard_hosts %}
+  {'domain': '*.{{ host }}.{{ domain }}', 'answer': '{{ host }}.{{ domain }}'},
+  {% endfor %}
+  {% for rewrite in adguardhome_rewrites %}
+  {'domain': '{{ rewrite.domain }}', 'answer': '{{ rewrite.answer }}'},
+  {% endfor %}
+  ]
+adguardhome_existing_filters: "{{ adguardhome_filters_response.json | json_query('filters[].{ enabled: enabled, name: name, url: url }') }}"

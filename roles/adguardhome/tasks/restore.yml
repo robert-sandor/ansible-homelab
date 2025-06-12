@@ -1,12 +1,7 @@
 ---
-- name: Run restore script
-  ansible.builtin.command:
-    cmd: "{{ backup_path }}/adguardhome/restore.sh"
-  changed_when: true
-
-- name: Enable backup timer
-  ansible.builtin.systemd_service:
-    scope: user
-    service: backup@adguardhome.timer
-    state: started
-    enabled: true
+- name: Import restore util
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: restore
+  vars:
+    util_app: adguardhome

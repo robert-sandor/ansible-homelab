@@ -4,6 +4,7 @@ services:
     image: "{{ adguardhome_image }}"
     container_name: adguardhome
     restart: always
+    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
     environment:
       TZ: "{{ timezone }}"
     networks:
@@ -11,13 +12,13 @@ services:
     ports:
       - 53:53/tcp
       - 53:53/udp
-      - 127.0.0.1:3000:3000
+      - "127.0.0.1:{{ adguardhome_api_port }}:{{ adguardhome_api_port }}"
     volumes:
-      - ./work:/opt/adguardhome/work
-      - ./conf:/opt/adguardhome/conf
+      - "{{ adguardhome_conf_path }}:/opt/adguardhome/conf"
+      - "{{ adguardhome_work_path }}:/opt/adguardhome/work"
     labels:
       traefik.enable: true
-      traefik.http.services.adguardhome.loadbalancer.server.port: 3000
+      traefik.http.services.adguardhome.loadbalancer.server.port: "{{ adguardhome_api_port }}"
       traefik.http.routers.adguardhome.rule: "Host(`adguardhome.{{ hostname }}`)"
       traefik.http.routers.adguardhome.entrypoints: https
       traefik.http.routers.adguardhome.service: adguardhome

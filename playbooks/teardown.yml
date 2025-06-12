@@ -152,3 +152,12 @@
       ansible.builtin.import_role:
         name: nut
         tasks_from: teardown
+
+- name: Teardown adguardhome
+  hosts: adguardhome
+  tags: adguardhome
+  tasks:
+    - name: Import role adguardhome
+      ansible.builtin.import_role:
+        name: adguardhome
+        tasks_from: teardown

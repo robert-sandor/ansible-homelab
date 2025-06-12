@@ -1,5 +1,7 @@
 ---
-- name: Run backup script
-  ansible.builtin.command:
-    cmd: "{{ adguardhome_deploy_path }}/backup.sh backup"
-  changed_when: true
+- name: Import backup util
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: backup
+  vars:
+    util_app: adguardhome

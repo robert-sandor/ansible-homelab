@@ -7,11 +7,13 @@
 - name: Create directories
   ansible.builtin.file:
     state: directory
-    path: "{{ adguardhome_deploy_path }}/{{ item }}"
+    path: "{{ dir }}"
     mode: "0750"
   loop:
-    - work
-    - conf
+    - "{{ adguardhome_conf_path }}"
+    - "{{ adguardhome_work_path }}"
+  loop_control:
+    loop_var: dir
 
 - name: Template compose file
   ansible.builtin.template:
@@ -19,8 +21,9 @@
     dest: "{{ adguardhome_deploy_path }}/compose.yml"
     mode: "0640"
 
+- ansible.builtin.import_tasks: ./initialize.yml # noqa: name
+
 - name: Start services
-  throttle: 1
   community.docker.docker_compose_v2:
     project_src: "{{ adguardhome_deploy_path }}"
     remove_orphans: true

@@ -1,126 +1,80 @@
 ---
-- name: Configure adguardhome
-  vars:
-    adguardhome_api: http://127.0.0.1:3000/control
-    adguardhome_cookie: agh_session={{ adguardhome_auth_response.cookies.agh_session }}
-    adguardhome_rewrite_list: >-
-      [
-      {% for host in adguardhome_wildcard_hosts %}
-      {'domain': '*.{{ host }}.{{ domain }}', 'answer': '{{ host }}.{{ domain }}'},
-      {% endfor %}
-      {% for rewrite in adguardhome_rewrites %}
-      {'domain': '{{ rewrite.domain }}', 'answer': '{{ rewrite.answer }}'},
-      {% endfor %}
-      ]
-    adguardhome_existing_filters: "{{ adguardhome_filters_response.json | json_query('filters[].{ enabled: enabled, name: name, url: url }') }}"
-  block:
-    - name: Initialize
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/install/configure"
-        method: POST
-        body_format: json
-        body:
-          username: "{{ adguardhome_user }}"
-          password: "{{ adguardhome_password }}"
-          web:
-            ip: 0.0.0.0
-            port: 3000
-          dns:
-            ip: 0.0.0.0
-            port: 53
-        status_code: 200, 403
-      register: adguardhome_init_response
-      until: adguardhome_init_response.status != 404
-      retries: 5
-      delay: 5
+- name: Login
+  ansible.builtin.uri:
+    url: "{{ adguardhome_api }}/login"
+    method: POST
+    body_format: json
+    body:
+      name: "{{ adguardhome_user }}"
+      password: "{{ adguardhome_password }}"
+    status_code: 200
+  register: adguardhome_auth_response
 
-    - name: Login
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/login"
-        method: POST
-        body_format: json
-        body:
-          name: "{{ adguardhome_user }}"
-          password: "{{ adguardhome_password }}"
-        status_code: 200
-      register: adguardhome_auth_response
+- name: DNS Config
+  ansible.builtin.uri:
+    url: "{{ adguardhome_api }}/dns_config"
+    method: POST
+    headers: "{{ adguardhome_api_headers }}"
+    body_format: json
+    body:
+      upstream_dns: "{{ adguardhome_upstream_dns }}"
+      bootstrap_dns: "{{ adguardhome_bootstrap_dns }}"
+      ratelimit: "{{ adguardhome_ratelimit }}"
+      cache_size: "{{ adguardhome_cache_size * 1024 * 1024 | int }}"
+    status_code: 200
 
-    - name: DNS Config
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/dns_config"
-        method: POST
-        headers:
-          cookie: "{{ adguardhome_cookie }}"
-        body_format: json
-        body: >-
-          {
-            "upstream_dns": {{ adguardhome_upstream_dns }},
-            "bootstrap_dns": {{ adguardhome_bootstrap_dns }},
-            "ratelimit": {{ adguardhome_ratelimit }},
-            "cache_size": {{ adguardhome_cache_size * 1024 * 1024 }}
-          }
-        status_code: 200
+- name: Get existing rewrites
+  ansible.builtin.uri:
+    url: "{{ adguardhome_api }}/rewrite/list"
+    method: GET
+    headers: "{{ adguardhome_api_headers }}"
+    status_code: 200
+  register: adguardhome_existing_rewrites
 
-    - name: Get existing rewrites
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/rewrite/list"
-        method: GET
-        headers:
-          Accept-Encoding: gzip
-          Cookie: "{{ adguardhome_cookie }}"
-        status_code: 200
-      register: adguardhome_existing_rewrites
+- name: Remove rewrites
+  ansible.builtin.uri:
+    url: "{{ adguardhome_api }}/rewrite/delete"
+    method: POST
+    body_format: json
+    headers: "{{ adguardhome_api_headers }}"
+    body: "{{ item }}"
+    status_code: 200
+  with_items: "{{ adguardhome_existing_rewrites.json | difference(adguardhome_rewrite_list) }}"
 
-    - name: Remove rewrites
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/rewrite/delete"
-        method: POST
-        body_format: json
-        headers:
-          Cookie: "{{ adguardhome_cookie }}"
-        body: "{{ item }}"
-        status_code: 200
-      with_items: "{{ adguardhome_existing_rewrites.json | difference(adguardhome_rewrite_list) }}"
+- name: Add rewrites
+  ansible.builtin.uri:
+    url: "{{ adguardhome_api }}/rewrite/add"
+    method: POST
+    body_format: json
+    headers: "{{ adguardhome_api_headers }}"
+    body: "{{ item }}"
+    status_code: 200
+  with_items: "{{ adguardhome_rewrite_list | difference(adguardhome_existing_rewrites.json) }}"
 
-    - name: Add rewrites
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/rewrite/add"
-        method: POST
-        body_format: json
-        headers:
-          Cookie: "{{ adguardhome_cookie }}"
-        body: "{{ item }}"
-        status_code: 200
-      with_items: "{{ adguardhome_rewrite_list | difference(adguardhome_existing_rewrites.json) }}"
+- name: Get existing filters
+  ansible.builtin.uri:
+    url: "{{ adguardhome_api }}/filtering/status"
+    method: GET
+    headers: "{{ adguardhome_api_headers }}"
+    status_code: 200
+  register: adguardhome_filters_response
 
-    - name: Get existing filters
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/filtering/status"
-        method: GET
-        headers:
-          Accept-Encoding: gzip
-          Cookie: "{{ adguardhome_cookie }}"
-        status_code: 200
-      register: adguardhome_filters_response
+- name: Remove filters
+  ansible.builtin.uri:
+    url: "{{ adguardhome_api }}/filtering/remove_url"
+    method: POST
+    body_format: json
+    headers: "{{ adguardhome_api_headers }}"
+    body: "{{ item }}"
+    status_code: 200
+  with_items: "{{ adguardhome_existing_filters | difference(adguardhome_filter_lists) }}"
 
-    - name: Remove filters
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/filtering/remove_url"
-        method: POST
-        body_format: json
-        headers:
-          Cookie: "{{ adguardhome_cookie }}"
-        body: "{{ item }}"
-        status_code: 200
-      with_items: "{{ adguardhome_existing_filters | difference(adguardhome_filter_lists) }}"
-
-    - name: Add filters
-      ansible.builtin.uri:
-        url: "{{ adguardhome_api }}/filtering/add_url"
-        method: POST
-        body_format: json
-        headers:
-          Cookie: "{{ adguardhome_cookie }}"
-        body: "{{ item }}"
-        status_code: 200
-      with_items: "{{ adguardhome_filter_lists | difference(adguardhome_existing_filters) }}"
+- name: Add filters
+  ansible.builtin.uri:
+    url: "{{ adguardhome_api }}/filtering/add_url"
+    method: POST
+    body_format: json
+    headers: "{{ adguardhome_api_headers }}"
+    body: "{{ item }}"
+    status_code: 200
+  with_items: "{{ adguardhome_filter_lists | difference(adguardhome_existing_filters) }}"

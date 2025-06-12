@@ -50,6 +50,7 @@
   hosts: adguardhome
   tags: adguardhome
   roles: [adguardhome]
+  serial: 1 # Only run this one at a time to ensure DNS availability
 
 - name: Deploy ntfy
   hosts: ntfy

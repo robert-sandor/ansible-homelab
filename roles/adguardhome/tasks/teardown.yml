@@ -1,19 +1,7 @@
 ---
-- name: Disable backup timer
-  ansible.builtin.systemd_service:
-    scope: user
-    service: backup@adguardhome.timer
-    state: stopped
-    enabled: false
-
-- name: Teardown services
-  community.docker.docker_compose_v2:
-    project_src: "{{ adguardhome_deploy_path }}"
-    state: absent
-    remove_volumes: true
-
-- name: Remove deploy directory and all contents
-  become: true # needed as it creates root owned directories
-  ansible.builtin.file:
-    dest: "{{ adguardhome_deploy_path }}"
-    state: absent
+- name: Import teardown util
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: teardown
+  vars:
+    util_app: adguardhome
