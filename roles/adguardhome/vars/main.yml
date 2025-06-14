@@ -13,16 +13,6 @@ adguardhome_api_headers:
   cookie: agh_session={{ adguardhome_auth_response.cookies.agh_session }}
   accept-encoding: gzip
 
-adguardhome_init_body:
-  username: "{{ adguardhome_user }}"
-  password: "{{ adguardhome_password }}"
-  web:
-    ip: 0.0.0.0
-    port: "{{ adguardhome_api_port }}"
-  dns:
-    ip: 0.0.0.0
-    port: 53
-
 adguardhome_rewrite_list: >-
   [
   {% for host in adguardhome_wildcard_hosts %}

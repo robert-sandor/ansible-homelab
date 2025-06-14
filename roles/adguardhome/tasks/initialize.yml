@@ -25,7 +25,15 @@
         url: "{{ adguardhome_api }}/install/configure"
         method: POST
         body_format: json
-        body: "{{ adguardhome_init_body }}"
+        body:
+          username: "{{ adguardhome_user }}"
+          password: "{{ adguardhome_password }}"
+          web:
+            ip: 0.0.0.0
+            port: "{{ adguardhome_api_port }}"
+          dns:
+            ip: 0.0.0.0
+            port: 53
         status_code: 200, 403
       register: adguardhome_init_response
       until: adguardhome_init_response.status != 404
