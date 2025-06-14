@@ -3,7 +3,7 @@ lidarr_deploy_path: "{{ deploy_path }}/lidarr"
 lidarr_backup_path: "{{ backup_path }}/lidarr"
 lidarr_config_path: "{{ lidarr_deploy_path }}/config"
 
-lidarr_version: "2.11.2"
+lidarr_version: "2.12.4"
 lidarr_image: "ghcr.io/linuxserver/lidarr:{{ lidarr_version }}"
 
 lidarr_media_mount: /media
