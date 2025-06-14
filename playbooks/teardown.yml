@@ -10,16 +10,6 @@
 #         name: template
 #         tasks_from: teardown
 
-# Needs to go before docker
-- name: Teardown netdata
-  hosts: netdata
-  tags: netdata
-  tasks:
-    - name: Import role netdata
-      ansible.builtin.import_role:
-        name: netdata
-        tasks_from: teardown
-
 - name: Teardown nextcloud
   hosts: nextcloud
   tags: nextcloud
@@ -29,13 +19,67 @@
         name: nextcloud
         tasks_from: teardown
 
-- name: Teardown ittools
-  hosts: ittools
-  tags: ittools
+- name: Teardown prowlarr
+  hosts: prowlarr
+  tags: prowlarr
   tasks:
-    - name: Import role ittools
+    - name: Import role prowlarr
       ansible.builtin.import_role:
-        name: ittools
+        name: prowlarr
+        tasks_from: teardown
+
+- name: Teardown bazarr
+  hosts: bazarr
+  tags: bazarr
+  tasks:
+    - name: Import role bazarr
+      ansible.builtin.import_role:
+        name: bazarr
+        tasks_from: teardown
+
+- name: Teardown jellyseerr
+  hosts: jellyseerr
+  tags: jellyseerr
+  tasks:
+    - name: Import role jellyseerr
+      ansible.builtin.import_role:
+        name: jellyseerr
+        tasks_from: teardown
+
+- name: Teardown overseerr
+  hosts: overseerr
+  tags: overseerr
+  tasks:
+    - name: Import role overseerr
+      ansible.builtin.import_role:
+        name: overseerr
+        tasks_from: teardown
+
+- name: Teardown radarr
+  hosts: radarr
+  tags: radarr
+  tasks:
+    - name: Import role radarr
+      ansible.builtin.import_role:
+        name: radarr
+        tasks_from: teardown
+
+- name: Teardown sonarr
+  hosts: sonarr
+  tags: sonarr
+  tasks:
+    - name: Import role sonarr
+      ansible.builtin.import_role:
+        name: sonarr
+        tasks_from: teardown
+
+- name: Teardown transmission
+  hosts: transmission
+  tags: transmission
+  tasks:
+    - name: Import role transmission
+      ansible.builtin.import_role:
+        name: transmission
         tasks_from: teardown
 
 - name: Teardown plex
@@ -56,57 +100,104 @@
         name: jellyfin
         tasks_from: teardown
 
-- name: Teardown transmission
-  hosts: transmission
-  tags: transmission
+- name: Teardown homepage
+  hosts: homepage
+  tags: homepage
   tasks:
-    - name: Import role transmission
+    - name: Import role homepage
       ansible.builtin.import_role:
-        name: transmission
+        name: homepage
         tasks_from: teardown
 
-- name: Teardown radarr
-  hosts: radarr
-  tags: radarr
+- name: Teardown gitea
+  hosts: gitea
+  tags: gitea
   tasks:
-    - name: Import role radarr
+    - name: Import role gitea
       ansible.builtin.import_role:
-        name: radarr
+        name: gitea
         tasks_from: teardown
 
-- name: Teardown bazarr
-  hosts: bazarr
-  tags: bazarr
+- name: Teardown ittools
+  hosts: ittools
+  tags: ittools
   tasks:
-    - name: Import role bazarr
+    - name: Import role ittools
       ansible.builtin.import_role:
-        name: bazarr
+        name: ittools
         tasks_from: teardown
 
-- name: Teardown prowlarr
-  hosts: prowlarr
-  tags: prowlarr
+- name: Teardown vikunja
+  hosts: vikunja
+  tags: vikunja
   tasks:
-    - ansible.builtin.import_role: # noqa: name
-        name: prowlarr
+    - name: Import role vikunja
+      ansible.builtin.import_role:
+        name: vikunja
         tasks_from: teardown
 
-- name: Teardown overseerr
-  hosts: overseerr
-  tags: overseerr
+- name: Teardown vaultwarden
+  hosts: vaultwarden
+  tags: vaultwarden
   tasks:
-    - name: Import role overseerr
+    - name: Import role vaultwarden
       ansible.builtin.import_role:
-        name: overseerr
+        name: vaultwarden
         tasks_from: teardown
 
-- name: Teardown jellyseerr
-  hosts: jellyseerr
-  tags: jellyseerr
+- name: Teardown manyfold
+  hosts: manyfold
+  tags: manyfold
   tasks:
-    - name: Import role jellyseerr
+    - name: Import role manyfold
       ansible.builtin.import_role:
-        name: jellyseerr
+        name: manyfold
+        tasks_from: teardown
+
+- name: Teardown mealie
+  hosts: mealie
+  tags: mealie
+  tasks:
+    - name: Import role mealie
+      ansible.builtin.import_role:
+        name: mealie
+        tasks_from: teardown
+
+# Needs to go before docker
+- name: Teardown netdata
+  hosts: netdata
+  tags: netdata
+  tasks:
+    - name: Import role netdata
+      ansible.builtin.import_role:
+        name: netdata
+        tasks_from: teardown
+
+- name: Teardown dozzle
+  hosts: dozzle
+  tags: dozzle
+  tasks:
+    - name: Import role dozzle
+      ansible.builtin.import_role:
+        name: dozzle
+        tasks_from: teardown
+
+- name: Teardown loki
+  hosts: loki
+  tags: loki
+  tasks:
+    - name: Import role loki
+      ansible.builtin.import_role:
+        name: loki
+        tasks_from: teardown
+
+- name: Teardown gatus
+  hosts: gatus
+  tags: gatus
+  tasks:
+    - name: Import role gatus
+      ansible.builtin.import_role:
+        name: gatus
         tasks_from: teardown
 
 - name: Teardown portainer
@@ -118,21 +209,13 @@
         name: portainer
         tasks_from: teardown
 
-- name: Teardown dozzle
-  hosts: dozzle
-  tags: dozzle
+- name: Teardown wud
+  hosts: wud
+  tags: wud
   tasks:
-    - ansible.builtin.import_role: # noqa: name
-        name: dozzle
-        tasks_from: teardown
-
-- name: Teardown gitea
-  hosts: gitea
-  tags: gitea
-  tasks:
-    - name: Import role gitea
+    - name: Import role wud
       ansible.builtin.import_role:
-        name: gitea
+        name: wud
         tasks_from: teardown
 
 - name: Teardown ntfy

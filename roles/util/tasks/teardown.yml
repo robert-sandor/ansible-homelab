@@ -1,18 +1,23 @@
 ---
-- name: Disable backup timer
+- name: Disable systemd timers for {{ util_app }}
   ansible.builtin.systemd_service:
     scope: user
-    service: backup@{{ util_app }}.timer
+    service: "{{ timer }}@{{ util_app }}.timer"
     state: stopped
     enabled: false
+    daemon_reload: true
+  loop:
+    - backup
+    - docker-compose-up
+  loop_control:
+    loop_var: timer
 
-- name: Stat the deploy directory
+- name: Check if deploy directory exists for {{ util_app }}
   ansible.builtin.stat:
     path: "{{ util_deploy_path }}"
   register: util_deploy_path_stat
 
-- name: Ensure services are stopped and deploy path removed
-  when: util_deploy_path_stat.stat.exists
+- when: util_deploy_path_stat.stat.exists # noqa: name
   block:
     - name: Ensure services are stopped
       community.docker.docker_compose_v2:

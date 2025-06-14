@@ -1,18 +1,7 @@
 ---
-- name: Disable backup timer
-  ansible.builtin.systemd_service:
-    scope: user
-    service: backup@portainer.timer
-    state: stopped
-    enabled: false
-
-- name: Teardown services
-  community.docker.docker_compose_v2:
-    project_src: "{{ portainer_deploy_path }}"
-    state: absent
-    remove_volumes: true
-
-- name: Remove all files
-  ansible.builtin.file:
-    dest: "{{ portainer_deploy_path }}"
-    state: absent
+- name: Import util teardown
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: teardown
+  vars:
+    util_app: portainer

@@ -1,11 +1,7 @@
 ---
-- name: Teardown services
-  community.docker.docker_compose_v2:
-    project_src: "{{ ittools_deploy_path }}"
-    state: absent
-    remove_volumes: true
-
-- name: Remove deploy directory and all contents
-  ansible.builtin.file:
-    dest: "{{ ittools_deploy_path }}"
-    state: absent
+- name: Import util teardown
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: teardown
+  vars:
+    util_app: ittools

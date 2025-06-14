@@ -1,19 +1,7 @@
 ---
-# NOTE: workaround for containers not starting on reboot with network shares
-- name: Remove cron job to ensure jellyfin is started after a reboot
-  ansible.builtin.cron:
-    state: absent
-    name: ensure jellyfin is up
-    special_time: reboot
-    job: "sleep 30 && docker compose -f {{ jellyfin_deploy_path }}/compose.yml up -d"
-
-- name: Teardown containers
-  community.docker.docker_compose_v2:
-    project_src: "{{ jellyfin_deploy_path }}"
-    state: absent
-    remove_volumes: true
-
-- name: Ensure directories are deleted
-  ansible.builtin.file:
-    state: absent
-    path: "{{ jellyfin_deploy_path }}"
+- name: Import util teardown
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: teardown
+  vars:
+    util_app: jellyfin
