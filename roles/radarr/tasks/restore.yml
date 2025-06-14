@@ -1,5 +1,8 @@
 ---
-- name: Run restore script
-  ansible.builtin.command:
-    cmd: "{{ sonarr_backup_path }}/restore.sh"
-  changed_when: true
+- name: Import util restore
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: restore
+  vars:
+    util_app: radarr
+    util_backup_path: "{{ radarr_backup_path }}"

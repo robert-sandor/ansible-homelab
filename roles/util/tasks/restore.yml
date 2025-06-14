@@ -1,4 +1,14 @@
 ---
+- name: Validate required variables for restore
+  ansible.builtin.assert:
+    that:
+      - util_app is defined
+      - util_app | length > 0
+      - util_backup_path is defined
+      - util_backup_path | length > 0
+    fail_msg: "Required variables missing: util_app and util_backup_path must be defined and non-empty"
+    success_msg: "Required variables validated for {{ util_app }} restore"
+
 - name: Stat restore script
   ansible.builtin.stat:
     path: "{{ util_backup_path }}/restore.sh"

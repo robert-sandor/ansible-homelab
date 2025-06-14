@@ -1,12 +1,8 @@
 ---
-- name: Run restore script
-  ansible.builtin.command:
-    cmd: "{{ backup_path }}/homepage/restore.sh"
-  changed_when: true
-
-- name: Enable backup timer
-  ansible.builtin.systemd_service:
-    scope: user
-    service: backup@homepage.timer
-    state: started
-    enabled: true
+- name: Import util restore
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: restore
+  vars:
+    util_app: homepage
+    util_backup_path: "{{ backup_path }}/homepage"

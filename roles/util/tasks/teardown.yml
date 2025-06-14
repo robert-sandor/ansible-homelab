@@ -1,4 +1,14 @@
 ---
+- name: Validate required variables for teardown
+  ansible.builtin.assert:
+    that:
+      - util_app is defined
+      - util_app | length > 0
+      - util_deploy_path is defined
+      - util_deploy_path | length > 0
+    fail_msg: "Required variables missing: util_app and util_deploy_path must be defined and non-empty"
+    success_msg: "Required variables validated for {{ util_app }} teardown"
+
 - name: Disable systemd timers for {{ util_app }}
   ansible.builtin.systemd_service:
     scope: user

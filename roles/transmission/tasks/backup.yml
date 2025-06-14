@@ -1,5 +1,8 @@
 ---
-- name: Run backup script
-  ansible.builtin.command:
-    cmd: "{{ transmission_deploy_path }}/backup.sh"
-  changed_when: true
+- name: Import util backup
+  ansible.builtin.import_role:
+    name: util
+    tasks_from: backup
+  vars:
+    util_app: transmission
+    util_deploy_path: "{{ transmission_deploy_path }}"
