@@ -1,5 +1,6 @@
 ---
 overseerr_deploy_path: "{{ deploy_path }}/overseerr"
+overseerr_backup_path: "{{ backup_path }}/overseerr"
 overseerr_config_path: "{{ overseerr_deploy_path }}/config"
 
 overseerr_image: "ghcr.io/linuxserver/overseerr:{{ overseerr_version }}"

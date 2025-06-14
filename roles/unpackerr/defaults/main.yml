@@ -3,6 +3,7 @@ unpackerr_version: "0.14.5"
 unpackerr_image: "ghcr.io/unpackerr/unpackerr:{{ unpackerr_version }}"
 
 unpackerr_deploy_path: "{{ deploy_path }}/unpackerr"
+unpackerr_backup_path: "{{ backup_path }}/unpackerr"
 unpackerr_media_path: "/media"
 unpackerr_media_mount: "/media"
 

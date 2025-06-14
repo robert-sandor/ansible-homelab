@@ -1,5 +1,6 @@
 ---
 healthchecks_deploy_path: "{{ deploy_path }}/healthchecks"
+healthchecks_backup_path: "{{ backup_path }}/healthchecks"
 
 healthchecks_version: v3.9-ls290
 healthchecks_image: ghcr.io/linuxserver/healthchecks:{{ healthchecks_version }}

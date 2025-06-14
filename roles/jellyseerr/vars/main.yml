@@ -1,5 +1,6 @@
 ---
 jellyseerr_deploy_path: "{{ deploy_path }}/jellyseerr"
+jellyseerr_backup_path: "{{ backup_path }}/jellyseerr"
 jellyseerr_config_path: "{{ jellyseerr_deploy_path }}/config"
 
 jellyseerr_image: "ghcr.io/fallenbagel/jellyseerr:{{ jellyseerr_version }}"

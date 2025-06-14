@@ -2,6 +2,7 @@
 prowlarr_image: "ghcr.io/linuxserver/prowlarr:{{ prowlarr_version }}"
 
 prowlarr_deploy_path: "{{ deploy_path }}/prowlarr"
+prowlarr_backup_path: "{{ backup_path }}/prowlarr"
 prowlarr_config_path: "{{ prowlarr_deploy_path }}/config"
 
 prowlarr_url: "https://prowlarr.{{ hostname }}"

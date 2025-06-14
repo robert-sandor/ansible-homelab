@@ -3,6 +3,7 @@ recyclarr_version: "7.4.1"
 recyclarr_image: "ghcr.io/recyclarr/recyclarr:{{ recyclarr_version }}"
 
 recyclarr_deploy_path: "{{ deploy_path }}/recyclarr"
+recyclarr_backup_path: "{{ backup_path }}/recyclarr"
 
 recyclarr_config:
   sonarr: "{{ {} if groups['sonarr'] | length <= 0 else {'sonarr': recyclarr_sonarr_config} }}"

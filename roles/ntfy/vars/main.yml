@@ -1,3 +1,4 @@
 ---
 ntfy_deploy_path: "{{ deploy_path }}/ntfy"
+ntfy_backup_path: "{{ backup_path }}/ntfy"
 ntfy_version: v2.12.0
