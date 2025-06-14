@@ -5,4 +5,4 @@
     tasks_from: restore
   vars:
     util_app: loki
-    util_backup_path: "{{ backup_path }}/loki"
+    util_backup_path: "{{ loki_backup_path }}"

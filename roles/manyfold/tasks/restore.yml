@@ -5,4 +5,4 @@
     tasks_from: restore
   vars:
     util_app: manyfold
-    util_backup_path: "{{ backup_path }}/manyfold"
+    util_backup_path: "{{ manyfold_backup_path }}"

@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: netdata
+    util_deploy_path: "{{ netdata_deploy_path }}"

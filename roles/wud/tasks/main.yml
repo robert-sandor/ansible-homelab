@@ -29,6 +29,8 @@
   vars:
     util_backup_type: simple
     util_app: wud
+    util_deploy_path: "{{ wud_deploy_path }}"
+    util_backup_path: "{{ wud_backup_path }}"
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:

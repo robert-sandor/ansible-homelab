@@ -5,3 +5,4 @@
     tasks_from: restore
   vars:
     util_app: nextcloud
+    util_backup_path: "{{ nextcloud_backup_path }}"

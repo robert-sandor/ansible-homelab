@@ -5,4 +5,4 @@
     tasks_from: restore
   vars:
     util_app: mealie
-    util_backup_path: "{{ backup_path }}/mealie"
+    util_backup_path: "{{ mealie_backup_path }}"

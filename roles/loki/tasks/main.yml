@@ -46,6 +46,8 @@
   vars:
     util_backup_type: simple
     util_app: loki
+    util_deploy_path: "{{ loki_deploy_path }}"
+    util_backup_path: "{{ loki_backup_path }}"
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:

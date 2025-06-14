@@ -16,6 +16,7 @@ manyfold_valkey_image: "docker.io/valkey/valkey:{{ manyfold_valkey_version }}"
 
 # Where to deploy manyfold
 manyfold_deploy_path: "{{ deploy_path }}/manyfold"
+manyfold_backup_path: "{{ backup_path }}/manyfold"
 
 # DB password for manyfold user
 manyfold_db_name: manyfold

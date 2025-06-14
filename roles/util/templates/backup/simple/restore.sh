@@ -2,11 +2,11 @@
 
 set -euo pipefail
 
-DEPLOY_PATH="{{ deploy_path }}"
-BACKUP_PATH="{{ backup_path }}"
+DEPLOY_PATH="{{ util_deploy_path }}"
+BACKUP_PATH="{{ util_backup_path }}"
 APP_NAME="{{ util_app }}"
-COMPOSE_FILE="$DEPLOY_PATH/$APP_NAME/compose.yml"
-STOP_SERVICES="{{ util_stop_services | default('') }}"
+COMPOSE_FILE="$DEPLOY_PATH/compose.yml"
+STOP_SERVICES="{{ util_stop_services }}"
 
 if [[ -f "$COMPOSE_FILE" && -n "$STOP_SERVICES" ]]; then
   read -ra services <<<"$STOP_SERVICES"
@@ -16,7 +16,9 @@ if [[ -f "$COMPOSE_FILE" && -n "$STOP_SERVICES" ]]; then
   fi
 fi
 
-if ! rsync -Aax "$BACKUP_PATH/$APP_NAME" "$DEPLOY_PATH"; then
+mkdir -p "$DEPLOY_PATH"
+
+if ! rsync -Aax "$BACKUP_PATH/" "$DEPLOY_PATH/"; then
   echo "Error: Failed to sync backup files to $DEPLOY_PATH" >&2
   exit 1
 fi

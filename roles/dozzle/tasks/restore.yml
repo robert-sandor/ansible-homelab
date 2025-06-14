@@ -5,4 +5,4 @@
     tasks_from: restore
   vars:
     util_app: dozzle
-    util_backup_path: "{{ backup_path }}/dozzle"
+    util_backup_path: "{{ dozzle_backup_path }}"

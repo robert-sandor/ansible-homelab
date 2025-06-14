@@ -1,14 +1,29 @@
 ---
+- name: Validate required variables for backup_and_restore
+  ansible.builtin.assert:
+    that:
+      - util_backup_type is defined
+      - util_backup_type | length > 0
+      - util_backup_type in ['simple', 'pgdump']
+      - util_app is defined
+      - util_app | length > 0
+      - util_deploy_path is defined
+      - util_deploy_path | length > 0
+      - util_backup_path is defined
+      - util_backup_path | length > 0
+    fail_msg: "Required variables missing: util_backup_type (simple|pgdump), util_app, util_deploy_path, and util_backup_path must be defined and non-empty"
+    success_msg: "Required variables validated for {{ util_app }} backup_and_restore (type: {{ util_backup_type }})"
+
 - name: Template backup and restore scripts
   ansible.builtin.template:
-    src: "backup/{{ util_backup_type }}/{{ script }}"
-    dest: "{{ util_deploy_path }}/{{ script }}"
+    src: "backup/{{ util_backup_type }}/{{ script_name }}.sh"
+    dest: "{{ util_deploy_path }}/{{ script_name }}.sh"
     mode: "0750"
   loop:
-    - backup.sh
-    - restore.sh
+    - backup
+    - restore
   loop_control:
-    loop_var: script
+    loop_var: script_name
 
 - name: Enable systemd timer for backup
   ansible.builtin.systemd_service:

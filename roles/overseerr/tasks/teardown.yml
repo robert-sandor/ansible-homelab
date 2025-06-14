@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: overseerr
+    util_deploy_path: "{{ overseerr_deploy_path }}"

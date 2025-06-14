@@ -1,5 +1,6 @@
 ---
 gitea_deploy_path: "{{ deploy_path }}/gitea"
+gitea_backup_path: "{{ backup_path }}/gitea"
 
 gitea_version: "1.24.0" # https://github.com/go-gitea/gitea/releases
 gitea_pg_version: "17.5"

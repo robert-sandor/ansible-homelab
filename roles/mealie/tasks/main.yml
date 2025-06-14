@@ -23,6 +23,8 @@
   vars:
     util_backup_type: simple
     util_app: mealie
+    util_deploy_path: "{{ mealie_deploy_path }}"
+    util_backup_path: "{{ mealie_backup_path }}"
     util_stop_services: app
 
 - name: Enable backup timer

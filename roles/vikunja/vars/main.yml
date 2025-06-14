@@ -1,5 +1,6 @@
 ---
 vikunja_deploy_path: "{{ deploy_path }}/vikunja"
+vikunja_backup_path: "{{ backup_path }}/vikunja"
 
 vikunja_version: "0.24.6" # https://hub.docker.com/r/vikunja/vikunja/tags
 vikunja_pg_version: "17.5"

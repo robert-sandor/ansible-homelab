@@ -5,4 +5,4 @@
     tasks_from: restore
   vars:
     util_app: wud
-    util_backup_path: "{{ backup_path }}/wud"
+    util_backup_path: "{{ wud_backup_path }}"

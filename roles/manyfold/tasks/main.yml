@@ -24,4 +24,6 @@
   vars:
     util_backup_type: pgdump
     util_app: manyfold
+    util_deploy_path: "{{ manyfold_deploy_path }}"
+    util_backup_path: "{{ manyfold_backup_path }}"
     util_stop_services: app

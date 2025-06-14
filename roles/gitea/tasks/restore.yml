@@ -5,4 +5,4 @@
     tasks_from: restore
   vars:
     util_app: gitea
-    util_backup_path: "{{ backup_path }}/gitea"
+    util_backup_path: "{{ gitea_backup_path }}"

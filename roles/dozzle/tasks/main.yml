@@ -36,6 +36,8 @@
   vars:
     util_backup_type: simple
     util_app: dozzle
+    util_deploy_path: "{{ dozzle_deploy_path }}"
+    util_backup_path: "{{ dozzle_backup_path }}"
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:

@@ -5,4 +5,4 @@
     tasks_from: restore
   vars:
     util_app: vaultwarden
-    util_backup_path: "{{ backup_path }}/vaultwarden"
+    util_backup_path: "{{ vaultwarden_backup_path }}"

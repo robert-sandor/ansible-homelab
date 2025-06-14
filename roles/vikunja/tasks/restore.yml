@@ -5,4 +5,4 @@
     tasks_from: restore
   vars:
     util_app: vikunja
-    util_backup_path: "{{ backup_path }}/vikunja"
+    util_backup_path: "{{ vikunja_backup_path }}"

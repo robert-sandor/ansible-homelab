@@ -77,6 +77,8 @@
   vars:
     util_backup_type: pgdump
     util_app: gitea
+    util_deploy_path: "{{ gitea_deploy_path }}"
+    util_backup_path: "{{ gitea_backup_path }}"
     util_stop_services: server runner
 
 - name: Configure gitea

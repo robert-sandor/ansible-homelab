@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: ittools
+    util_deploy_path: "{{ ittools_deploy_path }}"

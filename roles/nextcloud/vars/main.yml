@@ -1,5 +1,6 @@
 ---
 nextcloud_deploy_path: "{{ deploy_path }}/nextcloud"
+nextcloud_backup_path: "{{ backup_path }}/nextcloud"
 nextcloud_appdata_path: "{{ nextcloud_deploy_path }}/appdata"
 nextcloud_secrets_path: "{{ nextcloud_deploy_path }}/secrets"
 nextcloud_post_installation_hooks_path: "{{ nextcloud_deploy_path }}/hooks/post-installation"

@@ -1,5 +1,6 @@
 ---
 homepage_deploy_path: "{{ deploy_path }}/homepage"
+homepage_backup_path: "{{ backup_path }}/homepage"
 
 homepage_version: v1.3.2
 

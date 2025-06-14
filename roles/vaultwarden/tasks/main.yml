@@ -46,3 +46,5 @@
   vars:
     util_backup_type: pgdump
     util_app: vaultwarden
+    util_deploy_path: "{{ vaultwarden_deploy_path }}"
+    util_backup_path: "{{ vaultwarden_backup_path }}"

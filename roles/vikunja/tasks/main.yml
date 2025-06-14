@@ -49,4 +49,6 @@
   vars:
     util_backup_type: pgdump
     util_app: vikunja
+    util_deploy_path: "{{ vikunja_deploy_path }}"
+    util_backup_path: "{{ vikunja_backup_path }}"
     util_stop_services: vikunja

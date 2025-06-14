@@ -40,6 +40,8 @@
   vars:
     util_backup_type: simple
     util_app: homepage
+    util_deploy_path: "{{ homepage_deploy_path }}"
+    util_backup_path: "{{ homepage_backup_path }}"
 
 - name: Enable backup timer
   ansible.builtin.systemd_service:
