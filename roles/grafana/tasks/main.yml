@@ -1,10 +1,6 @@
 ---
 - name: Deploy grafana
   block:
-    - name: Set deploy path for grafana
-      ansible.builtin.set_fact:
-        grafana_deploy_path: "{{ deploy_path }}/grafana"
-
     - name: Create directories
       ansible.builtin.file:
         state: directory

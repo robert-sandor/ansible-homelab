@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: loki
+    util_deploy_path: "{{ loki_deploy_path }}"

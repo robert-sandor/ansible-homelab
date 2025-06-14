@@ -30,6 +30,8 @@
   vars:
     util_backup_type: simple
     util_app: transmission
+    util_deploy_path: "{{ transmission_deploy_path }}"
+    util_backup_path: "{{ transmission_backup_path }}"
     util_stop_services: transmission
 
 - name: Enable backup systemd timer

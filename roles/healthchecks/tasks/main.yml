@@ -31,3 +31,5 @@
   vars:
     util_backup_type: pgdump
     util_app: healthchecks
+    util_deploy_path: "{{ healthchecks_deploy_path }}"
+    util_backup_path: "{{ healthchecks_backup_path }}"

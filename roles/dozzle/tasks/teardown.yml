@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: dozzle
+    util_deploy_path: "{{ dozzle_deploy_path }}"

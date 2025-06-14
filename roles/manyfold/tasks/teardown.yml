@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: manyfold
+    util_deploy_path: "{{ manyfold_deploy_path }}"

@@ -5,3 +5,4 @@
     tasks_from: backup
   vars:
     util_app: nextcloud
+    util_deploy_path: "{{ nextcloud_deploy_path }}"

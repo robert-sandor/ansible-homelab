@@ -76,4 +76,6 @@
   vars:
     util_backup_type: pgdump
     util_app: nextcloud
+    util_deploy_path: "{{ nextcloud_deploy_path }}"
+    util_backup_path: "{{ nextcloud_backup_path }}"
     util_stop_services: server cron

@@ -25,6 +25,8 @@
   vars:
     util_backup_type: simple
     util_app: sonarr
+    util_deploy_path: "{{ sonarr_deploy_path }}"
+    util_backup_path: "{{ sonarr_backup_path }}"
     util_stop_services: sonarr
 
 - name: Enable compose up on boot timer

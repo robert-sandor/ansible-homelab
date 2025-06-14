@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: radarr
+    util_deploy_path: "{{ radarr_deploy_path }}"

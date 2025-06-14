@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: gitea
+    util_deploy_path: "{{ gitea_deploy_path }}"

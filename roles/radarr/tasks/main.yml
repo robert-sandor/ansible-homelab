@@ -25,6 +25,8 @@
   vars:
     util_backup_type: simple
     util_app: radarr
+    util_deploy_path: "{{ radarr_deploy_path }}"
+    util_backup_path: "{{ radarr_backup_path }}"
     util_stop_services: radarr
 
 - name: Enable compose up on boot systemd timer

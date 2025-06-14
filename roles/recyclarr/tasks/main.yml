@@ -46,4 +46,6 @@
   vars:
     util_backup_type: simple
     util_app: recyclarr
+    util_deploy_path: "{{ recyclarr_deploy_path }}"
+    util_backup_path: "{{ recyclarr_backup_path }}"
     util_stop_services: recyclarr

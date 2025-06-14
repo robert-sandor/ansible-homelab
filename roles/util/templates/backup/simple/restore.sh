@@ -6,7 +6,7 @@ DEPLOY_PATH="{{ util_deploy_path }}"
 BACKUP_PATH="{{ util_backup_path }}"
 APP_NAME="{{ util_app }}"
 COMPOSE_FILE="$DEPLOY_PATH/compose.yml"
-STOP_SERVICES="{{ util_stop_services }}"
+STOP_SERVICES="{{ util_stop_services | default('') }}"
 
 if [[ -f "$COMPOSE_FILE" && -n "$STOP_SERVICES" ]]; then
   read -ra services <<<"$STOP_SERVICES"

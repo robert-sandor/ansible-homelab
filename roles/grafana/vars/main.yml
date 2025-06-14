@@ -1,0 +1,2 @@
+---
+grafana_deploy_path: "{{ deploy_path }}/grafana"

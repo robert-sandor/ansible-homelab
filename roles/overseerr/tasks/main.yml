@@ -25,4 +25,6 @@
   vars:
     util_backup_type: simple
     util_app: overseerr
+    util_deploy_path: "{{ overseerr_deploy_path }}"
+    util_backup_path: "{{ overseerr_backup_path }}"
     util_stop_services: overseerr

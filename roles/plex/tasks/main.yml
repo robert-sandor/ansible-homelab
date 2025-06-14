@@ -35,6 +35,8 @@
   vars:
     util_backup_type: simple
     util_app: plex
+    util_deploy_path: "{{ plex_deploy_path }}"
+    util_backup_path: "{{ plex_backup_path }}"
     util_stop_services: plex
 
 - name: Enable systemd timers

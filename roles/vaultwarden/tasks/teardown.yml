@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: vaultwarden
+    util_deploy_path: "{{ vaultwarden_deploy_path }}"

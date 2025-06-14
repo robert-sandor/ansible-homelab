@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: wud
+    util_deploy_path: "{{ wud_deploy_path }}"

@@ -52,6 +52,8 @@
   vars:
     util_backup_type: simple
     util_app: unpackerr
+    util_deploy_path: "{{ unpackerr_deploy_path }}"
+    util_backup_path: "{{ unpackerr_backup_path }}"
     util_stop_services: unpackerr
 
 - name: Enable compose up on boot timer

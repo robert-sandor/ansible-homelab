@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: bazarr
+    util_deploy_path: "{{ bazarr_deploy_path }}"

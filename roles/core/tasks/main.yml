@@ -107,6 +107,8 @@
   vars:
     util_backup_type: pgdump
     util_app: core
+    util_deploy_path: "{{ core_deploy_path }}"
+    util_backup_path: "{{ core_backup_path }}"
     util_db_services: lldap-db authelia-db
 
 - name: Enable backup systemd timer

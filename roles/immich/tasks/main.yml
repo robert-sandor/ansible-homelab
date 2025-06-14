@@ -78,6 +78,8 @@
   vars:
     util_backup_type: pgdump
     util_app: immich
+    util_deploy_path: "{{ immich_deploy_path }}"
+    util_backup_path: "{{ immich_backup_path }}"
     util_stop_services: server ml
 
 - name: Flush handlers

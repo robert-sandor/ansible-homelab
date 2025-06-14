@@ -29,3 +29,5 @@
   vars:
     util_backup_type: simple
     util_app: ntfy
+    util_deploy_path: "{{ ntfy_deploy_path }}"
+    util_backup_path: "{{ ntfy_backup_path }}"

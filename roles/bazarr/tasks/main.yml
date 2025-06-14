@@ -25,6 +25,8 @@
   vars:
     util_backup_type: simple
     util_app: bazarr
+    util_deploy_path: "{{ bazarr_deploy_path }}"
+    util_backup_path: "{{ bazarr_backup_path }}"
     util_stop_services: bazarr
 
 - name: Enable compose up on boot timer

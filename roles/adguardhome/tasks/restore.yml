@@ -5,3 +5,4 @@
     tasks_from: restore
   vars:
     util_app: adguardhome
+    util_backup_path: "{{ adguardhome_backup_path }}"

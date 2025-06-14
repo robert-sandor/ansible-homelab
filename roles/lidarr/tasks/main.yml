@@ -25,6 +25,8 @@
   vars:
     util_backup_type: simple
     util_app: lidarr
+    util_deploy_path: "{{ lidarr_deploy_path }}"
+    util_backup_path: "{{ lidarr_backup_path }}"
     util_stop_services: lidarr
 
 - name: Enable compose up on boot timer

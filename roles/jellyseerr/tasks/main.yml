@@ -25,4 +25,6 @@
   vars:
     util_backup_type: simple
     util_app: jellyseerr
+    util_deploy_path: "{{ jellyseerr_deploy_path }}"
+    util_backup_path: "{{ jellyseerr_backup_path }}"
     util_stop_services: jellyseerr

@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: prowlarr
+    util_deploy_path: "{{ prowlarr_deploy_path }}"

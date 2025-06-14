@@ -5,3 +5,4 @@
     tasks_from: teardown
   vars:
     util_app: plex
+    util_deploy_path: "{{ plex_deploy_path }}"
