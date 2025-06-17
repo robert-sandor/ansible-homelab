@@ -7,5 +7,5 @@ base_traefik_image: "docker.io/library/traefik:{{ base_traefik_version }}"
 base_traefik_hostname: "traefik.{{ hostname }}"
 
 ### Docker Socket Proxy - a proxy to control exposed docker api resources
-base_dsp_version: 3.0.10 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy
+base_dsp_version: 3.2.1 # https://github.com/linuxserver/docker-socket-proxy/pkgs/container/socket-proxy
 base_dsp_image: "ghcr.io/linuxserver/socket-proxy:{{ base_dsp_version }}"
