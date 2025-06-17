@@ -26,7 +26,7 @@ services:
       homepage.siteMonitor: https://jellyseerr.{{ hostname }}
       # What's up docker
       wud.watch: true
-      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.tag.include: ^\d+\.\d+\.\d+$$
       wud.link.template: https://github.com/fallenbagel/jellyseerr/releases
 
 networks:

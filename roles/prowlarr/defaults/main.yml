@@ -2,7 +2,7 @@
 ### Prowlarr
 
 # Version of prowlarr to deploy
-prowlarr_version: "1.36.3"
+prowlarr_version: "1.37.0"
 
 # Try to auto configure transmission if deployed by this playbook
 prowlarr_transmission_configure: "{{ groups['transmission'] | length > 0 }}"

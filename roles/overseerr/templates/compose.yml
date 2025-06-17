@@ -29,7 +29,8 @@ services:
       homepage.siteMonitor: https://overseerr.{{ hostname }}
       # What's up docker
       wud.watch: true
-      wud.tag.include: ^v\d+\.\d+\.\d+$$
+      wud.tag.include: ^\d{1,3}\.\d+\.\d+$$
+      wud.link.template: https://github.com/linuxserver/docker-overseerr/releases
 
 networks:
   traefik:

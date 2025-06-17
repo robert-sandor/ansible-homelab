@@ -45,8 +45,8 @@ services:
       homepage.icon: healthchecks
       homepage.siteMonitor: https://healthchecks.{{ hostname }}
       wud.watch: true
-      wud.tag.include: ^\d+\.\d+-ls\d+$$
-      wud.tag.transform: ^(\d+.\d+)-.*$$ => $$1
+      wud.tag.include: ^v\d+\.\d+-ls\d+$$
+      wud.tag.transform: ^v(\d+.\d+)-.*$$ => $$1
       wud.link.template: https://github.com/healthchecks/healthchecks/releases
 
   db:

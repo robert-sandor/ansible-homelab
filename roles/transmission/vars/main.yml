@@ -1,5 +1,5 @@
 ---
-transmission_version: 4.0.5
+transmission_version: "4.0.6"
 transmission_image: "ghcr.io/linuxserver/transmission:{{ transmission_version }}"
 
 transmission_peer_port: 51413

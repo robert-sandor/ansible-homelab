@@ -3,7 +3,7 @@ radarr_deploy_path: "{{ deploy_path }}/radarr"
 radarr_backup_path: "{{ backup_path }}/radarr"
 radarr_config_path: "{{ radarr_deploy_path }}/config"
 
-radarr_version: "5.25.0"
+radarr_version: "5.26.2"
 radarr_image: "ghcr.io/linuxserver/radarr:{{ radarr_version }}"
 
 radarr_media_mount: /media
