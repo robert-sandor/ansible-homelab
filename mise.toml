@@ -4,7 +4,7 @@ python = "3.13"
 
 [env]
 _.file = ".env"
-'_'.python.venv = { path = ".venv", create = true }
+'_'.python.venv = { path = ".venv", create = true, uv_create_args = ['--seed'] }
 
 [tasks.deps]
 description = "Install dependencies (requirement.txt and requirements.yml)"
