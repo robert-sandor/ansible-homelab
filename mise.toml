@@ -1,6 +1,5 @@
 [tools]
 python = "3.13"
-"npm:@ansible/ansible-language-server" = "1"
 
 [env]
 _.file = ".env"
