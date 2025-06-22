@@ -3,7 +3,7 @@
 #
 ### Don't change settings below this line unless you know what you are doing
 # Version of manyfold to deploy - use version from https://github.com/manyfold3d/manyfold/releases, without the leading "v"
-manyfold_version: 0.113.0 # https://github.com/manyfold3d/manyfold/releases
+manyfold_version: 0.114.1 # https://github.com/manyfold3d/manyfold/releases
 manyfold_image: "ghcr.io/manyfold3d/manyfold:{{ manyfold_version }}"
 
 # Postgres version

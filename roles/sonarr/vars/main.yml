@@ -3,7 +3,7 @@ sonarr_deploy_path: "{{ deploy_path }}/sonarr"
 sonarr_backup_path: "{{ backup_path }}/sonarr"
 sonarr_config_path: "{{ sonarr_deploy_path }}/config"
 
-sonarr_version: "4.0.14"
+sonarr_version: "4.0.15"
 sonarr_image: "ghcr.io/linuxserver/sonarr:{{ sonarr_version }}"
 
 sonarr_media_mount: /media
