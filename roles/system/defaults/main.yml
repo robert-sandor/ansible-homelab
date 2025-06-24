@@ -2,6 +2,9 @@
 # Toggle on to update all system packages
 system_update: false
 
+# Toggle passwordless sudo for the ansible user
+system_passwordless_sudo_for_user: true
+
 # SSH keys to authorize on the servers
 system_authorized_ssh_keys: []
 # Mounts

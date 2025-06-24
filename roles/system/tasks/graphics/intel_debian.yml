@@ -1,4 +1,12 @@
 ---
+- name: Add non-free repositories
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "{{ repo }}"
+  loop: "{{ system_debian_non_free_repos }}"
+  loop_control:
+    loop_var: repo
+
 - name: Install Intel driver
   become: true
   ansible.builtin.package:
