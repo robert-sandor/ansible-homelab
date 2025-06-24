@@ -2,18 +2,13 @@
 - name: Ensure python3-virtualenv is installed
   become: true
   ansible.builtin.package:
-    name: python3-virtualenv
+    name: "{{ venv_system_packages }}"
     state: present
 
 - name: Create virtualenv
   ansible.builtin.command:
-    cmd: "python -m venv {{ venv_dir }}"
+    cmd: "virtualenv --clear --seeder pip {{ venv_dir }}"
     creates: "{{ venv_dir }}"
-
-- name: Ensure pip is available in the virtualenv
-  ansible.builtin.command:
-    cmd: "{{ venv_python }} -m ensurepip"
-    creates: "{{ venv_pip }}"
 
 - name: Check if setuptools is available in the virtualenv
   ansible.builtin.command: "{{ venv_python }} -c 'import setuptools'"
