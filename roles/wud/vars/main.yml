@@ -1,5 +1,0 @@
----
-wud_deploy_path: "{{ deploy_path }}/wud"
-wud_backup_path: "{{ backup_path }}/wud"
-
-wud_version: "8.0.1" # https://hub.docker.com/r/wud/wud/tags

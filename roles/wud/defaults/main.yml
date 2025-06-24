@@ -1,8 +1,38 @@
 ---
 ###
-# WUD - What's up docker - https://getwud.github.io/wud/
-# Checks for docker image updates
+# WUD - What's up docker - Cotainer image update checker and notifier
 
-# Set cron schedule for WUD watchers - https://crontab.guru/
-# Default is every Saturday at 9 AM local time
+# Set cron schedule for WUD watchers - Use a service like https://crontab.guru if you're not familiar with cron
 wud_cron_schedule: 0 9 * * 6
+
+# Whether to enable notifications through ntfy
+wud_ntfy_enable: "{{ groups['ntfy'] | length > 0 }}"
+# URL for ntfy
+wud_ntfy_url: "https://ntfy.{{ groups['ntfy'][0] }}.{{ domain }}"
+# Ntfy topic name to publish to
+wud_ntfy_topic: wud
+# Ntfy message priority - see https://docs.ntfy.sh/publish/#message-priority
+wud_ntfy_priority: 2
+
+### Advanced settings
+# Path to deploy and backup directories
+wud_deploy_path: "{{ deploy_path }}/wud"
+wud_backup_path: "{{ backup_path }}/wud"
+
+# Version - https://hub.docker.com/r/wud/wud/tags
+wud_version: "8.0.1"
+
+# OpenID Connect configuration
+# NOTE: these values need to be the same as the auth provider (Authelia)
+#
+# Enable the oidc integration
+wud_oidc_enable: true
+# Name of the oidc integration configuration
+wud_oidc_name: authelia
+# Client ID and secret
+wud_oidc_client_id: wud
+wud_oidc_client_secret: "{{ ('whats-up-docker@' + deployment_secret) | hash('sha256') }}"
+# OIDC discovery URL
+wud_oidc_discovery_url: https://auth.{{ groups['core'][0] }}.{{ domain }}/.well-known/openid-configuration
+# Whether to skip login page and redirect immediately
+wud_oidc_redirect: true
