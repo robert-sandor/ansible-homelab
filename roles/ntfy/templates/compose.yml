@@ -1,6 +1,7 @@
 ---
 services:
   server:
+    container_name: ntfy
     image: binwiederhier/ntfy:{{ ntfy_version }}
     restart: always
     command: serve
