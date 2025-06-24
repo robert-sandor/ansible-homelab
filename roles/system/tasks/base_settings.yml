@@ -11,7 +11,7 @@
 
 - name: Allow passwordless sudo for current user
   become: true
-  copy:
+  ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ ansible_facts.user_id }}"
     content: "{{ ansible_facts.user_id }} ALL=(ALL) NOPASSWD:ALL"
     owner: root
