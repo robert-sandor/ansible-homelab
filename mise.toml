@@ -38,4 +38,4 @@ run = "ansible-playbook ./playbooks/utils/nutscan.yml -i ./inventory -l {{arg(na
 
 [tasks.genvars]
 description = "Generate variables for ansible playbooks"
-run = "bash ./scripts/gen_vars.sh"
+run = "scripts/gen_vars.sh"
