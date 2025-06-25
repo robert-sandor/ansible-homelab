@@ -16,25 +16,25 @@ ROLES=()
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -a|--advanced)
-      INCLUDE_ADVANCED=true
-      shift
-      ;;
-    -o)
-      OUTPUT_FILE="$2"
-      shift 2
-      ;;
-    --)
-      shift
-      break
-      ;;
-    -*)
-      usage
-      ;;
-    *)
-      ROLES+=("$1")
-      shift
-      ;;
+  -a | --advanced)
+    INCLUDE_ADVANCED=true
+    shift
+    ;;
+  -o)
+    OUTPUT_FILE="$2"
+    shift 2
+    ;;
+  --)
+    shift
+    break
+    ;;
+  -*)
+    usage
+    ;;
+  *)
+    ROLES+=("$1")
+    shift
+    ;;
   esac
 done
 
