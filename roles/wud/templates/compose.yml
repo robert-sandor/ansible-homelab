@@ -1,8 +1,8 @@
 ---
 services:
   wud:
-    container_name: wud
-    image: ghcr.io/getwud/wud:{{ wud_version }}
+    container_name: "{{ wud_docker_container_name }}"
+    image: "{{ wud_docker_image }}"
     restart: always
     env_file: .env
     networks:

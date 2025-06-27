@@ -21,14 +21,17 @@ wud_backup_path: "{{ backup_path }}/wud"
 
 # Version - https://hub.docker.com/r/wud/wud/tags
 wud_version: "8.0.1"
+# Some settings for the Docker compose file
+wud_docker_image: ghcr.io/getwud/wud:{{ wud_version }}
+wud_docker_container_name: wud
 
 # OpenID Connect configuration
 # NOTE: these values need to be the same as the auth provider (Authelia)
 #
 # Enable the oidc integration
-wud_oidc_enable: true
+wud_oidc_enable: "{{ groups['core'] | length > 0 }}"
 # Name of the oidc integration configuration
-wud_oidc_name: authelia
+wud_oidc_name: Authelia
 # Client ID and secret
 wud_oidc_client_id: wud
 wud_oidc_client_secret: "{{ ('whats-up-docker@' + deployment_secret) | hash('sha256') }}"
