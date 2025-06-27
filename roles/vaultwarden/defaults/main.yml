@@ -1,11 +1,41 @@
 ---
-###
-# Vaultwarden - password manager
-###
+### Vaultwarden - password manager, reimplementation of Bitwarden server
 
-# Allow new accounts to be created
+# Whether to allow new accounts to be created
 # Recommend disabling it once accounts you are needed are created
 vaultwarden_allow_signups: true
 
-# Show password hints
-vaultwarden_show_password_hint: false # pragma: allowlist secret
+# Whether to show password hints
+vaultwarden_show_password_hint: false
+
+### Advanced settings
+# Path to deploy and backup directories
+vaultwarden_deploy_path: "{{ deploy_path }}/vaultwarden"
+vaultwarden_backup_path: "{{ backup_path }}/vaultwarden"
+vaultwarden_data_path: "{{ vaultwarden_deploy_path }}/data"
+
+# Version - https://github.com/dani-garcia/vaultwarden/releases
+vaultwarden_version: "1.34.1"
+# Docker image
+vaultwarden_docker_image: "vaultwarden/server:{{ vaultwarden_version }}"
+# Docker container name
+vaultwarden_docker_container_name: vaultwarden
+# User and group to run the docker container as (user field in the compose file)
+vaultwarden_docker_user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+
+# Vaultwarden public hostname and URL
+vaultwarden_hostname: "vaultwarden.{{ hostname }}"
+vaultwarden_url: "https://{{ vaultwarden_hostname }}"
+
+# Postgres version - https://www.postgresql.org/docs/release
+vaultwarden_pg_version: "17.5"
+# Postgres docker image
+vaultwarden_pg_docker_image: "docker.io/library/postgres:{{ vaultwarden_pg_version }}"
+# Postgres docker container name
+vaultwarden_pg_docker_container_name: vaultwarden-db
+
+# Database name and credentials
+# WARN: don't change this once deployed
+vaultwarden_db_name: vaultwarden
+vaultwarden_db_user: vaultwarden
+vaultwarden_db_pass: "{{ ('vaultwarden-db@' + deployment_secret) | hash('sha256') }}"

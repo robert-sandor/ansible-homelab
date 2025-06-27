@@ -1,9 +1,9 @@
 ---
 services:
   server:
-    image: vaultwarden/server:{{ vaultwarden_version }}
-    container_name: vaultwarden
-    user: "{{ ansible_facts.user_uid }}:{{ ansible_facts.user_gid }}"
+    image: "{{ vaultwarden_docker_image }}"
+    container_name: "{{ vaultwarden_docker_container_name }}"
+    user: "{{ vaultwarden_docker_user }}"
     restart: always
     depends_on:
       - db
@@ -11,33 +11,33 @@ services:
       - pg_url
     environment:
       DATABASE_URL_FILE: /run/secrets/pg_url
-      DOMAIN: https://vaultwarden.{{ hostname }}
+      DOMAIN: "{{ vaultwarden_url }}"
       SIGNUPS_ALLOWED: "{{ vaultwarden_allow_signups }}"
       SHOW_PASSWORD_HINT: "{{ vaultwarden_show_password_hint }}"
     networks:
       - default
       - traefik
     volumes:
-      - ./data:/data
+      - "{{ vaultwarden_data_path }}:/data"
     labels:
       traefik.enable: true
       traefik.http.services.vaultwarden.loadbalancer.server.port: 80
-      traefik.http.routers.vaultwarden.rule: Host(`vaultwarden.{{ hostname }}`)
+      traefik.http.routers.vaultwarden.rule: Host(`{{ vaultwarden_hostname }}`)
       traefik.http.routers.vaultwarden.entrypoints: https
       traefik.http.routers.vaultwarden.service: vaultwarden
       homepage.name: vaultwarden
       homepage.group: apps
       homepage.description: password manager
-      homepage.href: https://vaultwarden.{{ hostname }}
+      homepage.href: "{{ vaultwarden_url }}"
       homepage.icon: vaultwarden
-      homepage.siteMonitor: https://vaultwarden.{{ hostname }}
+      homepage.siteMonitor: "{{ vaultwarden_url }}"
       wud.watch: true
       wud.tag.include: ^\d+\.\d+.\d+$$
       wud.link.template: https://github.com/dani-garcia/vaultwarden/releases
 
   db:
-    image: docker.io/library/postgres:{{ vaultwarden_pg_version }}
-    container_name: vaultwarden-db
+    image: "{{ vaultwarden_pg_docker_image }}"
+    container_name: "{{ vaultwarden_pg_docker_container_name }}"
     restart: always
     secrets:
       - pg_pass

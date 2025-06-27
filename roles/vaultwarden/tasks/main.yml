@@ -2,7 +2,7 @@
 - name: Create directories
   ansible.builtin.file:
     state: directory
-    path: "{{ vaultwarden_deploy_path }}/data"
+    path: "{{ vaultwarden_data_path }}"
     mode: "0750"
 
 - name: Template compose file
@@ -10,11 +10,6 @@
     src: compose.yml
     dest: "{{ vaultwarden_deploy_path }}/compose.yml"
     mode: "0640"
-
-- name: Delete env file # TODO: remove
-  ansible.builtin.file:
-    path: "{{ vaultwarden_deploy_path }}/.env"
-    state: absent
 
 - name: Create secrets directory
   ansible.builtin.file:
