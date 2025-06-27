@@ -4,8 +4,10 @@ services:
     container_name: beszel-hub
     image: docker.io/henrygd/beszel:{{ beszel_version }}
     restart: always
-    profiles: [ hub ]
-    networks: [ traefik ]
+    profiles:
+      - hub
+    networks:
+      - traefik
     volumes:
       - ./data:/beszel_data
     labels:
