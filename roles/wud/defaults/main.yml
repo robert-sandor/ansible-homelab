@@ -25,6 +25,10 @@ wud_version: "8.0.1"
 wud_docker_image: ghcr.io/getwud/wud:{{ wud_version }}
 wud_docker_container_name: wud
 
+# Hostname and URL
+wud_hostname: "wud.{{ hostname }}"
+wud_url: "https://{{ wud_hostname }}"
+
 # OpenID Connect configuration
 # NOTE: these values need to be the same as the auth provider (Authelia)
 #

@@ -10,15 +10,15 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.wud.loadbalancer.server.port: 3000
-      traefik.http.routers.wud.rule: Host(`wud.{{ hostname }}`)
+      traefik.http.routers.wud.rule: Host(`{{ wud_hostname }}`)
       traefik.http.routers.wud.entrypoints: https
       traefik.http.routers.wud.service: wud
       homepage.name: wud
       homepage.group: admin
       homepage.description: container image updates
-      homepage.href: https://wud.{{ hostname }}
+      homepage.href: "{{ wud_url }}"
       homepage.icon: docker
-      homepage.siteMonitor: https://wud.{{ hostname }}
+      homepage.siteMonitor: "{{ wud_url }}"
       wud.watch: true
       wud.tag.include: ^\d+\.\d+\.\d+$$
       wud.link.template: https://github.com/getwud/wud/releases
