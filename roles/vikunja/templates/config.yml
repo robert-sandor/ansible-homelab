@@ -1,6 +1,6 @@
 service:
   JWTSecret: "{{ vikunja_jwt_secret }}"
-  publicurl: https://vikunja.{{ hostname }}
+  publicurl: "{{ vikunja_url }}"
   enablecaldav: false # disabling for now as it's unstable
   enableregistration: true
   timezone: "{{ timezone }}"

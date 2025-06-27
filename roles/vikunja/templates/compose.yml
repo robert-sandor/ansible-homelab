@@ -4,23 +4,26 @@ services:
     container_name: vikunja
     image: vikunja/vikunja:{{ vikunja_version }}
     restart: always
-    depends_on: [ db ]
-    networks: [ default, traefik ]
+    depends_on:
+      - db
+    networks:
+      - default
+      - traefik
     volumes:
       - ./config.yml:/app/vikunja/config.yml:ro
       - ./files:/app/vikunja/files
     labels:
       traefik.enable: true
       traefik.http.services.vikunja.loadbalancer.server.port: 3456
-      traefik.http.routers.vikunja.rule: Host(`vikunja.{{ hostname }}`)
+      traefik.http.routers.vikunja.rule: Host(`{{ vikunja_hostname }}`)
       traefik.http.routers.vikunja.entrypoints: https
       traefik.http.routers.vikunja.service: vikunja
       homepage.name: vikunja
       homepage.group: apps
       homepage.description: todo app
-      homepage.href: https://vikunja.{{ hostname }}
+      homepage.href: "{{ vikunja_url }}"
       homepage.icon: vikunja
-      homepage.siteMonitor: https://vikunja.{{ hostname }}
+      homepage.siteMonitor: "{{ vikunja_url }}"
       wud.watch: true
       wud.tag.include: ^\d+\.\d+\.\d+$$
       wud.link.template: https://github.com/go-vikunja/vikunja/releases/
@@ -29,7 +32,7 @@ services:
     container_name: vikunja-db
     image: postgres:{{ vikunja_pg_version }}
     restart: always
-    secrets: [ pg_pass ]
+    secrets: [pg_pass]
     environment:
       POSTGRES_DB: "{{ vikunja_db_name }}"
       POSTGRES_USER: "{{ vikunja_db_user }}"

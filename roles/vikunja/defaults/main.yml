@@ -9,6 +9,10 @@ vikunja_backup_path: "{{ backup_path }}/vikunja"
 # Version - https://hub.docker.com/r/vikunja/vikunja/tags
 vikunja_version: "0.24.6"
 
+# Vikunja public hostname and URL
+vikunja_hostname: "vikunja.{{ hostname }}"
+vikunja_url: "https://{{ vikunja_hostname }}"
+
 # Secret used for JWT Auth
 # WARN: don't change this once deployed
 vikunja_jwt_secret: "{{ ('vikunja-jwt@' + deployment_secret) | hash('sha256') }}"

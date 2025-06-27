@@ -13,6 +13,8 @@ All configuration for this role is considered advanced and should be reviewed be
 - `vikunja_deploy_path`: Path where Vikunja will be deployed (default: `{{ deploy_path }}/vikunja`)
 - `vikunja_backup_path`: Path for Vikunja backups (default: `{{ backup_path }}/vikunja`)
 - `vikunja_version`: Version of Vikunja to deploy (default: `"0.24.6"`)
+- `vikunja_hostname`: Public hostname for Vikunja (default: `vikunja.{{ hostname }}`)
+- `vikunja_url`: Public URL for Vikunja (default: `https://{{ vikunja_hostname }}`)
 - `vikunja_jwt_secret`: Secret used for JWT authentication (default: generated from deployment secret)
 - `vikunja_local_auth_enable`: Enable local auth (default: inverse of `vikunja_openid_enable`, i.e., if OpenID is enabled, local auth is disabled)
 - `vikunja_openid_enable`: Enable OpenID authentication (default: `true`)
