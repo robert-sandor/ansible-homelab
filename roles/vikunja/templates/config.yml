@@ -16,6 +16,7 @@ database:
   user: "{{ vikunja_db_user }}"
   password: "{{ vikunja_db_pass }}"
 
+# TODO: consider adding typesense as well
 typesense:
   # Whether to enable the Typesense integration. If true, all tasks will be synced to the configured Typesense
   # instance and all search and filtering will run through Typesense instead of only through the database.
@@ -61,31 +62,20 @@ backgrounds:
 
 auth:
   local:
-    enabled: false
-  # OpenID configuration will allow users to authenticate through a third-party OpenID Connect compatible provider.<br/>
-  # The provider needs to support the `openid`, `profile` and `email` scopes.<br/>
-  # **Note:** Some openid providers (like Gitlab) only make the email of the user available through OpenID if they have set it to be publicly visible.
-  # If the email is not public in those cases, authenticating will fail.
-  # **Note 2:** The frontend expects the third party to rediect the user <frontend-url>/auth/openid/<auth key> after authentication. Please make sure to configure the redirect url in your third party auth service accordingly if you're using the default vikunja frontend.
-  # The frontend will automatically provide the API with the redirect url, composed from the current url where it's hosted.
-  # If you want to use the desktop client with OpenID, make sure to allow redirects to `127.0.0.1`.
-  # Take a look at the [default config file](https://kolaente.dev/vikunja/vikunja/src/branch/main/config.yml.sample) for more information about how to configure openid authentication.
+    enabled: "{{ vikunja_local_auth_enable | bool | lower }}"
   openid:
-    enabled: true
+    enabled: "{{ vikunja_openid_enable | bool | lower }}"
     providers:
-      - name: Authelia
-        authurl: https://auth.{{ core_hostname }}
-        clientid: vikunja
-        clientsecret: "{{ vikunja_openid_secret }}"
-        scope: openid email profile
+      - name: "{{ vikunja_openid_name }}"
+        authurl: "{{ vikunja_openid_authurl }}"
+        clientid: "{{ vikunja_openid_clientid }}"
+        clientsecret: "{{ vikunja_openid_clientsecret }}"
+        scope: "{{ vikunja_openid_scope }}"
 
-# Prometheus metrics endpoint
+# TODO: consider exposing these as variables
 metrics:
-  # If set to true, enables a /metrics endpoint for prometheus to collect metrics about Vikunja. You can query it from `/api/v1/metrics`.
   enabled: false
-  # If set to a non-empty value the /metrics endpoint will require this as a username via basic auth in combination with the password below.
   username:
-  # If set to a non-empty value the /metrics endpoint will require this as a password via basic auth in combination with the username below.
   password:
 
 defaultsettings:

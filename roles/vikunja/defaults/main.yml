@@ -13,9 +13,16 @@ vikunja_version: "0.24.6"
 # WARN: don't change this once deployed
 vikunja_jwt_secret: "{{ ('vikunja-jwt@' + deployment_secret) | hash('sha256') }}"
 
-# OpenID Connect secret
-# NOTE: this value needs to be the same as the auth provider (Authelia)
-vikunja_openid_secret: "{{ ('vikunja@' + deployment_secret) | hash('sha256') }}"
+# Local auth configuration
+vikunja_local_auth_enable: "{{ not vikunja_openid_enable }}"
+
+# OpenID Connect configuration
+vikunja_openid_enable: true
+vikunja_openid_name: Authelia
+vikunja_openid_authurl: "https://auth.{{ core_hostname }}"
+vikunja_openid_clientid: vikunja
+vikunja_openid_clientsecret: "{{ ('vikunja@' + deployment_secret) | hash('sha256') }}"
+vikunja_openid_scope: "openid email profile"
 
 # Postgres version - https://www.postgresql.org/docs/release
 vikunja_pg_version: "17.5"

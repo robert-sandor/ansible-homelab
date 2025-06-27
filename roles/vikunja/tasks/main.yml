@@ -11,11 +11,6 @@
     dest: "{{ vikunja_deploy_path }}/compose.yml"
     mode: "0640"
 
-- name: Remove env file # TODO: remove
-  ansible.builtin.file:
-    path: "{{ vikunja_deploy_path }}/.env"
-    state: absent
-
 - name: Template vikunja config
   ansible.builtin.template:
     src: config.yml
