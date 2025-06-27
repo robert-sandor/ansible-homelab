@@ -1,18 +1,34 @@
 ---
-unpackerr_version: "0.14.5"
-unpackerr_image: "ghcr.io/unpackerr/unpackerr:{{ unpackerr_version }}"
+### Unpackerr - a media library unpacker - https://github.com/unpackerr/unpackerr
 
+# Path to your media library
+unpackerr_media_path: "/media"
+
+### Advanced settings
+
+# Version - https://github.com/unpackerr/unpackerr/releases
+unpackerr_version: "0.14.5"
+# Docker image
+unpackerr_docker_image: "ghcr.io/unpackerr/unpackerr:{{ unpackerr_version }}"
+# Docker container name
+unpackerr_container_name: "unpackerr"
+
+# Paths for deploy, backup and config
 unpackerr_deploy_path: "{{ deploy_path }}/unpackerr"
 unpackerr_backup_path: "{{ backup_path }}/unpackerr"
-unpackerr_media_path: "/media"
+unpackerr_config_path: "{{ unpackerr_deploy_path }}/config"
+
+# Where the unpackerr_media_path is mounted on the docker container
 unpackerr_media_mount: "/media"
 
+# Main configuration object - this will be saved as a TOML file
 unpackerr_config:
   interval: 1m
   sonarr: "{{ [] if groups['sonarr'] | length <= 0 else [unpackerr_sonarr_config] }}"
   radarr: "{{ [] if groups['radarr'] | length <= 0 else [unpackerr_radarr_config] }}"
   lidarr: "{{ [] if groups['lidarr'] | length <= 0 else [unpackerr_lidarr_config] }}"
 
+# Configurations for each service - this assumes https is enabled, and standard hostnames are used
 unpackerr_sonarr_config:
   url: "https://sonarr.{{ groups['sonarr'][0] }}.{{ domain }}"
   api_key: "{{ sonarr_api_key }}"

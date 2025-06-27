@@ -22,14 +22,14 @@
 
 - name: Ensure config directory exists
   ansible.builtin.file:
-    dest: "{{ unpackerr_deploy_path }}/config"
+    dest: "{{ unpackerr_config_path }}"
     state: directory
     mode: "0750"
 
 - name: Copy configuration file
   ansible.builtin.copy:
     content: "{{ unpackerr_config | to_toml }}"
-    dest: "{{ unpackerr_deploy_path }}/config/unpackerr.conf"
+    dest: "{{ unpackerr_config_path }}/unpackerr.conf"
     mode: "0640"
 
 - name: Template compose file
