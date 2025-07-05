@@ -5,7 +5,7 @@ gitea_backup_path: "{{ backup_path }}/gitea"
 gitea_version: "1.24.2" # https://github.com/go-gitea/gitea/releases
 gitea_pg_version: "17.5"
 
-gitea_runner_version: "0.2.11" # https://gitea.com/gitea/act_runner/releases
+gitea_runner_version: "0.2.12" # https://gitea.com/gitea/act_runner/releases
 
 gitea_db_name: gitea
 gitea_db_user: gitea

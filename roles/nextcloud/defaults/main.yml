@@ -5,7 +5,7 @@ nextcloud_admin_pass: secret
 nextcloud_data_path: "{{ nextcloud_deploy_path }}/data"
 
 nextcloud_version: "31.0.6"
-nextcloud_nginx_version: "1.28.0"
+nextcloud_nginx_version: "1.29.0"
 nextcloud_postgres_version: "17.5"
 nextcloud_valkey_version: "8.1.2"
 
