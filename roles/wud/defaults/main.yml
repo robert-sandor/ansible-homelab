@@ -20,7 +20,7 @@ wud_deploy_path: "{{ deploy_path }}/wud"
 wud_backup_path: "{{ backup_path }}/wud"
 
 # Version - https://hub.docker.com/r/wud/wud/tags
-wud_version: "8.1.0"
+wud_version: "8.1.1"
 # Some settings for the Docker compose file
 wud_docker_image: ghcr.io/getwud/wud:{{ wud_version }}
 wud_docker_container_name: wud

@@ -3,7 +3,7 @@
 #
 ### Don't change settings below this line unless you know what you are doing
 # Version of manyfold to deploy - use version from https://github.com/manyfold3d/manyfold/releases, without the leading "v"
-manyfold_version: 0.116.2 # https://github.com/manyfold3d/manyfold/releases
+manyfold_version: 0.117.0 # https://github.com/manyfold3d/manyfold/releases
 manyfold_image: "ghcr.io/manyfold3d/manyfold:{{ manyfold_version }}"
 
 # Postgres version
@@ -11,7 +11,7 @@ manyfold_pg_version: "17.5"
 manyfold_pg_image: "docker.io/library/postgres:{{ manyfold_pg_version }}"
 
 # Valkey version
-manyfold_valkey_version: "8.1.2"
+manyfold_valkey_version: "8.1.3"
 manyfold_valkey_image: "docker.io/valkey/valkey:{{ manyfold_valkey_version }}"
 
 # Where to deploy manyfold
